@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "module": "Node16",
+    "moduleResolution": "node16",
+    "types": ["node"],
+    "resolveJsonModule": true
+  },
+  "exclude": ["node_modules", "ui/src", "ui/dist"]
+}

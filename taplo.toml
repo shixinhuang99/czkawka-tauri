@@ -1,0 +1,8 @@
+include = ["*.toml", ".cargo/*.toml", "tauri/*.toml"]
+
+[[rule]]
+include = ["**/Cargo.toml"]
+keys = ["dependencies", "*-dependencies"]
+
+[rule.formatting]
+reorder_keys = true
