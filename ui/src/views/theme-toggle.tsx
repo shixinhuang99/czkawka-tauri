@@ -28,12 +28,7 @@ export function ThemeToggle() {
   }, []);
 
   return (
-    <TooltipButton
-      tooltip="Toggle theme"
-      variant="ghost"
-      size="icon"
-      onClick={toggleTheme}
-    >
+    <TooltipButton tooltip="Toggle theme" onClick={toggleTheme}>
       {theme.display === Theme.Light && <Sun />}
       {theme.display === Theme.Dark && <Moon />}
       {theme.display === Theme.System && <TvMinimal />}

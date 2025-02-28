@@ -6,7 +6,7 @@ fn main() {
 
 fn run() {
 	tauri::Builder::default()
-		.invoke_handler(tauri::generate_handler![view_github, set_theme,])
+		.invoke_handler(tauri::generate_handler![view_github, set_theme])
 		.run(tauri::generate_context!())
 		.unwrap();
 }

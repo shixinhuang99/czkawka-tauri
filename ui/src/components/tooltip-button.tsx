@@ -18,7 +18,7 @@ export const TooltipButton = forwardRef<HTMLButtonElement, TooltipButtonProps>(
     return (
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button ref={ref} {...restProps} />
+          <Button ref={ref} variant="ghost" size="icon" {...restProps} />
         </TooltipTrigger>
         <TooltipContent>
           <TooltipArrow />
