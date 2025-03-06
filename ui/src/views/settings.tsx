@@ -13,8 +13,15 @@ import {
   removePresetAtom,
 } from '~/atom/preset';
 import { PresetsAtom } from '~/atom/primitive';
-import { Label, ScrollArea, TooltipButton } from '~/components';
-import { EditInput } from '~/components/edit-input';
+import {
+  EditInput,
+  InputNumber,
+  Label,
+  ScrollArea,
+  Switch,
+  Textarea,
+  TooltipButton,
+} from '~/components';
 import {
   Dialog,
   DialogContent,
@@ -30,8 +37,48 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/shadcn/select';
+import { Form, FormItem } from '~/components/simple-form';
+import { MAXIMUM_FILE_SIZE, getDefaultSettings } from '~/consts';
 import { useBoolean } from '~/hooks';
 import { eventPreventDefault } from '~/utils/event';
+
+export function SettingsButton() {
+  const dialogOpen = useBoolean();
+  const isPreventDialogClose = useBoolean();
+
+  return (
+    <Dialog
+      open={dialogOpen.value}
+      onOpenChange={(open) => {
+        if (isPreventDialogClose.value) {
+          return;
+        }
+        dialogOpen.set(open);
+      }}
+    >
+      <DialogTrigger asChild>
+        <TooltipButton tooltip="Settings">
+          <SettingsIcon />
+        </TooltipButton>
+      </DialogTrigger>
+      <DialogContent
+        className="max-w-[550px] outline-none"
+        onOpenAutoFocus={eventPreventDefault}
+        onCloseAutoFocus={eventPreventDefault}
+        disableAnimate
+      >
+        <DialogHeader>
+          <DialogTitle>Settings</DialogTitle>
+          <DialogDescription>Application settings</DialogDescription>
+        </DialogHeader>
+        <div className="h-[60vh] flex flex-col">
+          <PresetSelect onPreventDialogCloseChange={isPreventDialogClose.set} />
+          <SettingsContent />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function PresetSelect(props: {
   onPreventDialogCloseChange: (open: boolean) => void;
@@ -66,6 +113,10 @@ function PresetSelect(props: {
   const handleEditPresetNameOk = (name: string) => {
     setCurrentPreset({ name });
     handleAddOrEditPresetCancel();
+  };
+
+  const handleResetPreset = () => {
+    setCurrentPreset({ settings: getDefaultSettings() });
   };
 
   return (
@@ -150,7 +201,7 @@ function PresetSelect(props: {
         >
           <Trash2 />
         </TooltipButton>
-        <TooltipButton tooltip="Reset preset">
+        <TooltipButton tooltip="Reset preset" onClick={handleResetPreset}>
           <RotateCcw />
         </TooltipButton>
       </span>
@@ -158,40 +209,67 @@ function PresetSelect(props: {
   );
 }
 
-export function SettingsButton() {
-  const dialogOpen = useBoolean();
-  const isPreventDialogClose = useBoolean();
+function SettingsContent() {
+  const [currentPreset, setCurrentPreset] = useAtom(currentPresetAtom);
 
   return (
-    <Dialog
-      open={dialogOpen.value}
-      onOpenChange={(open) => {
-        if (isPreventDialogClose.value) {
-          return;
-        }
-        dialogOpen.set(open);
-      }}
-    >
-      <DialogTrigger asChild>
-        <TooltipButton tooltip="Settings">
-          <SettingsIcon />
-        </TooltipButton>
-      </DialogTrigger>
-      <DialogContent
-        className="max-w-[550px] outline-none"
-        onOpenAutoFocus={eventPreventDefault}
-        onCloseAutoFocus={eventPreventDefault}
-        disableAnimate
+    <ScrollArea className="flex-1">
+      <Form
+        className="pr-3"
+        value={currentPreset.settings}
+        onChange={(v) => {
+          console.log(v);
+          setCurrentPreset({ settings: { ...currentPreset.settings, ...v } });
+        }}
       >
-        <DialogHeader>
-          <DialogTitle>Settings</DialogTitle>
-          <DialogDescription>Application settings</DialogDescription>
-        </DialogHeader>
-        <div className="h-[60vh]">
-          <PresetSelect onPreventDialogCloseChange={isPreventDialogClose.set} />
-          <ScrollArea className="h-full">...</ScrollArea>
+        <GroupTitle>General settings</GroupTitle>
+        <FormItem name="excludedItems" label="Excluded items" comp="textarea">
+          <Textarea rows={2} />
+        </FormItem>
+        <FormItem
+          name="allowedExtensions"
+          label="Allowed extensions"
+          comp="textarea"
+        >
+          <Textarea rows={2} />
+        </FormItem>
+        <div className="flex items-center gap-2">
+          <Label className="flex-shrink-0">File size(Kib):</Label>
+          <FormItem name="minimumFileSize" comp="input-number">
+            <InputNumber minValue={16} maxValue={MAXIMUM_FILE_SIZE} />
+          </FormItem>
+          ~
+          <FormItem name="maximumFileSize" comp="input-number">
+            <InputNumber minValue={16} maxValue={MAXIMUM_FILE_SIZE} />
+          </FormItem>
         </div>
-      </DialogContent>
-    </Dialog>
+        <FormItem name="recursiveSearch" label="Recursive search" comp="switch">
+          <Switch />
+        </FormItem>
+        <FormItem name="useCache" label="Use cache" comp="switch">
+          <Switch />
+        </FormItem>
+        <FormItem
+          name="saveAlsoAsJson"
+          label="Also save cache as JSON file"
+          comp="switch"
+        >
+          <Switch />
+        </FormItem>
+        <FormItem
+          name="moveDeletedFilesToTrash"
+          label="Move deleted files to trash"
+          comp="switch"
+        >
+          <Switch />
+        </FormItem>
+      </Form>
+    </ScrollArea>
   );
+}
+
+function GroupTitle(props: { children?: React.ReactNode }) {
+  const { children } = props;
+
+  return <h3 className="w-full text-center">{children}</h3>;
 }

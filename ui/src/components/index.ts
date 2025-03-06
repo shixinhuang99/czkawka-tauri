@@ -9,3 +9,5 @@ export { Textarea } from './shadcn/textarea';
 export { TooltipButton } from './tooltip-button';
 export { toastError } from './toast';
 export { CommonHeader } from './common-header';
+export { EditInput } from './edit-input';
+export { InputNumber } from './input-number';

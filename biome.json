@@ -28,6 +28,11 @@
         "noUnusedVariables": {
           "level": "error"
         }
+      },
+      "suspicious": {
+        "noExplicitAny": {
+          "level": "off"
+        }
       }
     }
   },
