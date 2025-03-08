@@ -1,11 +1,4 @@
-import { isTauri } from '@tauri-apps/api/core';
 import type { Preset, Settings } from '~/types';
-
-export const IS_MAC = navigator.userAgent.includes('Mac');
-
-export const IS_TAURI = isTauri();
-
-export const IS_TAURI_MAC = IS_TAURI && IS_MAC;
 
 export const Theme = {
   Dark: 'dark',
@@ -19,6 +12,7 @@ export function getDefaultPreset(): Preset {
   return {
     name: 'Default',
     active: true,
+    changed: false,
     settings: getDefaultSettings(),
   };
 }
@@ -39,6 +33,7 @@ export function getDefaultSettings(): Settings {
     saveAlsoAsJson: false,
     moveDeletedFilesToTrash: false,
     threadNumber: 1,
+    availableThreadNumber: 1,
     duplicateImagePreview: true,
     duplicateHideHardLinks: true,
     duplicateUsePrehash: true,

@@ -32,7 +32,7 @@ export const Form = (props: FormProps) => {
   }, [value, onChange]);
 
   return (
-    <form className={cn('grid gap-4 py-4', className)} {...restProps}>
+    <form className={cn('grid gap-3 py-4', className)} {...restProps}>
       <FormContext.Provider value={contextValue}>
         {children}
       </FormContext.Provider>
@@ -44,36 +44,51 @@ Form.displayName = 'Form';
 export function FormItem(
   props: React.PropsWithChildren<{
     name: string;
-    label?: string;
-    comp: 'textarea' | 'input-number' | 'switch';
+    label?: React.ReactNode;
+    comp: 'textarea' | 'input-number' | 'switch' | 'slider';
+    suffix?: React.ReactNode;
   }>,
 ) {
-  const { name, label, comp, children } = props;
+  const { name, label, comp, suffix, children } = props;
 
   const { value, onChange } = useContext(FormContext);
 
-  const handleChange = (e: React.FormEvent<HTMLElement>) => {
-    if (comp === 'textarea') {
-      onChange({ [name]: (e.target as HTMLTextAreaElement).value });
-    } else if (comp === 'input-number') {
-      onChange({ [name]: (e.target as HTMLInputElement).valueAsNumber });
+  const slotProps = (() => {
+    if (comp === 'switch') {
+      return {
+        name,
+        checked: value[name],
+        onCheckedChange: (v: boolean) => {
+          onChange({ [name]: v });
+        },
+      };
     }
-  };
-
-  const slotProps =
-    comp === 'switch'
-      ? {
-          name,
-          checked: value[name],
-          onCheckedChange: (v: boolean) => {
-            onChange({ [name]: v });
-          },
-        }
-      : {
-          name,
-          value: value[name],
-          onChange: handleChange,
-        };
+    if (comp === 'slider') {
+      return {
+        name,
+        value: [value[name]],
+        onValueChange: (values: number[]) => {
+          onChange({ [name]: values[0] });
+        },
+      };
+    }
+    if (comp === 'input-number') {
+      return {
+        name,
+        value: value[name],
+        onChange: (e: React.FormEvent<HTMLInputElement>) => {
+          onChange({ [name]: e.currentTarget.valueAsNumber });
+        },
+      };
+    }
+    return {
+      name,
+      value: value[name],
+      onChange: (e: React.FormEvent<HTMLTextAreaElement>) => {
+        onChange({ [name]: e.currentTarget.value });
+      },
+    };
+  })();
 
   if (!label) {
     return (
@@ -84,13 +99,14 @@ export function FormItem(
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 min-h-9">
       <Label className="flex-shrink-0" htmlFor={name}>
         {label}:
       </Label>
       <Slot id={name} {...slotProps}>
         {children}
       </Slot>
+      {suffix}
     </div>
   );
 }

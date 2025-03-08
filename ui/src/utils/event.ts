@@ -1,3 +1,3 @@
-export function eventPreventDefault<T extends Event>(e: T) {
-  e.preventDefault();
+export function eventPreventDefault(e: any) {
+  (e as Event).preventDefault();
 }

@@ -11,3 +11,4 @@ export { toastError } from './toast';
 export { CommonHeader } from './common-header';
 export { EditInput } from './edit-input';
 export { InputNumber } from './input-number';
+export { Slider } from './shadcn/slider';

@@ -1,4 +1,5 @@
 import { invoke } from '@tauri-apps/api/core';
+import type { PartialSettings } from '~/types';
 
 export const ipc = {
   viewGitHub(): Promise<void> {
@@ -7,5 +8,9 @@ export const ipc = {
 
   setTheme(theme: string): Promise<void> {
     return invoke('set_theme', { theme });
+  },
+
+  getPartialSettings(): Promise<PartialSettings> {
+    return invoke('get_partial_settings');
   },
 };

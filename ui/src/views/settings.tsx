@@ -1,16 +1,20 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
+  CircleHelp,
   FilePenLine,
   FilePlus,
   RotateCcw,
   Settings as SettingsIcon,
   Trash2,
 } from 'lucide-react';
+import { useEffect } from 'react';
 import {
   addPresetAtom,
   changeCurrentPresetAtom,
   currentPresetAtom,
+  initPartialSettingsAtom,
   removePresetAtom,
+  resetSettingsAtom,
 } from '~/atom/preset';
 import { PresetsAtom } from '~/atom/primitive';
 import {
@@ -18,6 +22,7 @@ import {
   InputNumber,
   Label,
   ScrollArea,
+  Slider,
   Switch,
   Textarea,
   TooltipButton,
@@ -38,13 +43,18 @@ import {
   SelectValue,
 } from '~/components/shadcn/select';
 import { Form, FormItem } from '~/components/simple-form';
-import { MAXIMUM_FILE_SIZE, getDefaultSettings } from '~/consts';
+import { MAXIMUM_FILE_SIZE } from '~/consts';
 import { useBoolean } from '~/hooks';
 import { eventPreventDefault } from '~/utils/event';
 
 export function SettingsButton() {
   const dialogOpen = useBoolean();
   const isPreventDialogClose = useBoolean();
+  const initPartialSettings = useSetAtom(initPartialSettingsAtom);
+
+  useEffect(() => {
+    initPartialSettings();
+  }, []);
 
   return (
     <Dialog
@@ -62,7 +72,7 @@ export function SettingsButton() {
         </TooltipButton>
       </DialogTrigger>
       <DialogContent
-        className="max-w-[550px] outline-none"
+        className="max-w-[700px] outline-none"
         onOpenAutoFocus={eventPreventDefault}
         onCloseAutoFocus={eventPreventDefault}
         disableAnimate
@@ -90,6 +100,7 @@ function PresetSelect(props: {
   const changeCurrentPreset = useSetAtom(changeCurrentPresetAtom);
   const addPreset = useSetAtom(addPresetAtom);
   const removePreset = useSetAtom(removePresetAtom);
+  const resetSettings = useSetAtom(resetSettingsAtom);
   const newPresetInputVisible = useBoolean();
   const editPresetInputVisible = useBoolean();
 
@@ -115,12 +126,8 @@ function PresetSelect(props: {
     handleAddOrEditPresetCancel();
   };
 
-  const handleResetPreset = () => {
-    setCurrentPreset({ settings: getDefaultSettings() });
-  };
-
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 pb-2 border-b">
       <Label>Current preset:</Label>
       {!(newPresetInputVisible.value || editPresetInputVisible.value) && (
         <Select
@@ -201,7 +208,7 @@ function PresetSelect(props: {
         >
           <Trash2 />
         </TooltipButton>
-        <TooltipButton tooltip="Reset preset" onClick={handleResetPreset}>
+        <TooltipButton tooltip="Reset settings" onClick={resetSettings}>
           <RotateCcw />
         </TooltipButton>
       </span>
@@ -229,6 +236,13 @@ function SettingsContent() {
         <FormItem
           name="allowedExtensions"
           label="Allowed extensions"
+          comp="textarea"
+        >
+          <Textarea rows={2} />
+        </FormItem>
+        <FormItem
+          name="excludedExtensions"
+          label="Excluded extensions"
           comp="textarea"
         >
           <Textarea rows={2} />
@@ -262,6 +276,29 @@ function SettingsContent() {
           comp="switch"
         >
           <Switch />
+        </FormItem>
+        <FormItem
+          name="threadNumber"
+          label={
+            <span className="inline-flex items-center">
+              Thread number
+              <TooltipButton
+                tooltip="You need to restart app to apply changes in thread number"
+                onClick={eventPreventDefault}
+              >
+                <CircleHelp />
+              </TooltipButton>
+            </span>
+          }
+          comp="slider"
+          suffix={
+            <span>
+              {currentPreset.settings.threadNumber}/
+              {currentPreset.settings.availableThreadNumber}
+            </span>
+          }
+        >
+          <Slider min={1} max={currentPreset.settings.availableThreadNumber} />
         </FormItem>
       </Form>
     </ScrollArea>

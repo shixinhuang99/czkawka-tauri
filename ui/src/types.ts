@@ -6,6 +6,7 @@ export interface ThemeCfg {
 export interface Preset {
   name: string;
   active: boolean;
+  changed: boolean;
   settings: Settings;
 }
 
@@ -22,8 +23,8 @@ export interface Settings {
   useCache: boolean;
   saveAlsoAsJson: boolean;
   moveDeletedFilesToTrash: boolean;
-  // ignoreOtherFileSystems: boolean;
   threadNumber: number;
+  availableThreadNumber: number;
   duplicateImagePreview: boolean;
   duplicateHideHardLinks: boolean;
   duplicateUsePrehash: boolean;
@@ -63,4 +64,11 @@ export interface Settings {
   brokenFilesSubPdf: boolean;
   brokenFilesSubArchive: boolean;
   brokenFilesSubImage: boolean;
+}
+
+export interface PartialSettings {
+  includedDirectories: string[];
+  excludedDirectories: string[];
+  excludedItems: string;
+  availableThreadNumber: number;
 }

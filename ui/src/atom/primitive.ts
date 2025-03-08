@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { getDefaultPreset } from '~/consts';
-import type { Preset, ThemeCfg } from '~/types';
+import type { PartialSettings, Preset, ThemeCfg } from '~/types';
 
 export const themeAtom = atom<ThemeCfg>({
   display: '',
@@ -14,3 +14,10 @@ export const PresetsAtom = atomWithStorage<Preset[]>(
   undefined,
   { getOnInit: true },
 );
+
+export const PartialSettingsAtom = atom<PartialSettings>({
+  includedDirectories: [],
+  excludedDirectories: [],
+  excludedItems: '',
+  availableThreadNumber: 1,
+});

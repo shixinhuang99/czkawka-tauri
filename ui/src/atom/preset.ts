@@ -1,7 +1,9 @@
 import { atom } from 'jotai';
+import { toastError } from '~/components';
 import { getDefaultPreset } from '~/consts';
+import { ipc } from '~/ipc';
 import type { Preset } from '~/types';
-import { PresetsAtom } from './primitive';
+import { PartialSettingsAtom, PresetsAtom } from './primitive';
 
 export const changeCurrentPresetAtom = atom(null, (get, set, name: string) => {
   const presets = get(PresetsAtom);
@@ -46,10 +48,32 @@ export const currentPresetAtom = atom(
       PresetsAtom,
       presets.map((preset) => {
         if (preset.active) {
-          return { ...preset, ...values };
+          return { ...preset, ...values, changed: true };
         }
         return preset;
       }),
     );
   },
 );
+
+export const initPartialSettingsAtom = atom(null, async (get, set) => {
+  try {
+    const data = await ipc.getPartialSettings();
+    set(PartialSettingsAtom, data);
+    const currentPreset = get(currentPresetAtom);
+    if (!currentPreset.changed) {
+      set(currentPresetAtom, {
+        settings: { ...currentPreset.settings, ...data },
+        changed: true,
+      });
+    }
+  } catch (error) {
+    toastError('Failed to load settings', error);
+  }
+  console.log(get(currentPresetAtom));
+});
+
+export const resetSettingsAtom = atom(null, (get, set) => {
+  const partialSettings = get(currentPresetAtom);
+  set(currentPresetAtom, partialSettings);
+});
