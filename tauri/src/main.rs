@@ -1,23 +1,37 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::env;
+use std::{env, sync::Mutex};
 
 use czkawka_core::{
-	common::get_all_available_threads,
+	common::{
+		get_all_available_threads, get_number_of_threads,
+		set_number_of_threads as set_czkawka_number_of_threads,
+	},
 	common_items::{DEFAULT_EXCLUDED_DIRECTORIES, DEFAULT_EXCLUDED_ITEMS},
 };
 use serde::{Deserialize, Serialize};
+use tauri::{Manager, State};
 
 fn main() {
 	run();
 }
 
+#[derive(Default)]
+struct AppState {
+	is_number_of_threads_set_up: bool,
+}
+
 fn run() {
 	tauri::Builder::default()
+		.setup(|app| {
+			app.manage(Mutex::new(AppState::default()));
+			Ok(())
+		})
 		.invoke_handler(tauri::generate_handler![
 			view_github,
 			set_theme,
-			get_partial_settings
+			get_partial_settings,
+			set_number_of_threads,
 		])
 		.run(tauri::generate_context!())
 		.unwrap();
@@ -86,4 +100,18 @@ fn default_excluded_directories() -> Vec<String> {
 
 fn default_excluded_items() -> String {
 	DEFAULT_EXCLUDED_ITEMS.to_string()
+}
+
+#[tauri::command]
+fn set_number_of_threads(
+	state: State<'_, Mutex<AppState>>,
+	number_of_threads: usize,
+) -> usize {
+	let mut state = state.lock().unwrap();
+	if state.is_number_of_threads_set_up {
+		return get_number_of_threads();
+	}
+	set_czkawka_number_of_threads(number_of_threads);
+	state.is_number_of_threads_set_up = true;
+	get_number_of_threads()
 }

@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { toastError } from '~/components';
-import { getDefaultPreset } from '~/consts';
+import { getDefaultPreset, getDefaultSettings } from '~/consts';
 import { ipc } from '~/ipc';
 import type { Preset } from '~/types';
 import { PartialSettingsAtom, PresetsAtom } from './primitive';
@@ -62,18 +62,42 @@ export const initPartialSettingsAtom = atom(null, async (get, set) => {
     set(PartialSettingsAtom, data);
     const currentPreset = get(currentPresetAtom);
     if (!currentPreset.changed) {
+      const threadNumber = await ipc.setNumberOfThreads(
+        data.availableThreadNumber,
+      );
       set(currentPresetAtom, {
-        settings: { ...currentPreset.settings, ...data },
+        settings: {
+          ...currentPreset.settings,
+          ...data,
+          threadNumber,
+        },
         changed: true,
       });
+      return;
     }
+    const threadNumber = await ipc.setNumberOfThreads(
+      currentPreset.settings.threadNumber,
+    );
+    set(currentPresetAtom, {
+      settings: {
+        ...currentPreset.settings,
+        threadNumber,
+        availableThreadNumber: data.availableThreadNumber,
+      },
+      changed: true,
+    });
   } catch (error) {
     toastError('Failed to load settings', error);
   }
-  console.log(get(currentPresetAtom));
 });
 
 export const resetSettingsAtom = atom(null, (get, set) => {
-  const partialSettings = get(currentPresetAtom);
-  set(currentPresetAtom, partialSettings);
+  const partialSettings = get(PartialSettingsAtom);
+  set(currentPresetAtom, {
+    settings: {
+      ...getDefaultSettings(),
+      ...partialSettings,
+      threadNumber: partialSettings.availableThreadNumber,
+    },
+  });
 });
