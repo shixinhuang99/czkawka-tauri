@@ -81,7 +81,7 @@ export function SettingsButton() {
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>Application settings</DialogDescription>
         </DialogHeader>
-        <div className="h-[60vh] flex flex-col">
+        <div className="h-[70vh] flex flex-col">
           <PresetSelect onPreventDialogCloseChange={isPreventDialogClose.set} />
           <SettingsContent />
         </div>
@@ -248,7 +248,7 @@ function SettingsContent() {
           <Textarea rows={2} />
         </FormItem>
         <div className="flex items-center gap-2">
-          <Label className="flex-shrink-0">File size(Kib):</Label>
+          <Label className="flex-shrink-0">File size(KiB):</Label>
           <FormItem name="minimumFileSize" comp="input-number">
             <InputNumber minValue={16} maxValue={MAXIMUM_FILE_SIZE} />
           </FormItem>

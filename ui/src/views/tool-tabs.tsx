@@ -12,20 +12,21 @@ export function ToolTabs() {
   };
 
   return (
-    <ScrollArea className="h-full px-3 pb-1">
+    <ScrollArea className="h-full w-[200px] border-r px-3 pb-1">
       {Object.values(Tools).map((name) => {
         return (
           <Button
             key={name}
-            className="w-full h-12 justify-between mt-1 cursor-pointer"
+            className="w-full h-10 justify-between mt-1 cursor-pointer"
             tabIndex={-1}
             variant={toolsCfg.current === name ? 'default' : 'ghost'}
             onClick={() => handleClick(name)}
           >
             {name}
-            {toolsCfg.inProgress === name && (
+            {/* {toolsCfg.inProgress === name && (
               <LoaderCircle className="animate-spin" />
-            )}
+            )} */}
+            <LoaderCircle className="animate-spin" />
           </Button>
         );
       })}
