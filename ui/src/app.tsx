@@ -6,6 +6,7 @@ import {
 import { Toaster } from '~/components/shadcn/sonner';
 import { TooltipProvider } from '~/components/shadcn/tooltip';
 import { AppHeader } from '~/views/app-header';
+import { ToolTabs } from '~/views/tool-tabs';
 
 export default function App() {
   return (
@@ -14,15 +15,27 @@ export default function App() {
         <AppHeader />
         <ResizablePanelGroup
           className="select-none"
-          direction="horizontal"
-          autoSaveId="main"
+          direction="vertical"
+          autoSaveId="outer"
         >
-          <ResizablePanel defaultSize={20} minSize={20} maxSize={30}>
-            <div>todo</div>
+          <ResizablePanel>
+            <ResizablePanelGroup
+              className="select-none"
+              direction="horizontal"
+              autoSaveId="inner"
+            >
+              <ResizablePanel defaultSize={20} minSize={20} maxSize={20}>
+                <ToolTabs />
+              </ResizablePanel>
+              <ResizableHandle />
+              <ResizablePanel>
+                <div>2</div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
           </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={80}>
-            <div>todo</div>
+          <ResizableHandle />
+          <ResizablePanel defaultSize={30} minSize={25} maxSize={30}>
+            3
           </ResizablePanel>
         </ResizablePanelGroup>
       </TooltipProvider>

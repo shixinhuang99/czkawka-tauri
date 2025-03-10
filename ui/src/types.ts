@@ -72,3 +72,8 @@ export interface PartialSettings {
   excludedItems: string;
   availableThreadNumber: number;
 }
+
+export interface ToolsCfg {
+  current: string;
+  inProgress: string;
+}

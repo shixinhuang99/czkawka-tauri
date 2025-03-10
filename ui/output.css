@@ -716,6 +716,10 @@ body {
   margin-top: 0.5rem;
 }
 
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
 .block {
   display: block;
 }
@@ -811,6 +815,14 @@ body {
   height: 100vh;
 }
 
+.h-auto {
+  height: auto;
+}
+
+.h-12 {
+  height: 3rem;
+}
+
 .max-h-96 {
   max-height: 24rem;
 }
@@ -821,6 +833,10 @@ body {
 
 .min-h-9 {
   min-height: 2.25rem;
+}
+
+.min-h-12 {
+  min-height: 3rem;
 }
 
 .w-2 {
@@ -1213,6 +1229,10 @@ body {
 
 .pr-8 {
   padding-right: 2rem;
+}
+
+.pb-1 {
+  padding-bottom: 0.25rem;
 }
 
 .text-center {

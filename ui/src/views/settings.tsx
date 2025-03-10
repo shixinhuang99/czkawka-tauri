@@ -16,7 +16,7 @@ import {
   removePresetAtom,
   resetSettingsAtom,
 } from '~/atom/preset';
-import { PresetsAtom } from '~/atom/primitive';
+import { presetsAtom } from '~/atom/primitive';
 import {
   EditInput,
   InputNumber,
@@ -95,7 +95,7 @@ function PresetSelect(props: {
 }) {
   const { onPreventDialogCloseChange } = props;
 
-  const presets = useAtomValue(PresetsAtom);
+  const presets = useAtomValue(presetsAtom);
   const [currentPreset, setCurrentPreset] = useAtom(currentPresetAtom);
   const changeCurrentPreset = useSetAtom(changeCurrentPresetAtom);
   const addPreset = useSetAtom(addPresetAtom);

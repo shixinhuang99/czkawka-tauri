@@ -3,12 +3,12 @@ import { toastError } from '~/components';
 import { getDefaultPreset, getDefaultSettings } from '~/consts';
 import { ipc } from '~/ipc';
 import type { Preset } from '~/types';
-import { PartialSettingsAtom, PresetsAtom } from './primitive';
+import { partialSettingsAtom, presetsAtom } from './primitive';
 
 export const changeCurrentPresetAtom = atom(null, (get, set, name: string) => {
-  const presets = get(PresetsAtom);
+  const presets = get(presetsAtom);
   set(
-    PresetsAtom,
+    presetsAtom,
     presets.map((preset) => {
       if (preset.name === name) {
         return { ...preset, active: true };
@@ -19,9 +19,9 @@ export const changeCurrentPresetAtom = atom(null, (get, set, name: string) => {
 });
 
 export const addPresetAtom = atom(null, (get, set, name: string) => {
-  const presets = get(PresetsAtom);
+  const presets = get(presetsAtom);
   set(
-    PresetsAtom,
+    presetsAtom,
     presets
       .map((preset) => {
         return { ...preset, active: false };
@@ -31,21 +31,21 @@ export const addPresetAtom = atom(null, (get, set, name: string) => {
 });
 
 export const removePresetAtom = atom(null, (get, set) => {
-  const presets = get(PresetsAtom);
+  const presets = get(presetsAtom);
   const newPresets = presets.filter((preset) => !preset.active);
   newPresets[0].active = true;
-  set(PresetsAtom, newPresets);
+  set(presetsAtom, newPresets);
 });
 
 export const currentPresetAtom = atom(
   (get) => {
-    const presets = get(PresetsAtom);
+    const presets = get(presetsAtom);
     return presets.find((preset) => preset.active) || getDefaultPreset();
   },
   (get, set, values: Partial<Preset>) => {
-    const presets = get(PresetsAtom);
+    const presets = get(presetsAtom);
     set(
-      PresetsAtom,
+      presetsAtom,
       presets.map((preset) => {
         if (preset.active) {
           return { ...preset, ...values, changed: true };
@@ -59,7 +59,7 @@ export const currentPresetAtom = atom(
 export const initPartialSettingsAtom = atom(null, async (get, set) => {
   try {
     const data = await ipc.getPartialSettings();
-    set(PartialSettingsAtom, data);
+    set(partialSettingsAtom, data);
     const currentPreset = get(currentPresetAtom);
     if (!currentPreset.changed) {
       const threadNumber = await ipc.setNumberOfThreads(
@@ -92,7 +92,7 @@ export const initPartialSettingsAtom = atom(null, async (get, set) => {
 });
 
 export const resetSettingsAtom = atom(null, (get, set) => {
-  const partialSettings = get(PartialSettingsAtom);
+  const partialSettings = get(partialSettingsAtom);
   set(currentPresetAtom, {
     settings: {
       ...getDefaultSettings(),
