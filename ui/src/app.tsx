@@ -1,8 +1,8 @@
 import { Toaster } from '~/components/shadcn/sonner';
 import { TooltipProvider } from '~/components/shadcn/tooltip';
 import { AppHeader } from '~/views/app-header';
-import { ToolTabs } from '~/views/tool-tabs';
 import { BottomBar } from '~/views/bottom-bar';
+import { ToolTabs } from '~/views/tool-tabs';
 
 export default function App() {
   return (

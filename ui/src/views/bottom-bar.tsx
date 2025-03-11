@@ -1,26 +1,39 @@
-import { useState } from 'react';
-import { useAtom } from 'jotai';
+import {
+  type ColumnDef,
+  type Table,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { useAtomValue, useSetAtom } from 'jotai';
 import {
   Folder,
+  FolderLock,
+  FolderPen,
+  FolderPlus,
+  FolderSymlink,
   ScrollText,
   Search,
-  FolderSymlink,
-  Trash2,
-  FolderLock,
   SquareMousePointer,
+  Trash2,
 } from 'lucide-react';
-import type { ColumnDef } from '@tanstack/react-table';
-import { Button, ScrollArea, Checkbox } from '~/components';
-import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
+import { useMemo, useState } from 'react';
+import { settingsAtom } from '~/atom/settings';
+import { Button, Checkbox, ScrollArea, TooltipButton } from '~/components';
 import { DataTable } from '~/components/shadcn/data-table';
-import { currentPresetAtom } from '~/atom/preset';
+import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
+import type { DirsType } from '~/types';
 
-const ContentKind = {
+const DisplayType = {
   Dirs: 'dirs',
   Logs: 'logs',
 } as const;
 
-const directoriesColumns: ColumnDef<{ path: string }>[] = [
+interface TableData {
+  path: string;
+  field: DirsType;
+}
+
+const tableColumns: ColumnDef<TableData>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -40,8 +53,6 @@ const directoriesColumns: ColumnDef<{ path: string }>[] = [
         aria-label="Select row"
       />
     ),
-    enableSorting: false,
-    enableHiding: false,
     meta: {
       span: 1,
     },
@@ -50,7 +61,11 @@ const directoriesColumns: ColumnDef<{ path: string }>[] = [
     accessorKey: 'path',
     header: 'Path',
     cell: ({ row }) => {
-      return <div className="break-all">{row.original.path}</div>;
+      return (
+        <div className="truncate" title={row.original.path}>
+          {row.original.path}
+        </div>
+      );
     },
     meta: {
       span: 10,
@@ -58,12 +73,8 @@ const directoriesColumns: ColumnDef<{ path: string }>[] = [
   },
   {
     id: 'actions',
-    cell: () => {
-      return (
-        <Button variant="ghost" size="icon">
-          <Trash2 />
-        </Button>
-      );
+    cell: ({ row }) => {
+      return <DirsRemoveButton {...row.original} />;
     },
     meta: {
       span: 1,
@@ -72,8 +83,7 @@ const directoriesColumns: ColumnDef<{ path: string }>[] = [
 ];
 
 export function BottomBar() {
-  const [contentKind, setContentKind] = useState<string>(ContentKind.Dirs);
-  const [currentPreset, setCurrentPreset] = useAtom(currentPresetAtom);
+  const [displayType, setDisplayType] = useState<string>(DisplayType.Dirs);
 
   return (
     <div className="h-[300px] flex flex-col px-2 py-1 gap-1 border-t">
@@ -100,48 +110,24 @@ export function BottomBar() {
             Save
           </Button>
         </div>
-        <Tabs value={contentKind} onValueChange={setContentKind}>
+        <Tabs value={displayType} onValueChange={setDisplayType}>
           <TabsList>
-            <TabsTrigger value={ContentKind.Dirs}>
+            <TabsTrigger value={DisplayType.Dirs}>
               <Folder />
             </TabsTrigger>
-            <TabsTrigger value={ContentKind.Logs}>
+            <TabsTrigger value={DisplayType.Logs}>
               <ScrollText />
             </TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
-      {contentKind === ContentKind.Dirs && (
+      {displayType === DisplayType.Dirs && (
         <div className="flex gap-1 flex-1 h-px">
-          <div className="w-1/2 flex flex-col">
-            <h3 className="text-center">Include Directories</h3>
-            <DataTable
-              className="flex-1"
-              columns={directoriesColumns}
-              data={currentPreset.settings.includedDirectories.map((path) => {
-                return {
-                  path,
-                };
-              })}
-              eleWhenNoData="Please add path"
-            />
-          </div>
-          <div className="flex-1 flex flex-col">
-            <h3 className="text-center">Exclude Directories</h3>
-            <DataTable
-              className="flex-1"
-              columns={directoriesColumns}
-              data={currentPreset.settings.excludedDirectories.map((path) => {
-                return {
-                  path,
-                };
-              })}
-              eleWhenNoData="Please add path"
-            />
-          </div>
+          <IncludedDirsTable />
+          <ExcludedDirsTable />
         </div>
       )}
-      {contentKind === ContentKind.Logs && (
+      {displayType === DisplayType.Logs && (
         <ScrollArea className="flex-1 rounded-md border bg-card text-card-foreground px-2 py-1">
           <div>2</div>
           <div>2</div>
@@ -154,6 +140,139 @@ export function BottomBar() {
           <div>2</div>
         </ScrollArea>
       )}
+    </div>
+  );
+}
+
+function IncludedDirsTable() {
+  'use no memo';
+
+  const settings = useAtomValue(settingsAtom);
+
+  const data: TableData[] = useMemo(() => {
+    return settings.includedDirectories.map((path) => {
+      return {
+        path,
+        field: 'includedDirectories',
+      };
+    });
+  }, [settings]);
+
+  const table = useReactTable({
+    data,
+    columns: tableColumns,
+    getCoreRowModel: getCoreRowModel(),
+    getRowId: (row) => row.path,
+  });
+
+  return (
+    <div className="w-1/2 flex flex-col">
+      <div className="flex justify-between items-center">
+        <h3 className="text-center">Include Directories</h3>
+        <DirsActions table={table} field="includedDirectories" />
+      </div>
+      <DataTable
+        className="flex-1"
+        table={table}
+        emptyTip="Please add path"
+        columnsLen={tableColumns.length}
+      />
+    </div>
+  );
+}
+
+function ExcludedDirsTable() {
+  'use no memo';
+
+  const settings = useAtomValue(settingsAtom);
+
+  const data: TableData[] = useMemo(() => {
+    return settings.excludedDirectories.map((path) => {
+      return {
+        path,
+        field: 'excludedDirectories',
+      };
+    });
+  }, [settings]);
+
+  const table = useReactTable({
+    data,
+    columns: tableColumns,
+    getCoreRowModel: getCoreRowModel(),
+    getRowId: (row) => row.path,
+  });
+
+  return (
+    <div className="flex-1 flex flex-col">
+      <div className="flex justify-between items-center">
+        <h3 className="text-center">Exclude Directories</h3>
+        <DirsActions table={table} field="excludedDirectories" />
+      </div>
+      <DataTable
+        className="flex-1"
+        table={table}
+        emptyTip="Please add path"
+        columnsLen={tableColumns.length}
+      />
+    </div>
+  );
+}
+
+function DirsRemoveButton(props: TableData) {
+  const { path, field } = props;
+  const setSettings = useSetAtom(settingsAtom);
+
+  const handleRemovePath = () => {
+    setSettings((settings) => {
+      return {
+        ...settings,
+        [field]: settings[field].filter((v) => v !== path),
+      };
+    });
+  };
+
+  return (
+    <Button variant="ghost" size="icon" onClick={handleRemovePath}>
+      <Trash2 />
+    </Button>
+  );
+}
+
+function DirsActions(
+  props: { table: Table<TableData> } & Pick<TableData, 'field'>,
+) {
+  const { table, field } = props;
+  const setSettings = useSetAtom(settingsAtom);
+
+  const handleRemovePaths = () => {
+    const selectedPaths = Object.entries(table.getState().rowSelection)
+      .filter((obj) => obj[1])
+      .map((obj) => obj[0]);
+    if (!selectedPaths.length) {
+      return;
+    }
+    setSettings((settings) => {
+      return {
+        ...settings,
+        [field]: settings[field].filter(
+          (path) => !selectedPaths.includes(path),
+        ),
+      };
+    });
+    table.resetRowSelection();
+  };
+
+  return (
+    <div>
+      <TooltipButton tooltip="Add">
+        <FolderPlus />
+      </TooltipButton>
+      <TooltipButton tooltip="Manual add">
+        <FolderPen />
+      </TooltipButton>
+      <TooltipButton tooltip="Remove" onClick={handleRemovePaths}>
+        <Trash2 />
+      </TooltipButton>
     </div>
   );
 }

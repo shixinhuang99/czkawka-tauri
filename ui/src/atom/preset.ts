@@ -1,41 +1,9 @@
 import { atom } from 'jotai';
 import { toastError } from '~/components';
-import { getDefaultPreset, getDefaultSettings } from '~/consts';
+import { getDefaultPreset } from '~/consts';
 import { ipc } from '~/ipc';
 import type { Preset } from '~/types';
-import { partialSettingsAtom, presetsAtom } from './primitive';
-
-export const changeCurrentPresetAtom = atom(null, (get, set, name: string) => {
-  const presets = get(presetsAtom);
-  set(
-    presetsAtom,
-    presets.map((preset) => {
-      if (preset.name === name) {
-        return { ...preset, active: true };
-      }
-      return { ...preset, active: false };
-    }),
-  );
-});
-
-export const addPresetAtom = atom(null, (get, set, name: string) => {
-  const presets = get(presetsAtom);
-  set(
-    presetsAtom,
-    presets
-      .map((preset) => {
-        return { ...preset, active: false };
-      })
-      .concat({ ...getDefaultPreset(), name, active: true }),
-  );
-});
-
-export const removePresetAtom = atom(null, (get, set) => {
-  const presets = get(presetsAtom);
-  const newPresets = presets.filter((preset) => !preset.active);
-  newPresets[0].active = true;
-  set(presetsAtom, newPresets);
-});
+import { platformSettingsAtom, presetsAtom } from './primitive';
 
 export const currentPresetAtom = atom(
   (get) => {
@@ -56,10 +24,10 @@ export const currentPresetAtom = atom(
   },
 );
 
-export const initPartialSettingsAtom = atom(null, async (get, set) => {
+export const initPlatformSettingsAtom = atom(null, async (get, set) => {
   try {
-    const data = await ipc.getPartialSettings();
-    set(partialSettingsAtom, data);
+    const data = await ipc.getPlatformSettings();
+    set(platformSettingsAtom, data);
     const currentPreset = get(currentPresetAtom);
     if (!currentPreset.changed) {
       const threadNumber = await ipc.setNumberOfThreads(
@@ -89,15 +57,4 @@ export const initPartialSettingsAtom = atom(null, async (get, set) => {
   } catch (error) {
     toastError('Failed to load settings', error);
   }
-});
-
-export const resetSettingsAtom = atom(null, (get, set) => {
-  const partialSettings = get(partialSettingsAtom);
-  set(currentPresetAtom, {
-    settings: {
-      ...getDefaultSettings(),
-      ...partialSettings,
-      threadNumber: partialSettings.availableThreadNumber,
-    },
-  });
 });

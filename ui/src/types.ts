@@ -66,7 +66,7 @@ export interface Settings {
   brokenFilesSubImage: boolean;
 }
 
-export interface PartialSettings {
+export interface PlatformSettings {
   includedDirectories: string[];
   excludedDirectories: string[];
   excludedItems: string;
@@ -77,3 +77,8 @@ export interface ToolsCfg {
   current: string;
   inProgress: string;
 }
+
+export type DirsType = Extract<
+  keyof Settings,
+  'includedDirectories' | 'excludedDirectories'
+>;

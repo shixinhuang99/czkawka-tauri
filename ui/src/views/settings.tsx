@@ -8,15 +8,9 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useEffect } from 'react';
-import {
-  addPresetAtom,
-  changeCurrentPresetAtom,
-  currentPresetAtom,
-  initPartialSettingsAtom,
-  removePresetAtom,
-  resetSettingsAtom,
-} from '~/atom/preset';
-import { presetsAtom } from '~/atom/primitive';
+import { currentPresetAtom, initPlatformSettingsAtom } from '~/atom/preset';
+import { platformSettingsAtom, presetsAtom } from '~/atom/primitive';
+import { settingsAtom } from '~/atom/settings';
 import {
   EditInput,
   InputNumber,
@@ -43,17 +37,17 @@ import {
   SelectValue,
 } from '~/components/shadcn/select';
 import { Form, FormItem } from '~/components/simple-form';
-import { MAXIMUM_FILE_SIZE } from '~/consts';
+import { MAXIMUM_FILE_SIZE, getDefaultSettings } from '~/consts';
 import { useBoolean } from '~/hooks';
 import { eventPreventDefault } from '~/utils/event';
 
 export function SettingsButton() {
   const dialogOpen = useBoolean();
   const isPreventDialogClose = useBoolean();
-  const initPartialSettings = useSetAtom(initPartialSettingsAtom);
+  const initPlatformSettings = useSetAtom(initPlatformSettingsAtom);
 
   useEffect(() => {
-    initPartialSettings();
+    initPlatformSettings();
   }, []);
 
   return (
@@ -81,7 +75,7 @@ export function SettingsButton() {
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>Application settings</DialogDescription>
         </DialogHeader>
-        <div className="h-[70vh] flex flex-col">
+        <div className="h-[550px] flex flex-col">
           <PresetSelect onPreventDialogCloseChange={isPreventDialogClose.set} />
           <SettingsContent />
         </div>
@@ -95,14 +89,22 @@ function PresetSelect(props: {
 }) {
   const { onPreventDialogCloseChange } = props;
 
-  const presets = useAtomValue(presetsAtom);
+  const [presets, setPresets] = useAtom(presetsAtom);
+  const platformSettings = useAtomValue(platformSettingsAtom);
   const [currentPreset, setCurrentPreset] = useAtom(currentPresetAtom);
-  const changeCurrentPreset = useSetAtom(changeCurrentPresetAtom);
-  const addPreset = useSetAtom(addPresetAtom);
-  const removePreset = useSetAtom(removePresetAtom);
-  const resetSettings = useSetAtom(resetSettingsAtom);
   const newPresetInputVisible = useBoolean();
   const editPresetInputVisible = useBoolean();
+
+  const handlePresetSelect = (name: string) => {
+    setPresets(
+      presets.map((preset) => {
+        if (preset.name === name) {
+          return { ...preset, active: true };
+        }
+        return { ...preset, active: false };
+      }),
+    );
+  };
 
   const handleAddOrEditPresetCancel = () => {
     newPresetInputVisible.off();
@@ -111,7 +113,21 @@ function PresetSelect(props: {
   };
 
   const handleAddPresetOk = (name: string) => {
-    addPreset(name);
+    setPresets([
+      ...presets.map((preset) => {
+        return { ...preset, active: false };
+      }),
+      {
+        name,
+        active: true,
+        changed: false,
+        settings: {
+          ...getDefaultSettings(),
+          ...platformSettings,
+          threadNumber: platformSettings.availableThreadNumber,
+        },
+      },
+    ]);
     handleAddOrEditPresetCancel();
   };
 
@@ -126,13 +142,29 @@ function PresetSelect(props: {
     handleAddOrEditPresetCancel();
   };
 
+  const handlePresetRemove = () => {
+    const newPresets = presets.filter((preset) => !preset.active);
+    newPresets[0].active = true;
+    setPresets(newPresets);
+  };
+
+  const handleSettingsReset = () => {
+    setCurrentPreset({
+      settings: {
+        ...getDefaultSettings(),
+        ...platformSettings,
+        threadNumber: platformSettings.availableThreadNumber,
+      },
+    });
+  };
+
   return (
     <div className="flex items-center gap-1 pb-2 border-b">
       <Label>Current preset:</Label>
       {!(newPresetInputVisible.value || editPresetInputVisible.value) && (
         <Select
           value={currentPreset.name}
-          onValueChange={changeCurrentPreset}
+          onValueChange={handlePresetSelect}
           onOpenChange={onPreventDialogCloseChange}
           name="presetSelect"
         >
@@ -199,7 +231,7 @@ function PresetSelect(props: {
         </TooltipButton>
         <TooltipButton
           tooltip="Remove preset"
-          onClick={removePreset}
+          onClick={handlePresetRemove}
           disabled={
             presets.length === 1 ||
             newPresetInputVisible.value ||
@@ -208,7 +240,7 @@ function PresetSelect(props: {
         >
           <Trash2 />
         </TooltipButton>
-        <TooltipButton tooltip="Reset settings" onClick={resetSettings}>
+        <TooltipButton tooltip="Reset settings" onClick={handleSettingsReset}>
           <RotateCcw />
         </TooltipButton>
       </span>
@@ -217,18 +249,15 @@ function PresetSelect(props: {
 }
 
 function SettingsContent() {
-  const [currentPreset, setCurrentPreset] = useAtom(currentPresetAtom);
+  const [settings, setSettings] = useAtom(settingsAtom);
+
+  const handleSettingsChange = (v: Record<string, any>) => {
+    setSettings((prev) => ({ ...prev, ...v }));
+  };
 
   return (
     <ScrollArea className="flex-1">
-      <Form
-        className="pr-3"
-        value={currentPreset.settings}
-        onChange={(v) => {
-          console.log(v);
-          setCurrentPreset({ settings: { ...currentPreset.settings, ...v } });
-        }}
-      >
+      <Form className="pr-3" value={settings} onChange={handleSettingsChange}>
         <GroupTitle>General settings</GroupTitle>
         <FormItem name="excludedItems" label="Excluded items" comp="textarea">
           <Textarea rows={2} />
@@ -293,12 +322,11 @@ function SettingsContent() {
           comp="slider"
           suffix={
             <span>
-              {currentPreset.settings.threadNumber}/
-              {currentPreset.settings.availableThreadNumber}
+              {settings.threadNumber}/{settings.availableThreadNumber}
             </span>
           }
         >
-          <Slider min={1} max={currentPreset.settings.availableThreadNumber} />
+          <Slider min={1} max={settings.availableThreadNumber} />
         </FormItem>
       </Form>
     </ScrollArea>

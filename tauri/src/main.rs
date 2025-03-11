@@ -18,7 +18,7 @@ fn main() {
 
 #[derive(Default)]
 struct AppState {
-	is_number_of_threads_set_up: bool,
+	is_number_of_threads_setup: bool,
 }
 
 fn run() {
@@ -30,7 +30,7 @@ fn run() {
 		.invoke_handler(tauri::generate_handler![
 			view_github,
 			set_theme,
-			get_partial_settings,
+			get_platform_settings,
 			set_number_of_threads,
 		])
 		.run(tauri::generate_context!())
@@ -58,7 +58,7 @@ fn set_theme(ww: tauri::WebviewWindow, theme: String) {
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct PartialSettings {
+struct PlatformSettings {
 	included_directories: Vec<String>,
 	excluded_directories: Vec<String>,
 	excluded_items: String,
@@ -66,8 +66,8 @@ struct PartialSettings {
 }
 
 #[tauri::command]
-fn get_partial_settings() -> PartialSettings {
-	PartialSettings {
+fn get_platform_settings() -> PlatformSettings {
+	PlatformSettings {
 		included_directories: default_included_directories(),
 		excluded_directories: default_excluded_directories(),
 		excluded_items: default_excluded_items(),
@@ -108,10 +108,10 @@ fn set_number_of_threads(
 	number_of_threads: usize,
 ) -> usize {
 	let mut state = state.lock().unwrap();
-	if state.is_number_of_threads_set_up {
+	if state.is_number_of_threads_setup {
 		return get_number_of_threads();
 	}
 	set_czkawka_number_of_threads(number_of_threads);
-	state.is_number_of_threads_set_up = true;
+	state.is_number_of_threads_setup = true;
 	get_number_of_threads()
 }
