@@ -28,32 +28,13 @@ fn run() {
 			Ok(())
 		})
 		.invoke_handler(tauri::generate_handler![
-			view_github,
-			set_theme,
 			get_platform_settings,
 			set_number_of_threads,
 		])
+		.plugin(tauri_plugin_opener::init())
+		.plugin(tauri_plugin_dialog::init())
 		.run(tauri::generate_context!())
 		.unwrap();
-}
-
-#[tauri::command]
-fn view_github() {
-	let url = env!("CARGO_PKG_REPOSITORY");
-	let _ = opener::open_browser(url);
-}
-
-#[tauri::command]
-fn set_theme(ww: tauri::WebviewWindow, theme: String) {
-	use tauri::Theme::*;
-
-	let window_theme = match theme.as_ref() {
-		"light" => Some(Light),
-		"dark" => Some(Dark),
-		_ => None,
-	};
-
-	let _ = ww.set_theme(window_theme);
 }
 
 #[derive(Serialize, Deserialize)]
@@ -78,10 +59,10 @@ fn get_platform_settings() -> PlatformSettings {
 fn default_included_directories() -> Vec<String> {
 	let mut included_directories = vec![];
 
-	if let Ok(current_dir) = env::current_dir() {
-		included_directories.push(current_dir.to_string_lossy().to_string());
-	} else if let Some(home_dir) = home::home_dir() {
+	if let Some(home_dir) = home::home_dir() {
 		included_directories.push(home_dir.to_string_lossy().to_string());
+	} else if let Ok(current_dir) = env::current_dir() {
+		included_directories.push(current_dir.to_string_lossy().to_string());
 	} else if cfg!(target_family = "unix") {
 		included_directories.push("/".to_string());
 	} else {

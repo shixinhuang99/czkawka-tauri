@@ -1,6 +1,6 @@
+import { openUrl } from '@tauri-apps/plugin-opener';
 import { CommonHeader, TooltipButton } from '~/components';
 import { GitHub } from '~/components/icons';
-import { ipc } from '~/ipc';
 import { SettingsButton } from './settings';
 import { ThemeToggle } from './theme-toggle';
 
@@ -23,7 +23,10 @@ export function AppHeader() {
 
 function ViewGitHubButton() {
   return (
-    <TooltipButton tooltip="View GitHub" onClick={() => ipc.viewGitHub()}>
+    <TooltipButton
+      tooltip="View GitHub"
+      onClick={() => openUrl(REPOSITORY_URL)}
+    >
       <GitHub />
     </TooltipButton>
   );

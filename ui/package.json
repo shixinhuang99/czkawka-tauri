@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "productName": "CzkawkaTauri",
+  "repository": {
+    "url": "https://github.com/shixinhuang99/czkawka-tauri"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -29,6 +32,8 @@
     "@tanstack/react-table": "^8.21.2",
     "@tanstack/react-virtual": "^3.13.2",
     "@tauri-apps/api": "^2.1.1",
+    "@tauri-apps/plugin-dialog": "^2.2.0",
+    "@tauri-apps/plugin-opener": "^2.2.6",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "jotai": "^2.10.3",

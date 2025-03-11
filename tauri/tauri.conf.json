@@ -35,7 +35,7 @@
     ],
     "category": "DeveloperTool",
     "licenseFile": "../LICENSE",
-    "shortDescription": "Another gui of Czkawka built for MacOs and Windows",
+    "shortDescription": "Another GUI of Czkawka built for MacOs and Windows",
     "useLocalToolsDir": true,
     "windows": {
       "allowDowngrades": true,

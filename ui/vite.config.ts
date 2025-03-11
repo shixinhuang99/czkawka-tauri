@@ -31,7 +31,7 @@ export default defineConfig(async () => {
     define: {
       PKG_NAME: JSON.stringify(pkg.productName),
       PKG_VERSION: JSON.stringify(pkg.version),
-      PLATFORM: JSON.stringify(process.platform === 'win32' ? 'WIN' : 'MAC'),
+      REPOSITORY_URL: JSON.stringify(pkg.repository.url),
     },
     build: {
       chunkSizeWarningLimit: 1000,

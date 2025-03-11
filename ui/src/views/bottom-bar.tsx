@@ -4,6 +4,8 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { isTauri } from '@tauri-apps/api/core';
+import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtomValue, useSetAtom } from 'jotai';
 import {
   Folder,
@@ -16,12 +18,29 @@ import {
   SquareMousePointer,
   Trash2,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { settingsAtom } from '~/atom/settings';
-import { Button, Checkbox, ScrollArea, TooltipButton } from '~/components';
+import {
+  Button,
+  Checkbox,
+  ScrollArea,
+  Textarea,
+  TooltipButton,
+} from '~/components';
 import { DataTable } from '~/components/shadcn/data-table';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '~/components/shadcn/dialog';
 import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
+import { useBoolean } from '~/hooks/use-boolean';
 import type { DirsType } from '~/types';
+import { emitter } from '~/utils/event';
 
 const DisplayType = {
   Dirs: 'dirs',
@@ -32,6 +51,10 @@ interface TableData {
   path: string;
   field: DirsType;
 }
+
+type PropsWithTable<T> = T & {
+  table: Table<TableData>;
+};
 
 const tableColumns: ColumnDef<TableData>[] = [
   {
@@ -73,8 +96,8 @@ const tableColumns: ColumnDef<TableData>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      return <DirsRemoveButton {...row.original} />;
+    cell: ({ row, table }) => {
+      return <DirsRemoveButton {...row.original} table={table} />;
     },
     meta: {
       span: 1,
@@ -218,8 +241,8 @@ function ExcludedDirsTable() {
   );
 }
 
-function DirsRemoveButton(props: TableData) {
-  const { path, field } = props;
+function DirsRemoveButton(props: PropsWithTable<TableData>) {
+  const { path, field, table } = props;
   const setSettings = useSetAtom(settingsAtom);
 
   const handleRemovePath = () => {
@@ -228,6 +251,11 @@ function DirsRemoveButton(props: TableData) {
         ...settings,
         [field]: settings[field].filter((v) => v !== path),
       };
+    });
+    table.setRowSelection((old) => {
+      return Object.fromEntries(
+        Object.entries(old).filter((obj) => obj[0] !== path),
+      );
     });
   };
 
@@ -238,11 +266,20 @@ function DirsRemoveButton(props: TableData) {
   );
 }
 
-function DirsActions(
-  props: { table: Table<TableData> } & Pick<TableData, 'field'>,
-) {
+function DirsActions(props: PropsWithTable<Pick<TableData, 'field'>>) {
   const { table, field } = props;
   const setSettings = useSetAtom(settingsAtom);
+  const manualAddDialogOpen = useBoolean();
+  const [manualAddPaths, setManualAddPaths] = useState('');
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    const listener = () => {
+      table.resetRowSelection();
+    };
+    emitter.on('reset-settings', listener);
+    return () => emitter.off('reset-settings', listener);
+  }, []);
 
   const handleRemovePaths = () => {
     const selectedPaths = Object.entries(table.getState().rowSelection)
@@ -262,15 +299,79 @@ function DirsActions(
     table.resetRowSelection();
   };
 
+  const handleAddPath = async () => {
+    if (!isTauri()) {
+      return;
+    }
+    const dir = await openFileDialog({ multiple: false, directory: true });
+    if (!dir) {
+      return;
+    }
+    setSettings((settings) => {
+      const dirs = settings[field];
+      if (dirs.includes(dir)) {
+        return settings;
+      }
+      return {
+        ...settings,
+        [field]: dirs.concat(dir),
+      };
+    });
+  };
+
+  const handleManualAddOk = () => {
+    const paths = manualAddPaths
+      .split(/\r?\n/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+    setSettings((settings) => {
+      return {
+        ...settings,
+        [field]: Array.from(new Set(settings[field].concat(...paths))),
+      };
+    });
+    manualAddDialogOpen.off();
+  };
+
   return (
     <div>
-      <TooltipButton tooltip="Add">
+      <TooltipButton tooltip="Add" onClick={handleAddPath}>
         <FolderPlus />
       </TooltipButton>
-      <TooltipButton tooltip="Manual add">
-        <FolderPen />
-      </TooltipButton>
-      <TooltipButton tooltip="Remove" onClick={handleRemovePaths}>
+      <Dialog
+        open={manualAddDialogOpen.value}
+        onOpenChange={(v) => {
+          setManualAddPaths('');
+          manualAddDialogOpen.set(v);
+        }}
+      >
+        <DialogTrigger asChild>
+          <TooltipButton tooltip="Manual add">
+            <FolderPen />
+          </TooltipButton>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Manual add</DialogTitle>
+            <DialogDescription>
+              Manually add paths(one per line)
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            rows={10}
+            value={manualAddPaths}
+            onChange={(e) => setManualAddPaths(e.target.value)}
+            className="resize-none"
+          />
+          <DialogFooter>
+            <Button onClick={handleManualAddOk}>Ok</Button>
+            <Button variant="secondary" onClick={manualAddDialogOpen.off}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <TooltipButton tooltip="Remove selected" onClick={handleRemovePaths}>
         <Trash2 />
       </TooltipButton>
     </div>

@@ -31,7 +31,7 @@ export function getDefaultSettings(): Settings {
     recursiveSearch: true,
     useCache: true,
     saveAlsoAsJson: false,
-    moveDeletedFilesToTrash: false,
+    moveDeletedFilesToTrash: true,
     threadNumber: 1,
     availableThreadNumber: 1,
     duplicateImagePreview: true,

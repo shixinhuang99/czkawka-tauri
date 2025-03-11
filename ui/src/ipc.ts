@@ -3,14 +3,6 @@ import { mockIPC } from '@tauri-apps/api/mocks';
 import type { PlatformSettings } from '~/types';
 
 export const ipc = {
-  viewGitHub(): Promise<void> {
-    return invoke('view_github');
-  },
-
-  setTheme(theme: string): Promise<void> {
-    return invoke('set_theme', { theme });
-  },
-
   getPlatformSettings(): Promise<PlatformSettings> {
     return invoke('get_platform_settings');
   },

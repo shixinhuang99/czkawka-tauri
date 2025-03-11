@@ -39,7 +39,7 @@ import {
 import { Form, FormItem } from '~/components/simple-form';
 import { MAXIMUM_FILE_SIZE, getDefaultSettings } from '~/consts';
 import { useBoolean } from '~/hooks';
-import { eventPreventDefault } from '~/utils/event';
+import { emitter, eventPreventDefault } from '~/utils/event';
 
 export function SettingsButton() {
   const dialogOpen = useBoolean();
@@ -68,8 +68,6 @@ export function SettingsButton() {
       <DialogContent
         className="max-w-[700px] outline-none"
         onOpenAutoFocus={eventPreventDefault}
-        onCloseAutoFocus={eventPreventDefault}
-        disableAnimate
       >
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
@@ -156,6 +154,7 @@ function PresetSelect(props: {
         threadNumber: platformSettings.availableThreadNumber,
       },
     });
+    emitter.emit('reset-settings');
   };
 
   return (

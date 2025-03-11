@@ -1,0 +1,19 @@
+{
+  "$schema": "../gen/schemas/macOS-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": ["main"],
+  "permissions": [
+    "core:window:allow-set-theme",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [
+        {
+          "url": "https://github.com/shixinhuang99/czkawka-tauri"
+        }
+      ]
+    },
+    "dialog:allow-open"
+  ],
+  "platforms": ["macOS", "windows"]
+}
