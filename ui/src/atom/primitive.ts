@@ -1,7 +1,13 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { Tools, getDefaultPreset } from '~/consts';
-import type { PlatformSettings, Preset, ThemeCfg, ToolsCfg } from '~/types';
+import type {
+  FileEntry,
+  PlatformSettings,
+  Preset,
+  ThemeCfg,
+  ToolsCfg,
+} from '~/types';
 
 export const themeAtom = atom<ThemeCfg>({
   display: '',
@@ -24,7 +30,11 @@ export const platformSettingsAtom = atom<PlatformSettings>({
 
 export const toolsCfgAtom = atomWithStorage<ToolsCfg>(
   'tools',
-  { current: Tools.DuplicateFiles, inProgress: Tools.DuplicateFiles },
+  { current: Tools.DuplicateFiles, inProgress: '' },
   undefined,
   { getOnInit: true },
 );
+
+export const logsAtom = atom<string>('');
+
+export const bigFilesAtom = atom<FileEntry[]>([]);

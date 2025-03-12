@@ -23,10 +23,9 @@ export function ToolTabs() {
             onClick={() => handleClick(name)}
           >
             {name}
-            {/* {toolsCfg.inProgress === name && (
+            {toolsCfg.inProgress === name && (
               <LoaderCircle className="animate-spin" />
-            )} */}
-            <LoaderCircle className="animate-spin" />
+            )}
           </Button>
         );
       })}

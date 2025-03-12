@@ -86,7 +86,7 @@ export type DirsType = Extract<
 export interface RawFileEntry {
   path: string;
   size: number;
-  modifiedDate: number;
+  modified_date: number;
 }
 
 export interface FileEntry {

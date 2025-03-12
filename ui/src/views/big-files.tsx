@@ -1,4 +1,6 @@
+import { useAtomValue } from 'jotai';
 import { useState } from 'react';
+import { bigFilesAtom } from '~/atom/primitive';
 import {
   DataTable,
   type RowSelection,
@@ -33,11 +35,12 @@ const columns = createColumns<FileEntry>([
 
 export function BigFiles() {
   const [rowSelection, setRowSelection] = useState<RowSelection>({});
+  const bigFiles = useAtomValue(bigFilesAtom);
 
   return (
     <DataTable
       className="flex-1 rounded-none border-none grow"
-      data={[]}
+      data={bigFiles}
       columns={columns}
       rowIdField="path"
       rowSelection={rowSelection}

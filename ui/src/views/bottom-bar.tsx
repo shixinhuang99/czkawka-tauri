@@ -4,16 +4,13 @@ import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtomValue, useSetAtom } from 'jotai';
 import {
   Folder,
-  FolderLock,
   FolderPen,
   FolderPlus,
-  FolderSymlink,
   ScrollText,
-  Search,
-  SquareMousePointer,
   Trash2,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { logsAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import { Button, ScrollArea, Textarea, TooltipButton } from '~/components';
 import {
@@ -35,6 +32,7 @@ import { useBoolean } from '~/hooks/use-boolean';
 import type { DirsType } from '~/types';
 import { splitStr } from '~/utils/common';
 import { emitter } from '~/utils/event';
+import { Operation } from './operation';
 
 const DisplayType = {
   Dirs: 'dirs',
@@ -80,28 +78,7 @@ export function BottomBar() {
   return (
     <div className="h-[250px] flex flex-col px-2 py-1 gap-1 border-t">
       <div className="flex justify-between items-center">
-        <div className="flex gap-1">
-          <Button variant="secondary" className="mr-2">
-            <Search />
-            Scan
-          </Button>
-          <Button variant="secondary">
-            <SquareMousePointer />
-            Select
-          </Button>
-          <Button variant="secondary">
-            <FolderSymlink />
-            Move
-          </Button>
-          <Button variant="secondary">
-            <Trash2 />
-            Delete
-          </Button>
-          <Button variant="secondary">
-            <FolderLock />
-            Save
-          </Button>
-        </div>
+        <Operation />
         <Tabs value={displayType} onValueChange={setDisplayType}>
           <TabsList>
             <TabsTrigger value={DisplayType.Dirs}>
@@ -119,19 +96,7 @@ export function BottomBar() {
           <ExcludedDirsTable />
         </div>
       )}
-      {displayType === DisplayType.Logs && (
-        <ScrollArea className="flex-1 rounded-md border bg-card text-card-foreground px-2 py-1">
-          <div>2</div>
-          <div>2</div>
-          <div>2</div>
-          <div>2</div>
-          <div>2</div>
-          <div>2</div>
-          <div>2</div>
-          <div>2</div>
-          <div>2</div>
-        </ScrollArea>
-      )}
+      {displayType === DisplayType.Logs && <Logs />}
     </div>
   );
 }
@@ -344,5 +309,15 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
         <Trash2 />
       </TooltipButton>
     </div>
+  );
+}
+
+function Logs() {
+  const logs = useAtomValue(logsAtom);
+
+  return (
+    <ScrollArea className="flex-1 rounded-md border bg-card text-card-foreground px-2 py-1">
+      <div className="whitespace-break-spaces">{logs}</div>
+    </ScrollArea>
   );
 }

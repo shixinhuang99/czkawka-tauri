@@ -5,6 +5,7 @@ use czkawka_core::{
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Settings {
 	pub included_directories: Vec<String>,
 	// pub included_directories_referenced: Vec<String>,

@@ -67,7 +67,6 @@ fn setup_number_of_threads(
 }
 
 #[derive(Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
 struct BigFilesResult {
 	files: Vec<FileEntry>,
 	message: String,
@@ -92,6 +91,7 @@ fn scan_big_files(settings: Settings) -> BigFilesResult {
 			search_mode,
 		));
 		apply_scaner_settings(&mut scaner, settings);
+		scaner.find_big_files(None, None);
 		let mut files = scaner.get_big_files().clone();
 		let message = scaner.get_text_messages().create_messages_text();
 

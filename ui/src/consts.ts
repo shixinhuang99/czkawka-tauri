@@ -19,6 +19,11 @@ export function getDefaultPreset(): Preset {
 
 export const MAXIMUM_FILE_SIZE = Math.floor((2 ** 31 - 1) / 1024);
 
+export const BigFilesSearchMode = {
+  BiggestFiles: 'BiggestFiles',
+  SmallestFiles: 'SmallestFiles',
+} as const;
+
 export function getDefaultSettings(): Settings {
   return {
     includedDirectories: [],
@@ -53,8 +58,8 @@ export function getDefaultSettings(): Settings {
     duplicatesSubCheckMethod: '',
     duplicatesSubAvailableHashType: '',
     duplicatesSubNameCaseSensitive: false,
-    biggestFilesSubMethod: '',
-    biggestFilesSubNumberOfFiles: 0,
+    biggestFilesSubMethod: BigFilesSearchMode.BiggestFiles,
+    biggestFilesSubNumberOfFiles: 50,
     similarVideosHideHardLinks: true,
     similarVideosSubIgnoreSameSize: true,
     similarVideosSubSimilarity: 0,

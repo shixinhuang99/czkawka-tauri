@@ -27,7 +27,7 @@ export const ipc = {
           size: fe.size.toString(),
           fileName: fe.path.toString(),
           path: fe.path,
-          modifiedDate: fe.modifiedDate.toString(),
+          modifiedDate: fe.modified_date.toString(),
         };
       }),
       message: data.message,

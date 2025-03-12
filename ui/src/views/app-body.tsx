@@ -4,10 +4,12 @@ import { Tools } from '~/consts';
 import { BigFiles } from './big-files';
 
 export function AppBody() {
+  const toolsCfg = useAtomValue(toolsCfgAtom);
+
   return (
     <div className="flex-1 flex flex-col w-px">
       <AllTable />
-      <div className="h-16 border-t">progress</div>
+      {!!toolsCfg.inProgress && <div className="h-16 border-t">progress</div>}
     </div>
   );
 }
