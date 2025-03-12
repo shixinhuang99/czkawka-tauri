@@ -984,6 +984,7 @@ version = "0.1.0"
 dependencies = [
  "czkawka_core",
  "home",
+ "rayon",
  "serde",
  "serde_json",
  "tauri",

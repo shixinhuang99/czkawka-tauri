@@ -1,9 +1,4 @@
-import {
-  type ColumnDef,
-  type Table,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import type { Table } from '@tanstack/react-table';
 import { isTauri } from '@tauri-apps/api/core';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtomValue, useSetAtom } from 'jotai';
@@ -20,14 +15,12 @@ import {
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { settingsAtom } from '~/atom/settings';
+import { Button, ScrollArea, Textarea, TooltipButton } from '~/components';
 import {
-  Button,
-  Checkbox,
-  ScrollArea,
-  Textarea,
-  TooltipButton,
-} from '~/components';
-import { DataTable } from '~/components/shadcn/data-table';
+  DataTable,
+  type RowSelection,
+  createColumns,
+} from '~/components/data-table';
 import {
   Dialog,
   DialogContent,
@@ -40,6 +33,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
 import { useBoolean } from '~/hooks/use-boolean';
 import type { DirsType } from '~/types';
+import { splitStr } from '~/utils/common';
 import { emitter } from '~/utils/event';
 
 const DisplayType = {
@@ -56,40 +50,15 @@ type PropsWithTable<T> = T & {
   table: Table<TableData>;
 };
 
-const tableColumns: ColumnDef<TableData>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    meta: {
-      span: 1,
-    },
-  },
+type PropsWithRowSelection<T> = T & {
+  rowSelection: RowSelection;
+  onRowSelectionChange: (v: RowSelection) => void;
+};
+
+const columns = createColumns<TableData>([
   {
     accessorKey: 'path',
     header: 'Path',
-    cell: ({ row }) => {
-      return (
-        <div className="truncate" title={row.original.path}>
-          {row.original.path}
-        </div>
-      );
-    },
     meta: {
       span: 10,
     },
@@ -103,13 +72,13 @@ const tableColumns: ColumnDef<TableData>[] = [
       span: 1,
     },
   },
-];
+]);
 
 export function BottomBar() {
   const [displayType, setDisplayType] = useState<string>(DisplayType.Dirs);
 
   return (
-    <div className="h-[300px] flex flex-col px-2 py-1 gap-1 border-t">
+    <div className="h-[250px] flex flex-col px-2 py-1 gap-1 border-t">
       <div className="flex justify-between items-center">
         <div className="flex gap-1">
           <Button variant="secondary" className="mr-2">
@@ -168,10 +137,8 @@ export function BottomBar() {
 }
 
 function IncludedDirsTable() {
-  'use no memo';
-
   const settings = useAtomValue(settingsAtom);
-
+  const [rowSelection, setRowSelection] = useState<RowSelection>({});
   const data: TableData[] = useMemo(() => {
     return settings.includedDirectories.map((path) => {
       return {
@@ -181,34 +148,33 @@ function IncludedDirsTable() {
     });
   }, [settings]);
 
-  const table = useReactTable({
-    data,
-    columns: tableColumns,
-    getCoreRowModel: getCoreRowModel(),
-    getRowId: (row) => row.path,
-  });
-
   return (
     <div className="w-1/2 flex flex-col">
       <div className="flex justify-between items-center">
         <h3 className="text-center">Include Directories</h3>
-        <DirsActions table={table} field="includedDirectories" />
+        <DirsActions
+          rowSelection={rowSelection}
+          onRowSelectionChange={setRowSelection}
+          field="includedDirectories"
+        />
       </div>
       <DataTable
         className="flex-1"
-        table={table}
+        data={data}
+        columns={columns}
         emptyTip="Please add path"
-        columnsLen={tableColumns.length}
+        layout="grid"
+        rowIdField="path"
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
       />
     </div>
   );
 }
 
 function ExcludedDirsTable() {
-  'use no memo';
-
   const settings = useAtomValue(settingsAtom);
-
+  const [rowSelection, setRowSelection] = useState<RowSelection>({});
   const data: TableData[] = useMemo(() => {
     return settings.excludedDirectories.map((path) => {
       return {
@@ -218,24 +184,25 @@ function ExcludedDirsTable() {
     });
   }, [settings]);
 
-  const table = useReactTable({
-    data,
-    columns: tableColumns,
-    getCoreRowModel: getCoreRowModel(),
-    getRowId: (row) => row.path,
-  });
-
   return (
     <div className="flex-1 flex flex-col">
       <div className="flex justify-between items-center">
         <h3 className="text-center">Exclude Directories</h3>
-        <DirsActions table={table} field="excludedDirectories" />
+        <DirsActions
+          rowSelection={rowSelection}
+          onRowSelectionChange={setRowSelection}
+          field="excludedDirectories"
+        />
       </div>
       <DataTable
         className="flex-1"
-        table={table}
+        data={data}
+        columns={columns}
         emptyTip="Please add path"
-        columnsLen={tableColumns.length}
+        layout="grid"
+        rowIdField="path"
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
       />
     </div>
   );
@@ -260,14 +227,19 @@ function DirsRemoveButton(props: PropsWithTable<TableData>) {
   };
 
   return (
-    <Button variant="ghost" size="icon" onClick={handleRemovePath}>
+    <Button
+      className="translate-x-[-8px]"
+      variant="ghost"
+      size="icon"
+      onClick={handleRemovePath}
+    >
       <Trash2 />
     </Button>
   );
 }
 
-function DirsActions(props: PropsWithTable<Pick<TableData, 'field'>>) {
-  const { table, field } = props;
+function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
+  const { field, rowSelection, onRowSelectionChange } = props;
   const setSettings = useSetAtom(settingsAtom);
   const manualAddDialogOpen = useBoolean();
   const [manualAddPaths, setManualAddPaths] = useState('');
@@ -275,14 +247,14 @@ function DirsActions(props: PropsWithTable<Pick<TableData, 'field'>>) {
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const listener = () => {
-      table.resetRowSelection();
+      onRowSelectionChange({});
     };
     emitter.on('reset-settings', listener);
     return () => emitter.off('reset-settings', listener);
   }, []);
 
   const handleRemovePaths = () => {
-    const selectedPaths = Object.entries(table.getState().rowSelection)
+    const selectedPaths = Object.entries(rowSelection)
       .filter((obj) => obj[1])
       .map((obj) => obj[0]);
     if (!selectedPaths.length) {
@@ -296,7 +268,7 @@ function DirsActions(props: PropsWithTable<Pick<TableData, 'field'>>) {
         ),
       };
     });
-    table.resetRowSelection();
+    onRowSelectionChange({});
   };
 
   const handleAddPath = async () => {
@@ -320,10 +292,7 @@ function DirsActions(props: PropsWithTable<Pick<TableData, 'field'>>) {
   };
 
   const handleManualAddOk = () => {
-    const paths = manualAddPaths
-      .split(/\r?\n/)
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
+    const paths = splitStr(manualAddPaths);
     setSettings((settings) => {
       return {
         ...settings,

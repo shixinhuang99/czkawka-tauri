@@ -82,3 +82,21 @@ export type DirsType = Extract<
   keyof Settings,
   'includedDirectories' | 'excludedDirectories'
 >;
+
+export interface RawFileEntry {
+  path: string;
+  size: number;
+  modifiedDate: number;
+}
+
+export interface FileEntry {
+  size: string;
+  fileName: string;
+  path: string;
+  modifiedDate: string;
+}
+
+export interface BigFileResult<T> {
+  files: T[];
+  message: string;
+}

@@ -12,7 +12,7 @@ export function ToolTabs() {
   };
 
   return (
-    <ScrollArea className="h-full w-[200px] border-r px-3 pb-1">
+    <ScrollArea className="h-full w-[200px] border-r px-3 pb-1 shrink-0">
       {Object.values(Tools).map((name) => {
         return (
           <Button

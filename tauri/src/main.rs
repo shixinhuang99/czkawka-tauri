@@ -1,16 +1,25 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::{env, sync::Mutex};
+mod scaner;
+mod settings;
+mod utils;
+
+use std::sync::Mutex;
 
 use czkawka_core::{
-	common::{
-		get_all_available_threads, get_number_of_threads,
-		set_number_of_threads as set_czkawka_number_of_threads,
-	},
-	common_items::{DEFAULT_EXCLUDED_DIRECTORIES, DEFAULT_EXCLUDED_ITEMS},
+	big_file::{BigFile, BigFileParameters, SearchMode},
+	common::{get_number_of_threads, set_number_of_threads},
+	common_dir_traversal::FileEntry,
+	common_tool::CommonData,
 };
+use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use tauri::{Manager, State};
+
+use crate::{
+	scaner::{apply_scaner_settings, spawn_scaner_thread},
+	settings::{PlatformSettings, Settings},
+};
 
 fn main() {
 	run();
@@ -29,7 +38,8 @@ fn run() {
 		})
 		.invoke_handler(tauri::generate_handler![
 			get_platform_settings,
-			set_number_of_threads,
+			setup_number_of_threads,
+			scan_big_files,
 		])
 		.plugin(tauri_plugin_opener::init())
 		.plugin(tauri_plugin_dialog::init())
@@ -37,54 +47,13 @@ fn run() {
 		.unwrap();
 }
 
-#[derive(Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct PlatformSettings {
-	included_directories: Vec<String>,
-	excluded_directories: Vec<String>,
-	excluded_items: String,
-	available_thread_number: usize,
-}
-
 #[tauri::command]
 fn get_platform_settings() -> PlatformSettings {
-	PlatformSettings {
-		included_directories: default_included_directories(),
-		excluded_directories: default_excluded_directories(),
-		excluded_items: default_excluded_items(),
-		available_thread_number: get_all_available_threads(),
-	}
-}
-
-fn default_included_directories() -> Vec<String> {
-	let mut included_directories = vec![];
-
-	if let Some(home_dir) = home::home_dir() {
-		included_directories.push(home_dir.to_string_lossy().to_string());
-	} else if let Ok(current_dir) = env::current_dir() {
-		included_directories.push(current_dir.to_string_lossy().to_string());
-	} else if cfg!(target_family = "unix") {
-		included_directories.push("/".to_string());
-	} else {
-		included_directories.push("C:\\".to_string());
-	};
-
-	included_directories
-}
-
-fn default_excluded_directories() -> Vec<String> {
-	DEFAULT_EXCLUDED_DIRECTORIES
-		.iter()
-		.map(|s| s.to_string())
-		.collect()
-}
-
-fn default_excluded_items() -> String {
-	DEFAULT_EXCLUDED_ITEMS.to_string()
+	PlatformSettings::default()
 }
 
 #[tauri::command]
-fn set_number_of_threads(
+fn setup_number_of_threads(
 	state: State<'_, Mutex<AppState>>,
 	number_of_threads: usize,
 ) -> usize {
@@ -92,7 +61,48 @@ fn set_number_of_threads(
 	if state.is_number_of_threads_setup {
 		return get_number_of_threads();
 	}
-	set_czkawka_number_of_threads(number_of_threads);
+	set_number_of_threads(number_of_threads);
 	state.is_number_of_threads_setup = true;
 	get_number_of_threads()
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct BigFilesResult {
+	files: Vec<FileEntry>,
+	message: String,
+}
+
+#[tauri::command]
+fn scan_big_files(settings: Settings) -> BigFilesResult {
+	let search_mode = match settings.biggest_files_sub_method.as_ref() {
+		"BiggestFiles" => SearchMode::BiggestFiles,
+		"SmallestFiles" => SearchMode::SmallestFiles,
+		_ => {
+			return BigFilesResult {
+				files: vec![],
+				message: "Unknown search mode".to_string(),
+			};
+		}
+	};
+
+	let result = spawn_scaner_thread(move || {
+		let mut scaner = BigFile::new(BigFileParameters::new(
+			settings.biggest_files_sub_number_of_files as usize,
+			search_mode,
+		));
+		apply_scaner_settings(&mut scaner, settings);
+		let mut files = scaner.get_big_files().clone();
+		let message = scaner.get_text_messages().create_messages_text();
+
+		if search_mode == SearchMode::BiggestFiles {
+			files.par_sort_unstable_by_key(|fe| u64::MAX - fe.size);
+		} else {
+			files.par_sort_unstable_by_key(|fe| fe.size);
+		}
+
+		BigFilesResult { files, message }
+	});
+
+	result
 }

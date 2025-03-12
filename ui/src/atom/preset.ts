@@ -30,7 +30,7 @@ export const initPlatformSettingsAtom = atom(null, async (get, set) => {
     set(platformSettingsAtom, data);
     const currentPreset = get(currentPresetAtom);
     if (!currentPreset.changed) {
-      const threadNumber = await ipc.setNumberOfThreads(
+      const threadNumber = await ipc.setupNumberOfThreads(
         data.availableThreadNumber,
       );
       set(currentPresetAtom, {
@@ -43,7 +43,7 @@ export const initPlatformSettingsAtom = atom(null, async (get, set) => {
       });
       return;
     }
-    const threadNumber = await ipc.setNumberOfThreads(
+    const threadNumber = await ipc.setupNumberOfThreads(
       currentPreset.settings.threadNumber,
     );
     set(currentPresetAtom, {
