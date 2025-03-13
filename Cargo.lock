@@ -982,6 +982,7 @@ dependencies = [
 name = "czkawka-tauri"
 version = "0.1.0"
 dependencies = [
+ "crossbeam-channel",
  "czkawka_core",
  "home",
  "rayon",

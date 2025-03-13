@@ -1,4 +1,4 @@
-import type { Preset, Settings } from '~/types';
+import type { Preset, Progress, Settings } from '~/types';
 
 export const Theme = {
   Dark: 'dark',
@@ -17,7 +17,7 @@ export function getDefaultPreset(): Preset {
   };
 }
 
-export const MAXIMUM_FILE_SIZE = Math.floor((2 ** 31 - 1) / 1024);
+export const MAXIMUM_FILE_SIZE = Math.floor((2 ** 31 - 1) / 1000);
 
 export const BigFilesSearchMode = {
   BiggestFiles: 'BiggestFiles',
@@ -94,3 +94,15 @@ export const Tools = {
   BrokenFiles: 'Broken Files',
   BadExtensions: 'Bad Extensions',
 } as const;
+
+export function getDefaultProgress(): Progress {
+  return {
+    tool: '',
+    stopping: false,
+    data: {
+      currentProgress: 0,
+      allProgress: 0,
+      stepName: '',
+    },
+  };
+}

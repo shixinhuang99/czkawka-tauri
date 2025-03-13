@@ -11,8 +11,8 @@
     "windows": [
       {
         "title": "CzkawkaTauri",
-        "width": 1000,
-        "minWidth": 1000,
+        "width": 1100,
+        "minWidth": 1100,
         "height": 800,
         "minHeight": 800,
         "resizable": true,

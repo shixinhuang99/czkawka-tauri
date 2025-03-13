@@ -30,9 +30,9 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
 import { useBoolean } from '~/hooks/use-boolean';
 import type { DirsType } from '~/types';
-import { splitStr } from '~/utils/common';
+import { getRowSelectionKeys, splitStr } from '~/utils/common';
 import { emitter } from '~/utils/event';
-import { Operation } from './operation';
+import { Operations } from './operations';
 
 const DisplayType = {
   Dirs: 'dirs',
@@ -78,7 +78,7 @@ export function BottomBar() {
   return (
     <div className="h-[250px] flex flex-col px-2 py-1 gap-1 border-t">
       <div className="flex justify-between items-center">
-        <Operation />
+        <Operations />
         <Tabs value={displayType} onValueChange={setDisplayType}>
           <TabsList>
             <TabsTrigger value={DisplayType.Dirs}>
@@ -219,9 +219,7 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
   }, []);
 
   const handleRemovePaths = () => {
-    const selectedPaths = Object.entries(rowSelection)
-      .filter((obj) => obj[1])
-      .map((obj) => obj[0]);
+    const selectedPaths = getRowSelectionKeys(rowSelection);
     if (!selectedPaths.length) {
       return;
     }

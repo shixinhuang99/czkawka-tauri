@@ -1,14 +1,15 @@
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { LoaderCircle } from 'lucide-react';
-import { toolsCfgAtom } from '~/atom/primitive';
+import { currentToolAtom, progressAtom } from '~/atom/primitive';
 import { Button, ScrollArea } from '~/components';
 import { Tools } from '~/consts';
 
 export function ToolTabs() {
-  const [toolsCfg, setToolsCfg] = useAtom(toolsCfgAtom);
+  const [currentTool, setCurrentTool] = useAtom(currentToolAtom);
+  const progress = useAtomValue(progressAtom);
 
   const handleClick = (name: string) => {
-    setToolsCfg({ ...toolsCfg, current: name });
+    setCurrentTool(name);
   };
 
   return (
@@ -19,11 +20,11 @@ export function ToolTabs() {
             key={name}
             className="w-full h-10 justify-between mt-1 cursor-pointer"
             tabIndex={-1}
-            variant={toolsCfg.current === name ? 'default' : 'ghost'}
+            variant={currentTool === name ? 'default' : 'ghost'}
             onClick={() => handleClick(name)}
           >
             {name}
-            {toolsCfg.inProgress === name && (
+            {progress.tool === name && (
               <LoaderCircle className="animate-spin" />
             )}
           </Button>

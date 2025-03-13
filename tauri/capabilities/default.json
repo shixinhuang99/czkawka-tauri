@@ -13,7 +13,8 @@
         }
       ]
     },
-    "dialog:allow-open"
+    "dialog:allow-open",
+    "core:event:allow-listen"
   ],
   "platforms": ["macOS", "windows"]
 }

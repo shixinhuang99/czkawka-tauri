@@ -73,15 +73,35 @@ export interface PlatformSettings {
   availableThreadNumber: number;
 }
 
-export interface ToolsCfg {
-  current: string;
-  inProgress: string;
-}
-
 export type DirsType = Extract<
   keyof Settings,
   'includedDirectories' | 'excludedDirectories'
 >;
+
+export type ScanCmd =
+  | 'scan_duplicate_files'
+  | 'scan_empty_folders'
+  | 'scan_big_files'
+  | 'scan_empty_files'
+  | 'scan_temporary_files'
+  | 'scan_similar_images'
+  | 'scan_similar_videos'
+  | 'scan_music_duplicates'
+  | 'scan_invalid_symlinks'
+  | 'scan_broken_files'
+  | 'scan_bad_extensions';
+
+export interface Progress {
+  tool: string;
+  stopping: boolean;
+  data: ProgressData;
+}
+
+export interface ProgressData {
+  currentProgress: number;
+  allProgress: number;
+  stepName: string;
+}
 
 export interface RawFileEntry {
   path: string;
@@ -96,7 +116,8 @@ export interface FileEntry {
   modifiedDate: string;
 }
 
-export interface BigFileResult<T> {
-  files: T[];
+export interface ScanResult<T> {
+  cmd: ScanCmd;
+  list: T[];
   message: string;
 }

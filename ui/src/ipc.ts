@@ -1,12 +1,6 @@
 import { invoke, isTauri } from '@tauri-apps/api/core';
 import { mockIPC } from '@tauri-apps/api/mocks';
-import type {
-  BigFileResult,
-  FileEntry,
-  PlatformSettings,
-  RawFileEntry,
-  Settings,
-} from '~/types';
+import type { PlatformSettings, ScanCmd, Settings } from '~/types';
 
 export const ipc = {
   getPlatformSettings(): Promise<PlatformSettings> {
@@ -17,21 +11,16 @@ export const ipc = {
     return invoke('setup_number_of_threads', { numberOfThreads });
   },
 
-  async scanBigFiles(settings: Settings): Promise<BigFileResult<FileEntry>> {
-    const data: BigFileResult<RawFileEntry> = await invoke('scan_big_files', {
-      settings,
-    });
-    return {
-      files: data.files.map((fe) => {
-        return {
-          size: fe.size.toString(),
-          fileName: fe.path.toString(),
-          path: fe.path,
-          modifiedDate: fe.modified_date.toString(),
-        };
-      }),
-      message: data.message,
-    };
+  scan(scanCmd: ScanCmd, settings: Settings) {
+    return invoke(scanCmd, { settings });
+  },
+
+  listenScanProgress() {
+    return invoke('listen_scan_progress');
+  },
+
+  stopScan() {
+    return invoke('stop_scan');
   },
 };
 

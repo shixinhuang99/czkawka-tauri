@@ -12,23 +12,25 @@ const columns = createColumns<FileEntry>([
   {
     accessorKey: 'size',
     header: 'Size',
-    size: 100,
+    size: 110,
     minSize: 50,
   },
   {
     accessorKey: 'fileName',
     header: 'File name',
+    size: 180,
     minSize: 100,
   },
   {
     accessorKey: 'path',
     header: 'Path',
-    size: 250,
+    size: 370,
     minSize: 100,
   },
   {
     accessorKey: 'modifiedDate',
     header: 'Modified date',
+    size: 160,
     minSize: 120,
   },
 ]);

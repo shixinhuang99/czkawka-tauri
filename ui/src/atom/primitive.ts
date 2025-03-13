@@ -1,12 +1,12 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import { Tools, getDefaultPreset } from '~/consts';
+import { Tools, getDefaultPreset, getDefaultProgress } from '~/consts';
 import type {
   FileEntry,
   PlatformSettings,
   Preset,
+  Progress,
   ThemeCfg,
-  ToolsCfg,
 } from '~/types';
 
 export const themeAtom = atom<ThemeCfg>({
@@ -28,13 +28,15 @@ export const platformSettingsAtom = atom<PlatformSettings>({
   availableThreadNumber: 1,
 });
 
-export const toolsCfgAtom = atomWithStorage<ToolsCfg>(
-  'tools',
-  { current: Tools.DuplicateFiles, inProgress: '' },
+export const currentToolAtom = atomWithStorage<string>(
+  'currentTool',
+  Tools.DuplicateFiles,
   undefined,
   { getOnInit: true },
 );
 
 export const logsAtom = atom<string>('');
+
+export const progressAtom = atom<Progress>(getDefaultProgress());
 
 export const bigFilesAtom = atom<FileEntry[]>([]);

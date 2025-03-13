@@ -5,18 +5,11 @@ use crate::{
 	utils::{covert_strs_to_path_bufs, split_str_with_comma},
 };
 
-pub fn spawn_scaner_thread<
-	T: Send + 'static,
-	F: FnOnce() -> T + Send + 'static,
->(
-	f: F,
-) -> T {
-	let handler = std::thread::Builder::new()
+pub fn spawn_scaner_thread<F: FnOnce() + Send + 'static>(f: F) {
+	std::thread::Builder::new()
 		.stack_size(DEFAULT_THREAD_SIZE)
 		.spawn(f)
-		.unwrap();
-
-	handler.join().unwrap()
+		.expect("Failed to spawn scaner thread");
 }
 
 pub fn apply_scaner_settings<T: CommonData>(
@@ -33,8 +26,8 @@ pub fn apply_scaner_settings<T: CommonData>(
 		settings.excluded_directories,
 	));
 	scaner.set_recursive_search(settings.recursive_search);
-	scaner.set_minimal_file_size(settings.minimum_file_size as u64 * 1024);
-	scaner.set_maximal_file_size(settings.maximum_file_size as u64 * 1024);
+	scaner.set_minimal_file_size(settings.minimum_file_size as u64 * 1000);
+	scaner.set_maximal_file_size(settings.maximum_file_size as u64 * 1000);
 	scaner.set_allowed_extensions(settings.allowed_extensions.clone());
 	scaner.set_excluded_extensions(settings.excluded_extensions.clone());
 	scaner.set_excluded_items(split_str_with_comma(settings.excluded_items));

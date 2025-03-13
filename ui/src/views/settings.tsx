@@ -276,7 +276,7 @@ function SettingsContent() {
           <Textarea rows={2} />
         </FormItem>
         <div className="flex items-center gap-2">
-          <Label className="flex-shrink-0">File size(KiB):</Label>
+          <Label className="flex-shrink-0">File size(KB):</Label>
           <FormItem name="minimumFileSize" comp="input-number">
             <InputNumber minValue={16} maxValue={MAXIMUM_FILE_SIZE} />
           </FormItem>
