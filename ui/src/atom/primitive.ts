@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
+import type { RowSelection } from '~/components/data-table';
 import { Tools, getDefaultPreset, getDefaultProgress } from '~/consts';
 import type {
   FileEntry,
@@ -35,8 +36,14 @@ export const currentToolAtom = atomWithStorage<string>(
   { getOnInit: true },
 );
 
+export const includedDirsRowSelectionAtom = atom<RowSelection>({});
+
+export const excludedDirsRowSelectionAtom = atom<RowSelection>({});
+
 export const logsAtom = atom<string>('');
 
 export const progressAtom = atom<Progress>(getDefaultProgress());
 
 export const bigFilesAtom = atom<FileEntry[]>([]);
+
+export const bigFilesRowSelectionAtom = atom<RowSelection>({});

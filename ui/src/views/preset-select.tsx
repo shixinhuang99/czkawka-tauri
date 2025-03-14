@@ -1,11 +1,15 @@
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { FilePenLine, FilePlus, RotateCcw, Trash2 } from 'lucide-react';
 import { currentPresetAtom } from '~/atom/preset';
-import { platformSettingsAtom, presetsAtom } from '~/atom/primitive';
+import {
+  excludedDirsRowSelectionAtom,
+  includedDirsRowSelectionAtom,
+  platformSettingsAtom,
+  presetsAtom,
+} from '~/atom/primitive';
 import { EditInput, Label, Select, TooltipButton } from '~/components';
 import { getDefaultSettings } from '~/consts';
 import { useBoolean } from '~/hooks';
-import { emitter } from '~/utils/event';
 
 interface PresetSelectProps {
   onPreventDialogCloseChange: (open: boolean) => void;
@@ -17,6 +21,8 @@ export function PresetSelect(props: PresetSelectProps) {
   const [presets, setPresets] = useAtom(presetsAtom);
   const platformSettings = useAtomValue(platformSettingsAtom);
   const [currentPreset, setCurrentPreset] = useAtom(currentPresetAtom);
+  const setIncludedDirsRowSelection = useSetAtom(includedDirsRowSelectionAtom);
+  const setExcludedDirsRowSelection = useSetAtom(excludedDirsRowSelectionAtom);
   const newPresetInputVisible = useBoolean();
   const editPresetInputVisible = useBoolean();
 
@@ -81,7 +87,8 @@ export function PresetSelect(props: PresetSelectProps) {
         threadNumber: platformSettings.availableThreadNumber,
       },
     });
-    emitter.emit('reset-settings');
+    setIncludedDirsRowSelection({});
+    setExcludedDirsRowSelection({});
   };
 
   return (

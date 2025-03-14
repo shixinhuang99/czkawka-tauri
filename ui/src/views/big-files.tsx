@@ -1,11 +1,6 @@
-import { useAtomValue } from 'jotai';
-import { useState } from 'react';
-import { bigFilesAtom } from '~/atom/primitive';
-import {
-  DataTable,
-  type RowSelection,
-  createColumns,
-} from '~/components/data-table';
+import { useAtom, useAtomValue } from 'jotai';
+import { bigFilesAtom, bigFilesRowSelectionAtom } from '~/atom/primitive';
+import { DataTable, createColumns } from '~/components/data-table';
 import type { FileEntry } from '~/types';
 
 const columns = createColumns<FileEntry>([
@@ -36,7 +31,7 @@ const columns = createColumns<FileEntry>([
 ]);
 
 export function BigFiles() {
-  const [rowSelection, setRowSelection] = useState<RowSelection>({});
+  const [rowSelection, setRowSelection] = useAtom(bigFilesRowSelectionAtom);
   const bigFiles = useAtomValue(bigFilesAtom);
 
   return (

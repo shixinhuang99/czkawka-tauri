@@ -1,7 +1,7 @@
 import type { Table } from '@tanstack/react-table';
 import { isTauri } from '@tauri-apps/api/core';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   Folder,
   FolderPen,
@@ -9,8 +9,12 @@ import {
   ScrollText,
   Trash2,
 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
-import { logsAtom } from '~/atom/primitive';
+import { useMemo, useState } from 'react';
+import {
+  excludedDirsRowSelectionAtom,
+  includedDirsRowSelectionAtom,
+  logsAtom,
+} from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import { Button, ScrollArea, Textarea, TooltipButton } from '~/components';
 import {
@@ -31,7 +35,6 @@ import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
 import { useBoolean } from '~/hooks/use-boolean';
 import type { DirsType } from '~/types';
 import { getRowSelectionKeys, splitStr } from '~/utils/common';
-import { emitter } from '~/utils/event';
 import { Operations } from './operations';
 
 const DisplayType = {
@@ -103,7 +106,7 @@ export function BottomBar() {
 
 function IncludedDirsTable() {
   const settings = useAtomValue(settingsAtom);
-  const [rowSelection, setRowSelection] = useState<RowSelection>({});
+  const [rowSelection, setRowSelection] = useAtom(includedDirsRowSelectionAtom);
   const data: TableData[] = useMemo(() => {
     return settings.includedDirectories.map((path) => {
       return {
@@ -139,7 +142,7 @@ function IncludedDirsTable() {
 
 function ExcludedDirsTable() {
   const settings = useAtomValue(settingsAtom);
-  const [rowSelection, setRowSelection] = useState<RowSelection>({});
+  const [rowSelection, setRowSelection] = useAtom(excludedDirsRowSelectionAtom);
   const data: TableData[] = useMemo(() => {
     return settings.excludedDirectories.map((path) => {
       return {
@@ -208,15 +211,6 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
   const setSettings = useSetAtom(settingsAtom);
   const manualAddDialogOpen = useBoolean();
   const [manualAddPaths, setManualAddPaths] = useState('');
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    const listener = () => {
-      onRowSelectionChange({});
-    };
-    emitter.on('reset-settings', listener);
-    return () => emitter.off('reset-settings', listener);
-  }, []);
 
   const handleRemovePaths = () => {
     const selectedPaths = getRowSelectionKeys(rowSelection);
