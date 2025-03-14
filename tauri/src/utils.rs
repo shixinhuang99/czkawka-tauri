@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-pub fn covert_strs_to_path_bufs(strs: Vec<String>) -> Vec<PathBuf> {
+pub fn convert_strs_to_path_bufs(strs: Vec<String>) -> Vec<PathBuf> {
 	strs.into_iter().map(PathBuf::from).collect()
 }
 

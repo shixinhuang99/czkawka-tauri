@@ -8,6 +8,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import { revealItemInDir } from '@tauri-apps/plugin-opener';
+import { FolderOpen } from 'lucide-react';
 import { useRef } from 'react';
 import { cn } from '~/utils/cn';
 import { Checkbox } from './shadcn/checkbox';
@@ -19,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from './shadcn/table';
+import { TooltipButton } from './tooltip-button';
 
 interface DataTableProps<T> {
   data: T[];
@@ -239,4 +242,24 @@ export function createColumns<T>(columns: ColumnDef<T>[]): ColumnDef<T>[] {
     },
     ...columns,
   ];
+}
+
+export function createActionsColumn<
+  T extends { path: string },
+>(): ColumnDef<T> {
+  return {
+    id: 'actions',
+    cell: ({ cell }) => {
+      return (
+        <TooltipButton
+          tooltip={`Reveal in ${PLATFORM === 'darwin' ? 'Finder' : 'File Explorer'}`}
+          onClick={() => revealItemInDir(cell.row.original.path)}
+        >
+          <FolderOpen />
+        </TooltipButton>
+      );
+    },
+    size: 50,
+    minSize: 50,
+  };
 }

@@ -1,6 +1,10 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { bigFilesAtom, bigFilesRowSelectionAtom } from '~/atom/primitive';
-import { DataTable, createColumns } from '~/components/data-table';
+import {
+  DataTable,
+  createActionsColumn,
+  createColumns,
+} from '~/components/data-table';
 import type { FileEntry } from '~/types';
 
 const columns = createColumns<FileEntry>([
@@ -19,7 +23,7 @@ const columns = createColumns<FileEntry>([
   {
     accessorKey: 'path',
     header: 'Path',
-    size: 370,
+    size: 320,
     minSize: 100,
   },
   {
@@ -28,6 +32,7 @@ const columns = createColumns<FileEntry>([
     size: 160,
     minSize: 120,
   },
+  createActionsColumn(),
 ]);
 
 export function BigFiles() {

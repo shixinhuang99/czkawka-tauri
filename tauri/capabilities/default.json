@@ -14,7 +14,8 @@
       ]
     },
     "dialog:allow-open",
-    "core:event:allow-listen"
+    "core:event:allow-listen",
+    "opener:allow-reveal-item-in-dir"
   ],
   "platforms": ["macOS", "windows"]
 }

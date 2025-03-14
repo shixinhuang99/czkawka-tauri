@@ -2,7 +2,7 @@ use czkawka_core::{common::DEFAULT_THREAD_SIZE, common_tool::CommonData};
 
 use crate::{
 	settings::Settings,
-	utils::{covert_strs_to_path_bufs, split_str_with_comma},
+	utils::{convert_strs_to_path_bufs, split_str_with_comma},
 };
 
 pub fn spawn_scaner_thread<F: FnOnce() + Send + 'static>(f: F) {
@@ -16,13 +16,13 @@ pub fn apply_scaner_settings<T: CommonData>(
 	scaner: &mut T,
 	settings: Settings,
 ) {
-	scaner.set_included_directory(covert_strs_to_path_bufs(
+	scaner.set_included_directory(convert_strs_to_path_bufs(
 		settings.included_directories,
 	));
 
 	// todo: included_directories_referenced
 
-	scaner.set_excluded_directory(covert_strs_to_path_bufs(
+	scaner.set_excluded_directory(convert_strs_to_path_bufs(
 		settings.excluded_directories,
 	));
 	scaner.set_recursive_search(settings.recursive_search);
