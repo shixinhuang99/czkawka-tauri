@@ -24,31 +24,36 @@ export interface Settings {
   saveAlsoAsJson: boolean;
   moveDeletedFilesToTrash: boolean;
   threadNumber: number;
-  availableThreadNumber: number;
+
   duplicateImagePreview: boolean;
   duplicateHideHardLinks: boolean;
   duplicateUsePrehash: boolean;
   duplicateMinimalHashCacheSize: number;
   duplicateMinimalPrehashCacheSize: number;
   duplicateDeleteOutdatedEntries: boolean;
+
   similarImagesHideHardLinks: boolean;
   similarImagesShowImagePreview: boolean;
   similarImagesDeleteOutdatedEntries: boolean;
-  similarVideosDeleteOutdatedEntries: boolean;
-  similarMusicDeleteOutdatedEntries: boolean;
   similarImagesSubHashSize: number;
   similarImagesSubHashAlg: string;
   similarImagesSubResizeAlgorithm: string;
   similarImagesSubIgnoreSameSize: boolean;
   similarImagesSubSimilarity: number;
+
   duplicatesSubCheckMethod: string;
   duplicatesSubAvailableHashType: string;
   duplicatesSubNameCaseSensitive: boolean;
+
   biggestFilesSubMethod: string;
   biggestFilesSubNumberOfFiles: number;
+
   similarVideosHideHardLinks: boolean;
+  similarVideosDeleteOutdatedEntries: boolean;
   similarVideosSubIgnoreSameSize: boolean;
   similarVideosSubSimilarity: number;
+
+  similarMusicDeleteOutdatedEntries: boolean;
   similarMusicSubAudioCheckType: string;
   similarMusicSubApproximateComparison: boolean;
   similarMusicCompareFingerprintsOnlyWithSimilarTitles: boolean;
@@ -60,6 +65,7 @@ export interface Settings {
   similarMusicSubLength: boolean;
   similarMusicSubMaximumDifferenceValue: number;
   similarMusicSubMinimalFragmentDurationValue: number;
+
   brokenFilesSubAudio: boolean;
   brokenFilesSubPdf: boolean;
   brokenFilesSubArchive: boolean;
@@ -71,6 +77,7 @@ export interface PlatformSettings {
   excludedDirectories: string[];
   excludedItems: string;
   availableThreadNumber: number;
+  cacheDirPath: string;
 }
 
 export type DirsType = Extract<

@@ -1,9 +1,12 @@
-import { useAtom, useSetAtom } from 'jotai';
+import { openPath } from '@tauri-apps/plugin-opener';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { CircleHelp, Settings } from 'lucide-react';
 import { useEffect } from 'react';
-import { initPlatformSettingsAtom } from '~/atom/preset';
+import { initCurrentPresetAtom } from '~/atom/preset';
+import { platformSettingsAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import {
+  Button,
   InputNumber,
   Label,
   ScrollArea,
@@ -11,6 +14,7 @@ import {
   Switch,
   Textarea,
   TooltipButton,
+  toastError,
 } from '~/components';
 import {
   Dialog,
@@ -29,10 +33,10 @@ import { PresetSelect } from './preset-select';
 export function SettingsButton() {
   const dialogOpen = useBoolean();
   const isPreventDialogClose = useBoolean();
-  const initPlatformSettings = useSetAtom(initPlatformSettingsAtom);
+  const initCurrentPreset = useSetAtom(initCurrentPresetAtom);
 
   useEffect(() => {
-    initPlatformSettings();
+    initCurrentPreset();
   }, []);
 
   return (
@@ -67,9 +71,19 @@ export function SettingsButton() {
 
 function SettingsContent() {
   const [settings, setSettings] = useAtom(settingsAtom);
+  const platformSettings = useAtomValue(platformSettingsAtom);
 
   const handleSettingsChange = (v: Record<string, any>) => {
     setSettings((prev) => ({ ...prev, ...v }));
+  };
+
+  const handleOpenCacheFolder = () => {
+    if (!platformSettings.cacheDirPath) {
+      return;
+    }
+    openPath(platformSettings.cacheDirPath).catch((err) => {
+      toastError('Failed to open cache folder', err);
+    });
   };
 
   return (
@@ -139,13 +153,101 @@ function SettingsContent() {
           comp="slider"
           suffix={
             <span>
-              {settings.threadNumber}/{settings.availableThreadNumber}
+              {settings.threadNumber}/{platformSettings.availableThreadNumber}
             </span>
           }
         >
-          <Slider min={1} max={settings.availableThreadNumber} />
+          <Slider min={1} max={platformSettings.availableThreadNumber} />
+        </FormItem>
+        <GroupTitle>Dulicate tool</GroupTitle>
+        <FormItem
+          name="duplicateMinimalHashCacheSize"
+          label="Minimal size of cached files - Hash (KB)"
+          comp="input-number"
+        >
+          <InputNumber minValue={1} />
+        </FormItem>
+        <FormItem
+          name="duplicateMinimalPrehashCacheSize"
+          label="Minimal size of cached files - Prehash (KB)"
+          comp="input-number"
+        >
+          <InputNumber minValue={1} />
+        </FormItem>
+        <FormItem
+          name="duplicateImagePreview"
+          label="Image preview"
+          comp="switch"
+        >
+          <Switch />
+        </FormItem>
+        <FormItem
+          name="duplicateHideHardLinks"
+          label="Hide hard links"
+          comp="switch"
+        >
+          <Switch />
+        </FormItem>
+        <FormItem name="duplicateUsePrehash" label="Use prehash" comp="switch">
+          <Switch />
+        </FormItem>
+        <FormItem
+          name="duplicateDeleteOutdatedEntries"
+          label="Delete automatically outdated entries"
+          comp="switch"
+        >
+          <Switch />
+        </FormItem>
+        <GroupTitle>Similar Images tool</GroupTitle>
+        <FormItem
+          name="similarImagesShowImagePreview"
+          label="Image preview"
+          comp="switch"
+        >
+          <Switch />
+        </FormItem>
+        <FormItem
+          name="similarImagesHideHardLinks"
+          label="Hide hard links"
+          comp="switch"
+        >
+          <Switch />
+        </FormItem>
+        <FormItem
+          name="similarImagesDeleteOutdatedEntries"
+          label="Delete automatically outdated entries"
+          comp="switch"
+        >
+          <Switch />
+        </FormItem>
+        <GroupTitle>Similar Videos tool</GroupTitle>
+        <FormItem
+          name="similarVideosHideHardLinks"
+          label="Hide hard links"
+          comp="switch"
+        >
+          <Switch />
+        </FormItem>
+        <FormItem
+          name="similarVideosDeleteOutdatedEntries"
+          label="Delete automatically outdated entries"
+          comp="switch"
+        >
+          <Switch />
+        </FormItem>
+        <GroupTitle>Similar Music tool</GroupTitle>
+        <FormItem
+          name="similarMusicDeleteOutdatedEntries"
+          label="Delete automatically outdated entries"
+          comp="switch"
+        >
+          <Switch />
         </FormItem>
       </Form>
+      <GroupTitle>Other</GroupTitle>
+      <Button variant="secondary" onClick={handleOpenCacheFolder}>
+        Open cache folder
+      </Button>
     </ScrollArea>
   );
 }

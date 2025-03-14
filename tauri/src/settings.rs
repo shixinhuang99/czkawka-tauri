@@ -2,6 +2,7 @@ use czkawka_core::{
 	common::get_all_available_threads,
 	common_items::{DEFAULT_EXCLUDED_DIRECTORIES, DEFAULT_EXCLUDED_ITEMS},
 };
+use directories_next::ProjectDirs;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -68,6 +69,7 @@ pub struct PlatformSettings {
 	pub excluded_directories: Vec<String>,
 	pub excluded_items: String,
 	pub available_thread_number: usize,
+	pub cache_dir_path: String,
 }
 
 impl Default for PlatformSettings {
@@ -77,6 +79,9 @@ impl Default for PlatformSettings {
 			excluded_directories: default_excluded_directories(),
 			excluded_items: default_excluded_items(),
 			available_thread_number: get_all_available_threads(),
+			cache_dir_path: ProjectDirs::from("pl", "Qarmin", "Czkawka")
+				.map(|dirs| dirs.cache_dir().to_string_lossy().to_string())
+				.unwrap_or_default(),
 		}
 	}
 }

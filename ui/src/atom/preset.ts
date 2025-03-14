@@ -24,7 +24,7 @@ export const currentPresetAtom = atom(
   },
 );
 
-export const initPlatformSettingsAtom = atom(null, async (get, set) => {
+export const initCurrentPresetAtom = atom(null, async (get, set) => {
   try {
     const data = await ipc.getPlatformSettings();
     set(platformSettingsAtom, data);
@@ -36,7 +36,9 @@ export const initPlatformSettingsAtom = atom(null, async (get, set) => {
       set(currentPresetAtom, {
         settings: {
           ...currentPreset.settings,
-          ...data,
+          includedDirectories: data.includedDirectories,
+          excludedDirectories: data.excludedDirectories,
+          excludedItems: data.excludedItems,
           threadNumber,
         },
         changed: true,
@@ -50,7 +52,6 @@ export const initPlatformSettingsAtom = atom(null, async (get, set) => {
       settings: {
         ...currentPreset.settings,
         threadNumber,
-        availableThreadNumber: data.availableThreadNumber,
       },
       changed: true,
     });

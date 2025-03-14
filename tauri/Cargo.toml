@@ -15,6 +15,7 @@ path = "src/main.rs"
 [dependencies]
 crossbeam-channel = "0.5.14"
 czkawka_core = "8.0.0"
+directories-next = "2.0.0"
 home = "0.5.11"
 rayon = "1.10.0"
 serde = { version = "1", features = ["derive"] }

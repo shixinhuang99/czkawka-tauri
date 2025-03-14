@@ -1,7 +1,12 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import type { RowSelection } from '~/components/data-table';
-import { Tools, getDefaultPreset, getDefaultProgress } from '~/consts';
+import {
+  Tools,
+  getDefaultPlatformSettings,
+  getDefaultPreset,
+  getDefaultProgress,
+} from '~/consts';
 import type {
   FileEntry,
   PlatformSettings,
@@ -22,12 +27,9 @@ export const presetsAtom = atomWithStorage<Preset[]>(
   { getOnInit: true },
 );
 
-export const platformSettingsAtom = atom<PlatformSettings>({
-  includedDirectories: [],
-  excludedDirectories: [],
-  excludedItems: '',
-  availableThreadNumber: 1,
-});
+export const platformSettingsAtom = atom<PlatformSettings>(
+  getDefaultPlatformSettings(),
+);
 
 export const currentToolAtom = atomWithStorage<string>(
   'currentTool',

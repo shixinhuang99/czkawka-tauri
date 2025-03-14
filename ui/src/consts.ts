@@ -1,4 +1,4 @@
-import type { Preset, Progress, Settings } from '~/types';
+import type { PlatformSettings, Preset, Progress, Settings } from '~/types';
 
 export const Theme = {
   Dark: 'dark',
@@ -24,6 +24,41 @@ export const BigFilesSearchMode = {
   SmallestFiles: 'SmallestFiles',
 } as const;
 
+export const SimilarImagesHashAlgorithm = {
+  Mean: 'Mean',
+  Gradient: 'Gradient',
+  BlockHash: 'BlockHash',
+  VertGradient: 'VertGradient',
+  DoubleGradient: 'DoubleGradient',
+  Median: 'Median',
+} as const;
+
+export const SimilarImagesResizeAlgorithm = {
+  Lanczos3: 'Lanczos3',
+  Gaussian: 'Gaussian',
+  CatmullRom: 'CatmullRom',
+  Triangle: 'Triangle',
+  Nearest: 'Nearest',
+} as const;
+
+export const DuplicatesCheckMethod = {
+  Hash: 'Hash',
+  Size: 'Size',
+  Name: 'Name',
+  SizeAndName: 'SizeAndName',
+} as const;
+
+export const DuplicatesAvailableHashType = {
+  Blake3: 'Blake3',
+  CRC32: 'CRC32',
+  XXH3: 'XXH3',
+} as const;
+
+export const SimilarMusicAudioCheckType = {
+  Tags: 'Tags',
+  Fingerprint: 'Fingerprint',
+} as const;
+
 export function getDefaultSettings(): Settings {
   return {
     includedDirectories: [],
@@ -38,46 +73,62 @@ export function getDefaultSettings(): Settings {
     saveAlsoAsJson: false,
     moveDeletedFilesToTrash: true,
     threadNumber: 1,
-    availableThreadNumber: 1,
+
     duplicateImagePreview: true,
     duplicateHideHardLinks: true,
     duplicateUsePrehash: true,
-    duplicateMinimalHashCacheSize: 100,
-    duplicateMinimalPrehashCacheSize: 100,
+    duplicateMinimalHashCacheSize: 256,
+    duplicateMinimalPrehashCacheSize: 256,
     duplicateDeleteOutdatedEntries: true,
+
     similarImagesHideHardLinks: true,
     similarImagesShowImagePreview: true,
     similarImagesDeleteOutdatedEntries: true,
-    similarVideosDeleteOutdatedEntries: true,
-    similarMusicDeleteOutdatedEntries: true,
-    similarImagesSubHashSize: 0,
-    similarImagesSubHashAlg: '',
-    similarImagesSubResizeAlgorithm: '',
-    similarImagesSubIgnoreSameSize: true,
-    similarImagesSubSimilarity: 0,
-    duplicatesSubCheckMethod: '',
-    duplicatesSubAvailableHashType: '',
+    similarImagesSubHashSize: 16,
+    similarImagesSubHashAlg: SimilarImagesHashAlgorithm.Mean,
+    similarImagesSubResizeAlgorithm: SimilarImagesResizeAlgorithm.Lanczos3,
+    similarImagesSubIgnoreSameSize: false,
+    similarImagesSubSimilarity: 10,
+
+    duplicatesSubCheckMethod: DuplicatesCheckMethod.Hash,
+    duplicatesSubAvailableHashType: DuplicatesAvailableHashType.Blake3,
     duplicatesSubNameCaseSensitive: false,
+
     biggestFilesSubMethod: BigFilesSearchMode.BiggestFiles,
     biggestFilesSubNumberOfFiles: 50,
+
     similarVideosHideHardLinks: true,
-    similarVideosSubIgnoreSameSize: true,
-    similarVideosSubSimilarity: 0,
-    similarMusicSubAudioCheckType: '',
-    similarMusicSubApproximateComparison: true,
-    similarMusicCompareFingerprintsOnlyWithSimilarTitles: true,
+    similarVideosDeleteOutdatedEntries: true,
+    similarVideosSubIgnoreSameSize: false,
+    similarVideosSubSimilarity: 15,
+
+    similarMusicDeleteOutdatedEntries: true,
+    similarMusicSubAudioCheckType: SimilarMusicAudioCheckType.Tags,
+    similarMusicSubApproximateComparison: false,
+    similarMusicCompareFingerprintsOnlyWithSimilarTitles: false,
     similarMusicSubTitle: true,
     similarMusicSubArtist: true,
-    similarMusicSubYear: true,
-    similarMusicSubBitrate: true,
-    similarMusicSubGenre: true,
-    similarMusicSubLength: true,
-    similarMusicSubMaximumDifferenceValue: 0,
-    similarMusicSubMinimalFragmentDurationValue: 0,
+    similarMusicSubYear: false,
+    similarMusicSubBitrate: false,
+    similarMusicSubGenre: false,
+    similarMusicSubLength: false,
+    similarMusicSubMaximumDifferenceValue: 3.0,
+    similarMusicSubMinimalFragmentDurationValue: 5.0,
+
     brokenFilesSubAudio: true,
-    brokenFilesSubPdf: true,
-    brokenFilesSubArchive: true,
-    brokenFilesSubImage: true,
+    brokenFilesSubPdf: false,
+    brokenFilesSubArchive: false,
+    brokenFilesSubImage: false,
+  };
+}
+
+export function getDefaultPlatformSettings(): PlatformSettings {
+  return {
+    includedDirectories: [],
+    excludedDirectories: [],
+    excludedItems: '',
+    availableThreadNumber: 1,
+    cacheDirPath: '',
   };
 }
 

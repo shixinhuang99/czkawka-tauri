@@ -984,6 +984,7 @@ version = "0.1.0"
 dependencies = [
  "crossbeam-channel",
  "czkawka_core",
+ "directories-next",
  "home",
  "rayon",
  "serde",

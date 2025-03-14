@@ -1,5 +1,5 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { FilePenLine, FilePlus, RotateCcw, Trash2 } from 'lucide-react';
+import { FilePenLine, FilePlus, TimerReset, Trash2 } from 'lucide-react';
 import { currentPresetAtom } from '~/atom/preset';
 import {
   excludedDirsRowSelectionAtom,
@@ -160,7 +160,7 @@ export function PresetSelect(props: PresetSelectProps) {
           <Trash2 />
         </TooltipButton>
         <TooltipButton tooltip="Reset settings" onClick={handleSettingsReset}>
-          <RotateCcw />
+          <TimerReset />
         </TooltipButton>
       </span>
     </div>

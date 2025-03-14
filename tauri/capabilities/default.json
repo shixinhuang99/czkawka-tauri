@@ -1,5 +1,5 @@
 {
-  "$schema": "../gen/schemas/macOS-schema.json",
+  "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Capability for the main window",
   "windows": ["main"],
@@ -15,7 +15,15 @@
     },
     "dialog:allow-open",
     "core:event:allow-listen",
-    "opener:allow-reveal-item-in-dir"
+    "opener:allow-reveal-item-in-dir",
+    "opener:allow-open-path",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [
+        { "path": "$HOME/Library/Caches/pl.Qarmin.Czkawka" },
+        { "path": "$HOME\\AppData\\Local\\Qarmin\\Czkawka\\cache" }
+      ]
+    }
   ],
   "platforms": ["macOS", "windows"]
 }
