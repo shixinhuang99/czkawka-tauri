@@ -32,7 +32,7 @@ export const Form = (props: FormProps) => {
   }, [value, onChange]);
 
   return (
-    <form className={cn('grid gap-3 py-4', className)} {...restProps}>
+    <form className={cn('flex flex-col gap-3 py-4', className)} {...restProps}>
       <FormContext.Provider value={contextValue}>
         {children}
       </FormContext.Provider>
@@ -45,7 +45,7 @@ export function FormItem(
   props: React.PropsWithChildren<{
     name: string;
     label?: React.ReactNode;
-    comp: 'textarea' | 'input-number' | 'switch' | 'slider';
+    comp: 'textarea' | 'input-number' | 'switch' | 'slider' | 'select';
     suffix?: React.ReactNode;
   }>,
 ) {
@@ -78,6 +78,15 @@ export function FormItem(
         value: value[name],
         onChange: (e: React.FormEvent<HTMLInputElement>) => {
           onChange({ [name]: e.currentTarget.valueAsNumber });
+        },
+      };
+    }
+    if (comp === 'select') {
+      return {
+        name,
+        value: value[name],
+        onChange: (v: any) => {
+          onChange({ [name]: v });
         },
       };
     }

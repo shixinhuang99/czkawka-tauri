@@ -6,13 +6,13 @@ interface InputNumberProps
   extends Omit<React.ComponentProps<typeof Input>, 'value'> {
   value?: number;
   minValue: number;
-  maxValue: number;
+  maxValue?: number;
 }
 
 export function InputNumber(props: InputNumberProps) {
   const {
     minValue,
-    maxValue,
+    maxValue = 2 ** 31 - 1,
     className,
     value,
     onChange = () => {},

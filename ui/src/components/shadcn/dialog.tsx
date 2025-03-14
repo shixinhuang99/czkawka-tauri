@@ -4,8 +4,6 @@ import * as React from 'react';
 import { cn } from '~/utils/cn';
 import { eventPreventDefault } from '~/utils/event';
 
-const Dialog = DialogPrimitive.Root;
-
 const DialogTrigger = DialogPrimitive.Trigger;
 
 const DialogPortal = DialogPrimitive.Portal;
@@ -114,6 +112,40 @@ const DialogDescription = React.forwardRef<
   />
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
+
+function findOpenedSelect(): boolean {
+  const dialog = document.body.querySelector('div[role="dialog"]');
+  if (!dialog) {
+    return false;
+  }
+  const selectButton = dialog.querySelector('button[role="combobox"]');
+  if (!selectButton) {
+    return false;
+  }
+  if (selectButton.getAttribute('data-state') === 'open') {
+    return true;
+  }
+  return false;
+}
+
+function Dialog(
+  props: React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root> & {
+    checkOpenedSelect?: boolean;
+  },
+) {
+  const { onOpenChange, checkOpenedSelect = true, ...restProps } = props;
+
+  const handleOpenChange = (v: boolean) => {
+    if (checkOpenedSelect && findOpenedSelect()) {
+      return;
+    }
+    onOpenChange?.(v);
+  };
+
+  return (
+    <DialogPrimitive.Root onOpenChange={handleOpenChange} {...restProps} />
+  );
+}
 
 export {
   Dialog,

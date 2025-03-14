@@ -1,18 +1,9 @@
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import {
-  CircleHelp,
-  FilePenLine,
-  FilePlus,
-  RotateCcw,
-  Settings as SettingsIcon,
-  Trash2,
-} from 'lucide-react';
+import { useAtom, useSetAtom } from 'jotai';
+import { CircleHelp, Settings } from 'lucide-react';
 import { useEffect } from 'react';
-import { currentPresetAtom, initPlatformSettingsAtom } from '~/atom/preset';
-import { platformSettingsAtom, presetsAtom } from '~/atom/primitive';
+import { initPlatformSettingsAtom } from '~/atom/preset';
 import { settingsAtom } from '~/atom/settings';
 import {
-  EditInput,
   InputNumber,
   Label,
   ScrollArea,
@@ -29,17 +20,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/shadcn/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '~/components/shadcn/select';
 import { Form, FormItem } from '~/components/simple-form';
-import { MAXIMUM_FILE_SIZE, getDefaultSettings } from '~/consts';
+import { MAXIMUM_FILE_SIZE } from '~/consts';
 import { useBoolean } from '~/hooks';
-import { emitter, eventPreventDefault } from '~/utils/event';
+import { eventPreventDefault } from '~/utils/event';
+import { PresetSelect } from './preset-select';
 
 export function SettingsButton() {
   const dialogOpen = useBoolean();
@@ -59,16 +44,14 @@ export function SettingsButton() {
         }
         dialogOpen.set(open);
       }}
+      checkOpenedSelect={false}
     >
       <DialogTrigger asChild>
         <TooltipButton tooltip="Settings">
-          <SettingsIcon />
+          <Settings />
         </TooltipButton>
       </DialogTrigger>
-      <DialogContent
-        className="max-w-[700px] outline-none"
-        onOpenAutoFocus={eventPreventDefault}
-      >
+      <DialogContent className="max-w-[700px] outline-none">
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>Application settings</DialogDescription>
@@ -79,171 +62,6 @@ export function SettingsButton() {
         </div>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function PresetSelect(props: {
-  onPreventDialogCloseChange: (open: boolean) => void;
-}) {
-  const { onPreventDialogCloseChange } = props;
-
-  const [presets, setPresets] = useAtom(presetsAtom);
-  const platformSettings = useAtomValue(platformSettingsAtom);
-  const [currentPreset, setCurrentPreset] = useAtom(currentPresetAtom);
-  const newPresetInputVisible = useBoolean();
-  const editPresetInputVisible = useBoolean();
-
-  const handlePresetSelect = (name: string) => {
-    setPresets(
-      presets.map((preset) => {
-        if (preset.name === name) {
-          return { ...preset, active: true };
-        }
-        return { ...preset, active: false };
-      }),
-    );
-  };
-
-  const handleAddOrEditPresetCancel = () => {
-    newPresetInputVisible.off();
-    editPresetInputVisible.off();
-    onPreventDialogCloseChange(false);
-  };
-
-  const handleAddPresetOk = (name: string) => {
-    setPresets([
-      ...presets.map((preset) => {
-        return { ...preset, active: false };
-      }),
-      {
-        name,
-        active: true,
-        changed: false,
-        settings: {
-          ...getDefaultSettings(),
-          ...platformSettings,
-          threadNumber: platformSettings.availableThreadNumber,
-        },
-      },
-    ]);
-    handleAddOrEditPresetCancel();
-  };
-
-  const handleNamingPresetValidate = (name: string) => {
-    if (presets.some((preset) => preset.name === name)) {
-      return `\`${name}\` already exists`;
-    }
-  };
-
-  const handleEditPresetNameOk = (name: string) => {
-    setCurrentPreset({ name });
-    handleAddOrEditPresetCancel();
-  };
-
-  const handlePresetRemove = () => {
-    const newPresets = presets.filter((preset) => !preset.active);
-    newPresets[0].active = true;
-    setPresets(newPresets);
-  };
-
-  const handleSettingsReset = () => {
-    setCurrentPreset({
-      settings: {
-        ...getDefaultSettings(),
-        ...platformSettings,
-        threadNumber: platformSettings.availableThreadNumber,
-      },
-    });
-    emitter.emit('reset-settings');
-  };
-
-  return (
-    <div className="flex items-center gap-1 pb-2 border-b">
-      <Label>Current preset:</Label>
-      {!(newPresetInputVisible.value || editPresetInputVisible.value) && (
-        <Select
-          value={currentPreset.name}
-          onValueChange={handlePresetSelect}
-          onOpenChange={onPreventDialogCloseChange}
-          name="presetSelect"
-        >
-          <SelectTrigger className="flex-1 dark:bg-black">
-            <SelectValue placeholder="Please select a preset" />
-          </SelectTrigger>
-          <SelectContent onCloseAutoFocus={eventPreventDefault}>
-            {presets.map((preset) => {
-              return (
-                <SelectItem
-                  className="hover:bg-accent hover:text-accent-foreground"
-                  key={preset.name}
-                  value={preset.name}
-                >
-                  {preset.name}
-                </SelectItem>
-              );
-            })}
-          </SelectContent>
-        </Select>
-      )}
-      {newPresetInputVisible.value && (
-        <EditInput
-          className="flex-1"
-          placeholder="New preset name"
-          name="newPresetName"
-          onOk={handleAddPresetOk}
-          onValidate={handleNamingPresetValidate}
-          onCancel={handleAddOrEditPresetCancel}
-        />
-      )}
-      {editPresetInputVisible.value && (
-        <EditInput
-          className="flex-1"
-          placeholder={currentPreset.name}
-          initValue={currentPreset.name}
-          name="editPresetName"
-          onOk={handleEditPresetNameOk}
-          onValidate={handleNamingPresetValidate}
-          onCancel={handleAddOrEditPresetCancel}
-          selectAllWhenMounted
-        />
-      )}
-      <span>
-        <TooltipButton
-          tooltip="Add preset"
-          onClick={() => {
-            newPresetInputVisible.on();
-            onPreventDialogCloseChange(true);
-          }}
-          disabled={editPresetInputVisible.value}
-        >
-          <FilePlus />
-        </TooltipButton>
-        <TooltipButton
-          tooltip="Edit name"
-          onClick={() => {
-            editPresetInputVisible.on();
-            onPreventDialogCloseChange(true);
-          }}
-          disabled={newPresetInputVisible.value}
-        >
-          <FilePenLine />
-        </TooltipButton>
-        <TooltipButton
-          tooltip="Remove preset"
-          onClick={handlePresetRemove}
-          disabled={
-            presets.length === 1 ||
-            newPresetInputVisible.value ||
-            editPresetInputVisible.value
-          }
-        >
-          <Trash2 />
-        </TooltipButton>
-        <TooltipButton tooltip="Reset settings" onClick={handleSettingsReset}>
-          <RotateCcw />
-        </TooltipButton>
-      </span>
-    </div>
   );
 }
 

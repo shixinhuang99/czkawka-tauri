@@ -16,13 +16,12 @@ import {
   progressAtom,
 } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
-import { Button } from '~/components';
-import type { ButtonProps } from '~/components/shadcn/button';
+import { OperationButton } from '~/components';
 import { Tools, getDefaultProgress } from '~/consts';
 import { ipc } from '~/ipc';
 import type { ProgressData, RawFileEntry, ScanCmd, ScanResult } from '~/types';
-import { cn } from '~/utils/cn';
 import { fmtDate, fmtFileSize, pathBaseName } from '~/utils/common';
+import { ToolSettings } from './tool-settings';
 
 const scanCmdMap: Record<string, ScanCmd> = {
   [Tools.DuplicateFiles]: 'scan_duplicate_files',
@@ -111,6 +110,7 @@ export function Operations() {
           Stop
         </OperationButton>
       )}
+      <ToolSettings />
       <OperationButton disabled={otherButtonsDisabled}>
         <SquareMousePointer />
         Select
@@ -128,22 +128,5 @@ export function Operations() {
         Save
       </OperationButton>
     </div>
-  );
-}
-
-function OperationButton(props: ButtonProps) {
-  const { children, className, ...restProps } = props;
-
-  return (
-    <Button
-      variant="secondary"
-      className={cn(
-        'hover:bg-primary hover:text-primary-foreground',
-        className,
-      )}
-      {...restProps}
-    >
-      {children}
-    </Button>
   );
 }
