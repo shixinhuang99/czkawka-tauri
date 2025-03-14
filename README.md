@@ -10,22 +10,22 @@ Since Cakawka became unusable halfway through, the functionality and UI/UX were 
 
 ## Current progress
 
-- [x] General settings
-- [] Select
-- [] Move
-- [] Delete
-- [] Save
+- ✅ General settings
+- 🚧 Select
+- 🚧 Move
+- 🚧 Delete
+- 🚧 Save
 
 Scan:
 
-- [] Duplicate Files
-- [] Empty Folders
-- [x] Big Files
-- [] Empty Files
-- [] Temporary Files
-- [] Similar Images
-- [] Similar Videos
-- [] Music Duplicates
-- [] Invalid Symlinks
-- [] Broken Files
-- [] Bad Extensions
+- 🚧 Duplicate Files
+- 🚧 Empty Folders
+- ✅ Big Files
+- 🚧 Empty Files
+- 🚧 Temporary Files
+- 🚧 Similar Images
+- 🚧 Similar Videos
+- 🚧 Music Duplicates
+- 🚧 Invalid Symlinks
+- 🚧 Broken Files
+- 🚧 Bad Extensions
