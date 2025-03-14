@@ -1,12 +1,12 @@
-# CzkawakTauri
+## CzkawakTauri
 
-## Another GUI of Czkawka built for macOS and Windows
+Another GUI of [Czkawka](https://github.com/qarmin/czkawka) built for macOS and Windows
 
 ![screenshot_1](./screenshots/1.png)
 
 A user interface developed with Tauri and React based on cakawka_core, targeting only Windows and macOS(Major) platforms
 
-Since Cakawka became unusable halfway through, the functionality and UI/UX were referenced from Krokiet
+Since Czkawka became unusable halfway through, the functionality and UI/UX were referenced from Krokiet
 
 ## Current progress
 
