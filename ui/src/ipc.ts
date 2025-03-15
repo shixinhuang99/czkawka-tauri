@@ -40,6 +40,7 @@ export function mockIPCForDev() {
           ],
           excludedItems: 'foo,bar,baz',
           availableThreadNumber: 8,
+          cacheDirPath: '',
         };
         return Promise.resolve(data);
       }

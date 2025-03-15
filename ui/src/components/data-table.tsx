@@ -1,6 +1,5 @@
 import {
   type ColumnDef,
-  type OnChangeFn,
   type RowSelectionState,
   type Table as TTable,
   flexRender,
@@ -31,7 +30,7 @@ interface DataTableProps<T> {
   layout?: 'grid' | 'resizeable';
   rowIdField: keyof T;
   rowSelection: RowSelectionState;
-  onRowSelectionChange: OnChangeFn<RowSelectionState>;
+  onRowSelectionChange: (v: RowSelectionState) => void;
 }
 
 export type RowSelection = RowSelectionState;
@@ -55,7 +54,13 @@ export function DataTable<T>(props: DataTableProps<T>) {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getRowId: (row) => row[rowIdField] as string,
-    onRowSelectionChange,
+    onRowSelectionChange: (updater) => {
+      if (typeof updater === 'function') {
+        onRowSelectionChange(updater(rowSelection));
+        return;
+      }
+      onRowSelectionChange(updater);
+    },
     state: {
       rowSelection,
     },
@@ -216,24 +221,30 @@ export function createColumns<T>(columns: ColumnDef<T>[]): ColumnDef<T>[] {
   return [
     {
       id: 'select',
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-          className="translate-y-[2px]"
-        />
-      ),
+      header: ({ table }) => {
+        return (
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && 'indeterminate')
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label="Select all"
+          />
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+            className="translate-y-[2px]"
+          />
+        );
+      },
       meta: {
         span: 1,
       },

@@ -105,7 +105,7 @@ export function BottomBar() {
 }
 
 function IncludedDirsTable() {
-  const settings = useAtomValue(settingsAtom);
+  const [settings, setSettings] = useAtom(settingsAtom);
   const [rowSelection, setRowSelection] = useAtom(includedDirsRowSelectionAtom);
   const data: TableData[] = useMemo(() => {
     return settings.includedDirectories.map((path) => {
@@ -116,13 +116,20 @@ function IncludedDirsTable() {
     });
   }, [settings]);
 
+  const handleRowSelectionChagne = (v: RowSelection) => {
+    setRowSelection(v);
+    setSettings((old) => {
+      return { ...old, includedDirectoriesReferenced: getRowSelectionKeys(v) };
+    });
+  };
+
   return (
     <div className="w-1/2 flex flex-col">
       <div className="flex justify-between items-center">
         <h3 className="text-center">Include Directories</h3>
         <DirsActions
           rowSelection={rowSelection}
-          onRowSelectionChange={setRowSelection}
+          onRowSelectionChange={handleRowSelectionChagne}
           field="includedDirectories"
         />
       </div>
@@ -134,7 +141,7 @@ function IncludedDirsTable() {
         layout="grid"
         rowIdField="path"
         rowSelection={rowSelection}
-        onRowSelectionChange={setRowSelection}
+        onRowSelectionChange={handleRowSelectionChagne}
       />
     </div>
   );

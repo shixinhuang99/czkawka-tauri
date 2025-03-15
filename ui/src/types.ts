@@ -12,7 +12,7 @@ export interface Preset {
 
 export interface Settings {
   includedDirectories: string[];
-  // includedDirectoriesReferenced: string[];
+  includedDirectoriesReferenced: string[];
   excludedDirectories: string[];
   excludedItems: string;
   allowedExtensions: string;
@@ -31,6 +31,9 @@ export interface Settings {
   duplicateMinimalHashCacheSize: number;
   duplicateMinimalPrehashCacheSize: number;
   duplicateDeleteOutdatedEntries: boolean;
+  duplicatesSubCheckMethod: string;
+  duplicatesSubAvailableHashType: string;
+  duplicatesSubNameCaseSensitive: boolean;
 
   similarImagesHideHardLinks: boolean;
   similarImagesShowImagePreview: boolean;
@@ -40,10 +43,6 @@ export interface Settings {
   similarImagesSubResizeAlgorithm: string;
   similarImagesSubIgnoreSameSize: boolean;
   similarImagesSubSimilarity: number;
-
-  duplicatesSubCheckMethod: string;
-  duplicatesSubAvailableHashType: string;
-  duplicatesSubNameCaseSensitive: boolean;
 
   biggestFilesSubMethod: string;
   biggestFilesSubNumberOfFiles: number;
@@ -123,8 +122,32 @@ export interface FileEntry {
   modifiedDate: string;
 }
 
-export interface ScanResult<T> {
-  cmd: ScanCmd;
-  list: T[];
-  message: string;
+export interface RawDuplicateEntry {
+  path: string;
+  modified_date: number;
+  size: number;
+  hash: string;
 }
+
+export interface DuplicateEntry {
+  size: string;
+  fileName: string;
+  path: string;
+  modifiedDate: string;
+  hash: string;
+  isRef: boolean;
+  hidden: boolean;
+  raw: RawDuplicateEntry;
+}
+
+export type ScanResult =
+  | {
+      cmd: 'scan_duplicate_files';
+      list: [[RawDuplicateEntry | null, RawDuplicateEntry[]]];
+      message: string;
+    }
+  | {
+      cmd: 'scan_big_files';
+      list: RawFileEntry[];
+      message: string;
+    };

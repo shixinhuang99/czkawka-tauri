@@ -3,6 +3,7 @@ import { currentToolAtom, progressAtom } from '~/atom/primitive';
 import { Progress } from '~/components';
 import { Tools } from '~/consts';
 import { BigFiles } from './big-files';
+import { DuplicateFiles } from './duplicate-files';
 
 export function AppBody() {
   const progress = useAtomValue(progressAtom);
@@ -39,6 +40,10 @@ export function AppBody() {
 function AllTable() {
   const currentTool = useAtomValue(currentToolAtom);
 
+  if (currentTool === Tools.DuplicateFiles) {
+    return <DuplicateFiles />;
+  }
+
   if (currentTool === Tools.BigFiles) {
     return <BigFiles />;
   }
@@ -56,7 +61,7 @@ function ProgressWrap(props: { label: string; value: number }) {
   return (
     <div className="flex items-center">
       <div className="shrink-0 w-28">{label}</div>
-      <Progress value={value / 100} />
+      <Progress value={value} />
       <div className="w-12 shrink-0 text-right">{value}%</div>
     </div>
   );

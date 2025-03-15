@@ -6,6 +6,8 @@ import {
   bigFilesAtom,
   bigFilesRowSelectionAtom,
   currentToolAtom,
+  duplicateFilesAtom,
+  duplicateFilesRowSelectionAtom,
   logsAtom,
   progressAtom,
 } from '~/atom/primitive';
@@ -13,8 +15,8 @@ import { settingsAtom } from '~/atom/settings';
 import { OperationButton } from '~/components';
 import { Tools, getDefaultProgress } from '~/consts';
 import { ipc } from '~/ipc';
-import type { ProgressData, RawFileEntry, ScanCmd, ScanResult } from '~/types';
-import { fmtDate, fmtFileSize, pathBaseName } from '~/utils/common';
+import type { ProgressData, ScanCmd, ScanResult } from '~/types';
+import { convertDuplicateEntries, convertFileEntries } from '~/utils/common';
 
 const scanCmdMap: Record<string, ScanCmd> = {
   [Tools.DuplicateFiles]: 'scan_duplicate_files',
@@ -37,22 +39,21 @@ export function ScanButton() {
   const setLogs = useSetAtom(logsAtom);
   const setBigFiles = useSetAtom(bigFilesAtom);
   const setBigFilesRowSelection = useSetAtom(bigFilesRowSelectionAtom);
+  const setDuplicateFiles = useSetAtom(duplicateFilesAtom);
+  const setDuplicateFilesRowSelection = useSetAtom(
+    duplicateFilesRowSelectionAtom,
+  );
 
   useEffect(() => {
-    listen<ScanResult<RawFileEntry>>('scan-result', (e) => {
+    listen<ScanResult>('scan-result', (e) => {
       setProgress(getDefaultProgress());
-      setLogs(e.payload.message);
-      if (e.payload.cmd === 'scan_big_files') {
-        setBigFiles(
-          e.payload.list.map((fe) => {
-            return {
-              size: fmtFileSize(fe.size),
-              fileName: pathBaseName(fe.path),
-              path: fe.path,
-              modifiedDate: fmtDate(fe.modified_date),
-            };
-          }),
-        );
+      const { cmd, message, list } = e.payload;
+      setLogs(message);
+      if (cmd === 'scan_duplicate_files') {
+        setDuplicateFiles(convertDuplicateEntries(list));
+        setDuplicateFilesRowSelection({});
+      } else if (cmd === 'scan_big_files') {
+        setBigFiles(convertFileEntries(list));
         setBigFilesRowSelection({});
       }
     });

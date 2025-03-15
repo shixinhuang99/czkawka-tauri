@@ -1,6 +1,11 @@
 import { useAtomValue } from 'jotai';
 import { FolderLock, FolderSymlink, Trash2 } from 'lucide-react';
-import { bigFilesAtom, currentToolAtom, progressAtom } from '~/atom/primitive';
+import {
+  bigFilesAtom,
+  currentToolAtom,
+  duplicateFilesAtom,
+  progressAtom,
+} from '~/atom/primitive';
 import { OperationButton } from '~/components';
 import { Tools } from '~/consts';
 import { RowSelectionMenu } from './row-selection-menu';
@@ -11,10 +16,13 @@ export function Operations() {
   const currentTool = useAtomValue(currentToolAtom);
   const progress = useAtomValue(progressAtom);
   const bigFiles = useAtomValue(bigFilesAtom);
+  const duplicateFiles = useAtomValue(duplicateFilesAtom);
 
   const disabled = (() => {
     let base = !!progress.tool;
-    if (currentTool === Tools.BigFiles) {
+    if (currentTool === Tools.DuplicateFiles) {
+      base ||= !duplicateFiles.length;
+    } else if (currentTool === Tools.BigFiles) {
       base ||= !bigFiles.length;
     }
     return base;

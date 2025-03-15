@@ -4,7 +4,7 @@ import { currentToolAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import { OperationButton } from '~/components';
 import { InputNumber } from '~/components';
-import { Select } from '~/components';
+import { Select, Switch } from '~/components';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,12 @@ import {
   DialogTrigger,
 } from '~/components/shadcn/dialog';
 import { Form, FormItem } from '~/components/simple-form';
-import { BigFilesSearchMode, Tools } from '~/consts';
+import {
+  BigFilesSearchMode,
+  DuplicatesAvailableHashType,
+  DuplicatesCheckMethod,
+  Tools,
+} from '~/consts';
 import { useBoolean } from '~/hooks';
 
 const descMap: Record<string, string> = {
@@ -66,9 +71,57 @@ export function ToolSettings() {
 function AllSettings(props: { currentTool: string }) {
   const { currentTool } = props;
 
+  if (currentTool === Tools.DuplicateFiles) {
+    return <DuplicateFilesSettings />;
+  }
+
   if (currentTool === Tools.BigFiles) {
     return <BigFilesSettings />;
   }
+}
+
+function DuplicateFilesSettings() {
+  return (
+    <>
+      <FormItem
+        name="duplicatesSubCheckMethod"
+        label="Check method"
+        comp="select"
+      >
+        <Select
+          options={[
+            { label: 'Hash', value: DuplicatesCheckMethod.Hash },
+            { label: 'Name', value: DuplicatesCheckMethod.Name },
+            { label: 'Size', value: DuplicatesCheckMethod.Size },
+            {
+              label: 'Size and name',
+              value: DuplicatesCheckMethod.SizeAndName,
+            },
+          ]}
+        />
+      </FormItem>
+      <FormItem
+        name="duplicatesSubAvailableHashType"
+        label="Hash type"
+        comp="select"
+      >
+        <Select
+          options={[
+            { label: 'Blake3', value: DuplicatesAvailableHashType.Blake3 },
+            { label: 'CRC32', value: DuplicatesAvailableHashType.CRC32 },
+            { label: 'XXH3', value: DuplicatesAvailableHashType.XXH3 },
+          ]}
+        />
+      </FormItem>
+      <FormItem
+        name="duplicatesSubNameCaseSensitive"
+        label="Case sensitive(only name modes)"
+        comp="switch"
+      >
+        <Switch />
+      </FormItem>
+    </>
+  );
 }
 
 function BigFilesSettings() {

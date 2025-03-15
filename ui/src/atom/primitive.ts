@@ -8,6 +8,7 @@ import {
   getDefaultProgress,
 } from '~/consts';
 import type {
+  DuplicateEntry,
   FileEntry,
   PlatformSettings,
   Preset,
@@ -49,3 +50,7 @@ export const progressAtom = atom<Progress>(getDefaultProgress());
 export const bigFilesAtom = atom<FileEntry[]>([]);
 
 export const bigFilesRowSelectionAtom = atom<RowSelection>({});
+
+export const duplicateFilesAtom = atom<DuplicateEntry[]>([]);
+
+export const duplicateFilesRowSelectionAtom = atom<RowSelection>({});

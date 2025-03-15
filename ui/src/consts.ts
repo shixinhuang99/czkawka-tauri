@@ -62,6 +62,7 @@ export const SimilarMusicAudioCheckType = {
 export function getDefaultSettings(): Settings {
   return {
     includedDirectories: [],
+    includedDirectoriesReferenced: [],
     excludedDirectories: [],
     excludedItems: '',
     allowedExtensions: '',
@@ -80,6 +81,9 @@ export function getDefaultSettings(): Settings {
     duplicateMinimalHashCacheSize: 256,
     duplicateMinimalPrehashCacheSize: 256,
     duplicateDeleteOutdatedEntries: true,
+    duplicatesSubCheckMethod: DuplicatesCheckMethod.Hash,
+    duplicatesSubAvailableHashType: DuplicatesAvailableHashType.Blake3,
+    duplicatesSubNameCaseSensitive: false,
 
     similarImagesHideHardLinks: true,
     similarImagesShowImagePreview: true,
@@ -89,10 +93,6 @@ export function getDefaultSettings(): Settings {
     similarImagesSubResizeAlgorithm: SimilarImagesResizeAlgorithm.Lanczos3,
     similarImagesSubIgnoreSameSize: false,
     similarImagesSubSimilarity: 10,
-
-    duplicatesSubCheckMethod: DuplicatesCheckMethod.Hash,
-    duplicatesSubAvailableHashType: DuplicatesAvailableHashType.Blake3,
-    duplicatesSubNameCaseSensitive: false,
 
     biggestFilesSubMethod: BigFilesSearchMode.BiggestFiles,
     biggestFilesSubNumberOfFiles: 50,

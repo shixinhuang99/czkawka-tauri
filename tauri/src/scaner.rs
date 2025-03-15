@@ -16,12 +16,17 @@ pub fn apply_scaner_settings<T: CommonData>(
 	scaner: &mut T,
 	settings: Settings,
 ) {
+	let all_referenced = settings.included_directories.len()
+		== settings.included_directories_referenced.len();
+
 	scaner.set_included_directory(convert_strs_to_path_bufs(
 		settings.included_directories,
 	));
-
-	// todo: included_directories_referenced
-
+	if !all_referenced {
+		scaner.set_reference_directory(convert_strs_to_path_bufs(
+			settings.included_directories_referenced,
+		));
+	}
 	scaner.set_excluded_directory(convert_strs_to_path_bufs(
 		settings.excluded_directories,
 	));

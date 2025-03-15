@@ -118,14 +118,10 @@ function findOpenedSelect(): boolean {
   if (!dialog) {
     return false;
   }
-  const selectButton = dialog.querySelector('button[role="combobox"]');
-  if (!selectButton) {
-    return false;
-  }
-  if (selectButton.getAttribute('data-state') === 'open') {
-    return true;
-  }
-  return false;
+  const selectButtons = dialog.querySelectorAll('button[role="combobox"]');
+  return Array.from(selectButtons).some((btn) => {
+    return btn.getAttribute('data-state') === 'open';
+  });
 }
 
 function Dialog(
