@@ -1,4 +1,4 @@
-## CzkawakTauri
+## CzkawkaTauri
 
 Another GUI of [Czkawka](https://github.com/qarmin/czkawka) built for macOS and Windows
 
@@ -6,7 +6,7 @@ Another GUI of [Czkawka](https://github.com/qarmin/czkawka) built for macOS and 
 
 A user interface developed with Tauri and React based on cakawka_core, targeting only Windows and macOS(Major) platforms
 
-Since Czkawka became unusable halfway through, the functionality and UI/UX were referenced from Krokiet
+Because the Czkawka on my computer can't be used halfway, the functionality and UI/UX were referenced from Krokiet
 
 ## Current progress
 
@@ -18,7 +18,7 @@ Since Czkawka became unusable halfway through, the functionality and UI/UX were 
 
 Scan:
 
-- 🚧 Duplicate Files
+- ✅ Duplicate Files
 - 🚧 Empty Folders
 - ✅ Big Files
 - 🚧 Empty Files
