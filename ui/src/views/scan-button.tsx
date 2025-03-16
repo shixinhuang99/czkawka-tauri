@@ -8,6 +8,8 @@ import {
   currentToolAtom,
   duplicateFilesAtom,
   duplicateFilesRowSelectionAtom,
+  emptyFoldersAtom,
+  emptyFoldersRowSelectionAtom,
   logsAtom,
   progressAtom,
 } from '~/atom/primitive';
@@ -16,7 +18,11 @@ import { OperationButton } from '~/components';
 import { Tools, getDefaultProgress } from '~/consts';
 import { ipc } from '~/ipc';
 import type { ProgressData, ScanCmd, ScanResult } from '~/types';
-import { convertDuplicateEntries, convertFileEntries } from '~/utils/common';
+import {
+  convertDuplicateEntries,
+  convertFileEntries,
+  convertFolderEntries,
+} from '~/utils/common';
 
 const scanCmdMap: Record<string, ScanCmd> = {
   [Tools.DuplicateFiles]: 'scan_duplicate_files',
@@ -37,12 +43,14 @@ export function ScanButton() {
   const settings = useAtomValue(settingsAtom);
   const [progress, setProgress] = useAtom(progressAtom);
   const setLogs = useSetAtom(logsAtom);
-  const setBigFiles = useSetAtom(bigFilesAtom);
-  const setBigFilesRowSelection = useSetAtom(bigFilesRowSelectionAtom);
   const setDuplicateFiles = useSetAtom(duplicateFilesAtom);
   const setDuplicateFilesRowSelection = useSetAtom(
     duplicateFilesRowSelectionAtom,
   );
+  const setEmptyFolders = useSetAtom(emptyFoldersAtom);
+  const setEmptyFoldersRowSelection = useSetAtom(emptyFoldersRowSelectionAtom);
+  const setBigFiles = useSetAtom(bigFilesAtom);
+  const setBigFilesRowSelection = useSetAtom(bigFilesRowSelectionAtom);
 
   useEffect(() => {
     listen<ScanResult>('scan-result', (e) => {
@@ -52,6 +60,9 @@ export function ScanButton() {
       if (cmd === 'scan_duplicate_files') {
         setDuplicateFiles(convertDuplicateEntries(list));
         setDuplicateFilesRowSelection({});
+      } else if (cmd === 'scan_empty_folders') {
+        setEmptyFolders(convertFolderEntries(list));
+        setEmptyFoldersRowSelection({});
       } else if (cmd === 'scan_big_files') {
         setBigFiles(convertFileEntries(list));
         setBigFilesRowSelection({});

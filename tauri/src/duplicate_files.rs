@@ -58,6 +58,7 @@ pub fn scan_duplicate_files(app: AppHandle, settings: Settings) {
 
 		let mut message = scaner.get_text_messages().create_messages_text();
 		let mut list;
+
 		if scaner.get_use_reference() {
 			match scaner.get_params().check_method {
 				CheckingMethod::Hash => {

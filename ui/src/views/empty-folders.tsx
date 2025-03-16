@@ -1,29 +1,26 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { bigFilesAtom, bigFilesRowSelectionAtom } from '~/atom/primitive';
+import {
+  emptyFoldersAtom,
+  emptyFoldersRowSelectionAtom,
+} from '~/atom/primitive';
 import {
   DataTable,
   createActionsColumn,
   createColumns,
 } from '~/components/data-table';
-import type { FileEntry } from '~/types';
+import type { FolderEntry } from '~/types';
 
-const columns = createColumns<FileEntry>([
+const columns = createColumns<FolderEntry>([
   {
-    accessorKey: 'size',
-    header: 'Size',
-    size: 110,
-    minSize: 50,
-  },
-  {
-    accessorKey: 'fileName',
-    header: 'File name',
+    accessorKey: 'folderName',
+    header: 'Folder name',
     size: 180,
     minSize: 100,
   },
   {
     accessorKey: 'path',
     header: 'Path',
-    size: 320,
+    size: 430,
     minSize: 100,
   },
   {
@@ -35,9 +32,9 @@ const columns = createColumns<FileEntry>([
   createActionsColumn(),
 ]);
 
-export function BigFiles() {
-  const data = useAtomValue(bigFilesAtom);
-  const [rowSelection, setRowSelection] = useAtom(bigFilesRowSelectionAtom);
+export function EmptyFolders() {
+  const data = useAtomValue(emptyFoldersAtom);
+  const [rowSelection, setRowSelection] = useAtom(emptyFoldersRowSelectionAtom);
 
   return (
     <DataTable

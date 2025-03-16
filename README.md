@@ -19,7 +19,7 @@ Because the Czkawka on my computer can't be used halfway, the functionality and 
 Scan:
 
 - ✅ Duplicate Files
-- 🚧 Empty Folders
+- ✅ Empty Folders
 - ✅ Big Files
 - 🚧 Empty Files
 - 🚧 Temporary Files

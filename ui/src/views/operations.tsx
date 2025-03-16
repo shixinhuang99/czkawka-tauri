@@ -4,6 +4,7 @@ import {
   bigFilesAtom,
   currentToolAtom,
   duplicateFilesAtom,
+  emptyFoldersAtom,
   progressAtom,
 } from '~/atom/primitive';
 import { OperationButton } from '~/components';
@@ -17,11 +18,14 @@ export function Operations() {
   const progress = useAtomValue(progressAtom);
   const bigFiles = useAtomValue(bigFilesAtom);
   const duplicateFiles = useAtomValue(duplicateFilesAtom);
+  const emptyFolders = useAtomValue(emptyFoldersAtom);
 
   const disabled = (() => {
     let base = !!progress.tool;
     if (currentTool === Tools.DuplicateFiles) {
       base ||= !duplicateFiles.length;
+    } else if (currentTool === Tools.EmptyFolders) {
+      base ||= !emptyFolders.length;
     } else if (currentTool === Tools.BigFiles) {
       base ||= !bigFiles.length;
     }

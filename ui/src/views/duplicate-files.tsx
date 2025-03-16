@@ -80,15 +80,15 @@ const columns: ColumnDef<DuplicateEntry>[] = [
 ];
 
 export function DuplicateFiles() {
+  const data = useAtomValue(duplicateFilesAtom);
   const [rowSelection, setRowSelection] = useAtom(
     duplicateFilesRowSelectionAtom,
   );
-  const duplicateFiles = useAtomValue(duplicateFilesAtom);
 
   return (
     <DataTable
       className="flex-1 rounded-none border-none grow"
-      data={duplicateFiles}
+      data={data}
       columns={columns}
       rowIdField="path"
       rowSelection={rowSelection}

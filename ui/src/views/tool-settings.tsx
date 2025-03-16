@@ -24,7 +24,6 @@ import { useBoolean } from '~/hooks';
 
 const descMap: Record<string, string> = {
   [Tools.DuplicateFiles]: 'Duplicate files settings',
-  [Tools.EmptyFolders]: 'Empty folders settings',
   [Tools.BigFiles]: 'Big files settings',
   [Tools.EmptyFiles]: 'Empty files settings',
   [Tools.TemporaryFiles]: 'Temporary files settings',
@@ -40,6 +39,10 @@ export function ToolSettings() {
   const currentTool = useAtomValue(currentToolAtom);
   const [settings, setSettings] = useAtom(settingsAtom);
   const dialogOpen = useBoolean();
+
+  if (currentTool === Tools.EmptyFolders) {
+    return null;
+  }
 
   const desc = descMap[currentTool];
 
@@ -78,6 +81,8 @@ function AllSettings(props: { currentTool: string }) {
   if (currentTool === Tools.BigFiles) {
     return <BigFilesSettings />;
   }
+
+  return null;
 }
 
 function DuplicateFilesSettings() {

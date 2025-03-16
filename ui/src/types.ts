@@ -140,10 +140,26 @@ export interface DuplicateEntry {
   raw: RawDuplicateEntry;
 }
 
+export interface RawFolderEntry {
+  path: string;
+  modified_date: number;
+}
+
+export interface FolderEntry {
+  folderName: string;
+  path: string;
+  modifiedDate: string;
+}
+
 export type ScanResult =
   | {
       cmd: 'scan_duplicate_files';
       list: [[RawDuplicateEntry | null, RawDuplicateEntry[]]];
+      message: string;
+    }
+  | {
+      cmd: 'scan_empty_folders';
+      list: RawFolderEntry[];
       message: string;
     }
   | {

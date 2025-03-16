@@ -4,6 +4,7 @@ import { Progress } from '~/components';
 import { Tools } from '~/consts';
 import { BigFiles } from './big-files';
 import { DuplicateFiles } from './duplicate-files';
+import { EmptyFolders } from './empty-folders';
 
 export function AppBody() {
   const progress = useAtomValue(progressAtom);
@@ -37,20 +38,6 @@ export function AppBody() {
   );
 }
 
-function AllTable() {
-  const currentTool = useAtomValue(currentToolAtom);
-
-  if (currentTool === Tools.DuplicateFiles) {
-    return <DuplicateFiles />;
-  }
-
-  if (currentTool === Tools.BigFiles) {
-    return <BigFiles />;
-  }
-
-  return <div>todo</div>;
-}
-
 function ProgressWrap(props: { label: string; value: number }) {
   const { label, value } = props;
 
@@ -65,4 +52,22 @@ function ProgressWrap(props: { label: string; value: number }) {
       <div className="w-12 shrink-0 text-right">{value}%</div>
     </div>
   );
+}
+
+function AllTable() {
+  const currentTool = useAtomValue(currentToolAtom);
+
+  if (currentTool === Tools.DuplicateFiles) {
+    return <DuplicateFiles />;
+  }
+
+  if (currentTool === Tools.EmptyFolders) {
+    return <EmptyFolders />;
+  }
+
+  if (currentTool === Tools.BigFiles) {
+    return <BigFiles />;
+  }
+
+  return <div>Unknown tool</div>;
 }

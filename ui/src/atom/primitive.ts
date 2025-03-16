@@ -10,6 +10,7 @@ import {
 import type {
   DuplicateEntry,
   FileEntry,
+  FolderEntry,
   PlatformSettings,
   Preset,
   Progress,
@@ -47,10 +48,14 @@ export const logsAtom = atom<string>('');
 
 export const progressAtom = atom<Progress>(getDefaultProgress());
 
-export const bigFilesAtom = atom<FileEntry[]>([]);
-
-export const bigFilesRowSelectionAtom = atom<RowSelection>({});
-
 export const duplicateFilesAtom = atom<DuplicateEntry[]>([]);
 
 export const duplicateFilesRowSelectionAtom = atom<RowSelection>({});
+
+export const emptyFoldersAtom = atom<FolderEntry[]>([]);
+
+export const emptyFoldersRowSelectionAtom = atom<RowSelection>({});
+
+export const bigFilesAtom = atom<FileEntry[]>([]);
+
+export const bigFilesRowSelectionAtom = atom<RowSelection>({});

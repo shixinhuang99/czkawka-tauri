@@ -2,6 +2,7 @@
 
 mod big_files;
 mod duplicate_files;
+mod empty_folders;
 mod image;
 mod progress;
 mod scaner;
@@ -32,9 +33,10 @@ fn main() {
 			setup_number_of_threads,
 			stop_scan,
 			listen_scan_progress,
-			scan_big_files,
-			scan_duplicate_files,
 			read_image,
+			scan_duplicate_files,
+			scan_empty_folders,
+			scan_big_files,
 		])
 		.plugin(tauri_plugin_opener::init())
 		.plugin(tauri_plugin_dialog::init())
@@ -103,4 +105,9 @@ fn scan_big_files(app: AppHandle, settings: Settings) {
 #[tauri::command]
 fn scan_duplicate_files(app: AppHandle, settings: Settings) {
 	duplicate_files::scan_duplicate_files(app, settings);
+}
+
+#[tauri::command]
+fn scan_empty_folders(app: AppHandle, settings: Settings) {
+	empty_folders::scan_empty_folders(app, settings);
 }

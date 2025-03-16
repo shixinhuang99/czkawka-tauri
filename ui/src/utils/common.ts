@@ -4,8 +4,10 @@ import type { RowSelection } from '~/components/data-table';
 import type {
   DuplicateEntry,
   FileEntry,
+  FolderEntry,
   RawDuplicateEntry,
   RawFileEntry,
+  RawFolderEntry,
 } from '~/types';
 
 export function splitStr(s: string): string[] {
@@ -49,17 +51,6 @@ export function isImage(fileName: string): boolean {
   ];
   const ext = fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase();
   return imageExtensions.includes(ext);
-}
-
-export function convertFileEntries(list: RawFileEntry[]): FileEntry[] {
-  return list.map((item) => {
-    return {
-      size: fmtFileSize(item.size),
-      fileName: pathBaseName(item.path),
-      path: item.path,
-      modifiedDate: fmtDate(item.modified_date),
-    };
-  });
 }
 
 function convertDuplicateEntry(
@@ -120,5 +111,26 @@ export function convertDuplicateEntries(
       id += 1;
     }
     return convertedFiles;
+  });
+}
+
+export function convertFolderEntries(list: RawFolderEntry[]): FolderEntry[] {
+  return list.map((item) => {
+    return {
+      folderName: pathBaseName(item.path),
+      path: item.path,
+      modifiedDate: fmtDate(item.modified_date),
+    };
+  });
+}
+
+export function convertFileEntries(list: RawFileEntry[]): FileEntry[] {
+  return list.map((item) => {
+    return {
+      size: fmtFileSize(item.size),
+      fileName: pathBaseName(item.path),
+      path: item.path,
+      modifiedDate: fmtDate(item.modified_date),
+    };
   });
 }
