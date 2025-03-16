@@ -66,11 +66,11 @@ const columns = createColumns<TableData>([
   },
   {
     id: 'actions',
-    cell: ({ row, table }) => {
-      return <DirsRemoveButton {...row.original} table={table} />;
-    },
     meta: {
       span: 1,
+    },
+    cell: ({ row, table }) => {
+      return <DirsRemoveButton {...row.original} table={table} />;
     },
   },
 ]);

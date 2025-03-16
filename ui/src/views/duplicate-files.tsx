@@ -1,48 +1,37 @@
-import type { ColumnDef } from '@tanstack/react-table';
-import { revealItemInDir } from '@tauri-apps/plugin-opener';
+import type { ColumnDef, Row } from '@tanstack/react-table';
 import { useAtom, useAtomValue } from 'jotai';
-import { FolderOpen } from 'lucide-react';
 import {
   duplicateFilesAtom,
   duplicateFilesRowSelectionAtom,
 } from '~/atom/primitive';
-import { Checkbox, TooltipButton } from '~/components';
-import { DataTable } from '~/components/data-table';
+import { settingsAtom } from '~/atom/settings';
+import {
+  DataTable,
+  TableActions,
+  TableRowSelectionCell,
+  TableRowSelectionHeader,
+} from '~/components/data-table';
 import type { DuplicateEntry } from '~/types';
+import { isImage } from '~/utils/common';
+import { ImagePreview } from './image-preview';
 
 const columns: ColumnDef<DuplicateEntry>[] = [
   {
     id: 'select',
-    header: ({ table }) => {
-      return (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      );
-    },
-    cell: ({ row }) => {
-      if (row.original.isRef) {
-        return null;
-      }
-      return (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-          className="translate-y-[2px]"
-        />
-      );
-    },
     meta: {
       span: 1,
     },
     size: 40,
     minSize: 40,
+    header: ({ table }) => {
+      return <TableRowSelectionHeader table={table} />;
+    },
+    cell: ({ row }) => {
+      if (row.original.isRef) {
+        return null;
+      }
+      return <TableRowSelectionCell row={row} />;
+    },
   },
   {
     accessorKey: 'size',
@@ -55,18 +44,21 @@ const columns: ColumnDef<DuplicateEntry>[] = [
     header: 'File name',
     size: 180,
     minSize: 100,
+    cell: ({ row }) => {
+      return <FileName row={row} />;
+    },
   },
   {
     accessorKey: 'path',
     header: 'Path',
+    size: 320,
+    minSize: 100,
     cell: ({ row }) => {
       if (row.original.hidden) {
         return null;
       }
       return row.original.path;
     },
-    size: 320,
-    minSize: 100,
   },
   {
     accessorKey: 'modifiedDate',
@@ -76,21 +68,14 @@ const columns: ColumnDef<DuplicateEntry>[] = [
   },
   {
     id: 'actions',
+    size: 50,
+    minSize: 50,
     cell: ({ cell }) => {
       if (cell.row.original.isRef) {
         return null;
       }
-      return (
-        <TooltipButton
-          tooltip={`Reveal in ${PLATFORM === 'darwin' ? 'Finder' : 'File Explorer'}`}
-          onClick={() => revealItemInDir(cell.row.original.path)}
-        >
-          <FolderOpen />
-        </TooltipButton>
-      );
+      return <TableActions path={cell.row.original.path} />;
     },
-    size: 50,
-    minSize: 50,
   },
 ];
 
@@ -110,4 +95,25 @@ export function DuplicateFiles() {
       onRowSelectionChange={setRowSelection}
     />
   );
+}
+
+function FileName(props: { row: Row<DuplicateEntry> }) {
+  const { row } = props;
+  const { hidden, path, fileName } = row.original;
+
+  const settings = useAtomValue(settingsAtom);
+
+  if (hidden) {
+    return null;
+  }
+
+  if (settings.duplicateImagePreview && isImage(fileName)) {
+    return (
+      <ImagePreview path={path}>
+        <div className="truncate">{fileName}</div>
+      </ImagePreview>
+    );
+  }
+
+  return fileName;
 }

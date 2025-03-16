@@ -982,10 +982,12 @@ dependencies = [
 name = "czkawka-tauri"
 version = "0.1.0"
 dependencies = [
+ "base64 0.22.1",
  "crossbeam-channel",
  "czkawka_core",
  "directories-next",
  "home",
+ "infer 0.19.0",
  "rayon",
  "serde",
  "serde_json",

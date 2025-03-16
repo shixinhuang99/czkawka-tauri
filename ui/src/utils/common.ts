@@ -35,6 +35,22 @@ function fmtDate(v: number): string {
   return format(v * 1000, 'yyyy/MM/dd HH:mm:ss');
 }
 
+export function isImage(fileName: string): boolean {
+  const imageExtensions = [
+    'bmp',
+    'gif',
+    'icns',
+    'ico',
+    'jpeg',
+    'jpg',
+    'svg',
+    'png',
+    'webp',
+  ];
+  const ext = fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase();
+  return imageExtensions.includes(ext);
+}
+
 export function convertFileEntries(list: RawFileEntry[]): FileEntry[] {
   return list.map((item) => {
     return {

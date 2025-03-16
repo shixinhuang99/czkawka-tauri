@@ -151,3 +151,8 @@ export type ScanResult =
       list: RawFileEntry[];
       message: string;
     };
+
+export interface ImageInfo {
+  base64: string;
+  mimeType: string;
+}

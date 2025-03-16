@@ -761,6 +761,11 @@ body {
   height: 2.5rem;
 }
 
+.size-24 {
+  width: 6rem;
+  height: 6rem;
+}
+
 .size-6 {
   width: 1.5rem;
   height: 1.5rem;
@@ -825,6 +830,10 @@ body {
 
 .h-\[250px\] {
   height: 250px;
+}
+
+.h-\[450px\] {
+  height: 450px;
 }
 
 .h-\[550px\] {
@@ -895,6 +904,10 @@ body {
   width: 1rem;
 }
 
+.w-64 {
+  width: 16rem;
+}
+
 .w-9 {
   width: 2.25rem;
 }
@@ -905,6 +918,10 @@ body {
 
 .w-\[200px\] {
   width: 200px;
+}
+
+.w-\[500px\] {
+  width: 500px;
 }
 
 .w-full {
@@ -1139,10 +1156,6 @@ body {
   border-radius: 0.75rem;
 }
 
-.rounded-3xl {
-  border-radius: 1.5rem;
-}
-
 .border {
   border-width: 1px;
 }
@@ -1268,8 +1281,21 @@ body {
   fill: #ef4444;
 }
 
+.object-contain {
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+
+.p-0 {
+  padding: 0px;
+}
+
 .p-1 {
   padding: 0.25rem;
+}
+
+.p-4 {
+  padding: 1rem;
 }
 
 .p-6 {

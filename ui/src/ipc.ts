@@ -1,6 +1,6 @@
 import { invoke, isTauri } from '@tauri-apps/api/core';
 import { mockIPC } from '@tauri-apps/api/mocks';
-import type { PlatformSettings, ScanCmd, Settings } from '~/types';
+import type { ImageInfo, PlatformSettings, ScanCmd, Settings } from '~/types';
 
 export const ipc = {
   getPlatformSettings(): Promise<PlatformSettings> {
@@ -21,6 +21,10 @@ export const ipc = {
 
   stopScan() {
     return invoke('stop_scan');
+  },
+
+  readImage(path: string): Promise<ImageInfo> {
+    return invoke('read_image', { path });
   },
 };
 

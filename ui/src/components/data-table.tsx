@@ -1,5 +1,6 @@
 import {
   type ColumnDef,
+  type Row,
   type RowSelectionState,
   type Table as TTable,
   flexRender,
@@ -217,42 +218,69 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
   );
 }
 
+export function TableRowSelectionHeader<T>(props: { table: TTable<T> }) {
+  'use no memo';
+
+  const { table } = props;
+
+  return (
+    <Checkbox
+      checked={
+        table.getIsAllPageRowsSelected() ||
+        (table.getIsSomePageRowsSelected() && 'indeterminate')
+      }
+      onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+      aria-label="Select all"
+    />
+  );
+}
+
+export function TableRowSelectionCell<T>(props: { row: Row<T> }) {
+  'use no memo';
+
+  const { row } = props;
+
+  return (
+    <Checkbox
+      checked={row.getIsSelected()}
+      onCheckedChange={(value) => row.toggleSelected(!!value)}
+      aria-label="Select row"
+      className="translate-y-[2px]"
+    />
+  );
+}
+
 export function createColumns<T>(columns: ColumnDef<T>[]): ColumnDef<T>[] {
   return [
     {
       id: 'select',
-      header: ({ table }) => {
-        return (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && 'indeterminate')
-            }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-          />
-        );
-      },
-      cell: ({ row }) => {
-        return (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-            className="translate-y-[2px]"
-          />
-        );
-      },
       meta: {
         span: 1,
       },
       size: 40,
       minSize: 40,
+      header: ({ table }) => {
+        return <TableRowSelectionHeader table={table} />;
+      },
+      cell: ({ row }) => {
+        return <TableRowSelectionCell row={row} />;
+      },
     },
     ...columns,
   ];
+}
+
+export function TableActions(props: { path: string }) {
+  const { path } = props;
+
+  return (
+    <TooltipButton
+      tooltip={`Reveal in ${PLATFORM === 'darwin' ? 'Finder' : 'File Explorer'}`}
+      onClick={() => revealItemInDir(path)}
+    >
+      <FolderOpen />
+    </TooltipButton>
+  );
 }
 
 export function createActionsColumn<
@@ -260,17 +288,10 @@ export function createActionsColumn<
 >(): ColumnDef<T> {
   return {
     id: 'actions',
-    cell: ({ cell }) => {
-      return (
-        <TooltipButton
-          tooltip={`Reveal in ${PLATFORM === 'darwin' ? 'Finder' : 'File Explorer'}`}
-          onClick={() => revealItemInDir(cell.row.original.path)}
-        >
-          <FolderOpen />
-        </TooltipButton>
-      );
-    },
     size: 50,
     minSize: 50,
+    cell: ({ cell }) => {
+      return <TableActions path={cell.row.original.path} />;
+    },
   };
 }
