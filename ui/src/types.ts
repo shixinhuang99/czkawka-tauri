@@ -38,7 +38,7 @@ export interface Settings {
   similarImagesHideHardLinks: boolean;
   similarImagesShowImagePreview: boolean;
   similarImagesDeleteOutdatedEntries: boolean;
-  similarImagesSubHashSize: number;
+  similarImagesSubHashSize: string;
   similarImagesSubHashAlg: string;
   similarImagesSubResizeAlgorithm: string;
   similarImagesSubIgnoreSameSize: boolean;
@@ -137,6 +137,7 @@ export interface DuplicateEntry {
   hash: string;
   isRef: boolean;
   hidden: boolean;
+  isImage: boolean;
   raw: RawDuplicateEntry;
 }
 
@@ -157,10 +158,37 @@ export interface TemporaryFileEntry {
   modifiedDate: string;
 }
 
-export type ScanResult =
+export interface RawImagesEntry {
+  path: string;
+  size: number;
+  width: number;
+  height: number;
+  modified_date: number;
+  similarity: string;
+}
+
+export interface ImagesEntry {
+  path: string;
+  fileName: string;
+  size: string;
+  modifiedDate: string;
+  similarity: string;
+  dimensions: string;
+  isRef: boolean;
+  hidden: boolean;
+  raw: RawImagesEntry;
+}
+
+interface ScanResult<C extends ScanCmd, L> {
+  cmd: C;
+  list: L;
+  message: string;
+}
+
+export type AllScanResult =
   | {
       cmd: 'scan_duplicate_files';
-      list: [[RawDuplicateEntry | null, RawDuplicateEntry[]]];
+      list: [RawDuplicateEntry | null, RawDuplicateEntry[]][];
       message: string;
     }
   | {
@@ -182,7 +210,11 @@ export type ScanResult =
       cmd: 'scan_temporary_files';
       list: RawFolderOrTemporaryFileEntry[];
       message: string;
-    };
+    }
+  | ScanResult<
+      'scan_similar_images',
+      [RawImagesEntry | null, RawImagesEntry[]][]
+    >;
 
 export interface ImageInfo {
   base64: string;

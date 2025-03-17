@@ -6,15 +6,32 @@ import { BigFiles } from './big-files';
 import { DuplicateFiles } from './duplicate-files';
 import { EmptyFiles } from './empty-files';
 import { EmptyFolders } from './empty-folders';
+import { SimilarImages } from './similar-images';
 import { TemporaryFiles } from './temporary-files';
+
+const tableMap: Record<string, () => React.JSX.Element> = {
+  [Tools.DuplicateFiles]: DuplicateFiles,
+  [Tools.EmptyFolders]: EmptyFolders,
+  [Tools.BigFiles]: BigFiles,
+  [Tools.EmptyFiles]: EmptyFiles,
+  [Tools.TemporaryFiles]: TemporaryFiles,
+  [Tools.SimilarImages]: SimilarImages,
+  // [Tools.SimilarVideos]:
+  // [Tools.MusicDuplicates]:
+  // [Tools.InvalidSymlinks]:
+  // [Tools.BrokenFiles]:
+  // [Tools.BadExtensions]:
+};
 
 export function AppBody() {
   const progress = useAtomValue(progressAtom);
   const currentTool = useAtomValue(currentToolAtom);
 
+  const Table = tableMap[currentTool] || UnknownTool;
+
   return (
     <div className="flex-1 flex flex-col w-px">
-      <AllTable />
+      <Table />
       {progress.tool === currentTool && (
         <div className="h-20 border-t px-3">
           {progress.stopping ? (
@@ -56,28 +73,6 @@ function ProgressWrap(props: { label: string; value: number }) {
   );
 }
 
-function AllTable() {
-  const currentTool = useAtomValue(currentToolAtom);
-
-  if (currentTool === Tools.DuplicateFiles) {
-    return <DuplicateFiles />;
-  }
-
-  if (currentTool === Tools.EmptyFolders) {
-    return <EmptyFolders />;
-  }
-
-  if (currentTool === Tools.BigFiles) {
-    return <BigFiles />;
-  }
-
-  if (currentTool === Tools.EmptyFiles) {
-    return <EmptyFiles />;
-  }
-
-  if (currentTool === Tools.TemporaryFiles) {
-    return <TemporaryFiles />;
-  }
-
+function UnknownTool() {
   return <div>Unknown tool</div>;
 }

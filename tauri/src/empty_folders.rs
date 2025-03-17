@@ -13,7 +13,7 @@ use crate::{
 };
 
 #[derive(Serialize, Clone)]
-struct FolderEntry {
+struct CustomFolderEntry {
 	path: String,
 	modified_date: u64,
 }
@@ -21,7 +21,7 @@ struct FolderEntry {
 #[derive(Serialize, Clone)]
 struct ScanResult {
 	cmd: &'static str,
-	list: Vec<FolderEntry>,
+	list: Vec<CustomFolderEntry>,
 	message: String,
 }
 
@@ -49,9 +49,9 @@ pub fn scan_empty_folders(app: AppHandle, settings: Settings) {
 		message =
 			format!("Found {} empty folders\n{}", raw_list.len(), message);
 
-		let list: Vec<FolderEntry> = raw_list
+		let list: Vec<CustomFolderEntry> = raw_list
 			.into_iter()
-			.map(|item| FolderEntry {
+			.map(|item| CustomFolderEntry {
 				path: item.path.to_string_lossy().to_string(),
 				modified_date: item.modified_date,
 			})

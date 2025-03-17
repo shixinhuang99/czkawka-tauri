@@ -32,7 +32,7 @@ pub struct Settings {
 	pub similar_images_delete_outdated_entries: bool,
 	pub similar_videos_delete_outdated_entries: bool,
 	pub similar_music_delete_outdated_entries: bool,
-	pub similar_images_sub_hash_size: u8,
+	pub similar_images_sub_hash_size: String,
 	pub similar_images_sub_hash_alg: String,
 	pub similar_images_sub_resize_algorithm: String,
 	pub similar_images_sub_ignore_same_size: bool,

@@ -1,8 +1,8 @@
 import type { ColumnDef, Row } from '@tanstack/react-table';
 import { useAtom, useAtomValue } from 'jotai';
 import {
-  duplicateFilesAtom,
-  duplicateFilesRowSelectionAtom,
+  similarImagesAtom,
+  similarImagesRowSelectionAtom,
 } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import {
@@ -11,10 +11,10 @@ import {
   TableRowSelectionCell,
   TableRowSelectionHeader,
 } from '~/components/data-table';
-import type { DuplicateEntry } from '~/types';
+import type { ImagesEntry } from '~/types';
 import { ImagePreview } from './image-preview';
 
-const columns: ColumnDef<DuplicateEntry>[] = [
+const columns: ColumnDef<ImagesEntry>[] = [
   {
     id: 'select',
     meta: {
@@ -33,15 +33,27 @@ const columns: ColumnDef<DuplicateEntry>[] = [
     },
   },
   {
+    accessorKey: 'similarity',
+    header: 'Similarity',
+    size: 100,
+    minSize: 50,
+  },
+  {
     accessorKey: 'size',
     header: 'Size',
-    size: 110,
+    size: 100,
+    minSize: 50,
+  },
+  {
+    accessorKey: 'dimensions',
+    header: 'Dimensions',
+    size: 100,
     minSize: 50,
   },
   {
     accessorKey: 'fileName',
     header: 'File name',
-    size: 180,
+    size: 150,
     minSize: 100,
     cell: ({ row }) => {
       return <FileName row={row} />;
@@ -50,7 +62,7 @@ const columns: ColumnDef<DuplicateEntry>[] = [
   {
     accessorKey: 'path',
     header: 'Path',
-    size: 320,
+    size: 160,
     minSize: 100,
     cell: ({ row }) => {
       if (row.original.hidden) {
@@ -78,10 +90,10 @@ const columns: ColumnDef<DuplicateEntry>[] = [
   },
 ];
 
-export function DuplicateFiles() {
-  const data = useAtomValue(duplicateFilesAtom);
+export function SimilarImages() {
+  const data = useAtomValue(similarImagesAtom);
   const [rowSelection, setRowSelection] = useAtom(
-    duplicateFilesRowSelectionAtom,
+    similarImagesRowSelectionAtom,
   );
 
   return (
@@ -96,9 +108,9 @@ export function DuplicateFiles() {
   );
 }
 
-function FileName(props: { row: Row<DuplicateEntry> }) {
+function FileName(props: { row: Row<ImagesEntry> }) {
   const { row } = props;
-  const { hidden, path, fileName, isImage } = row.original;
+  const { hidden, path, fileName } = row.original;
 
   const settings = useAtomValue(settingsAtom);
 
@@ -106,7 +118,7 @@ function FileName(props: { row: Row<DuplicateEntry> }) {
     return null;
   }
 
-  if (settings.duplicateImagePreview && isImage) {
+  if (settings.similarImagesShowImagePreview) {
     return (
       <ImagePreview path={path}>
         <div className="truncate">{fileName}</div>

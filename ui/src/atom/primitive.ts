@@ -11,6 +11,7 @@ import type {
   DuplicateEntry,
   FileEntry,
   FolderEntry,
+  ImagesEntry,
   PlatformSettings,
   Preset,
   Progress,
@@ -68,3 +69,7 @@ export const emptyFilesRowSelectionAtom = atom<RowSelection>({});
 export const temporaryFilesAtom = atom<TemporaryFileEntry[]>([]);
 
 export const temporaryFilesRowSelectionAtom = atom<RowSelection>({});
+
+export const similarImagesAtom = atom<ImagesEntry[]>([]);
+
+export const similarImagesRowSelectionAtom = atom<RowSelection>({});

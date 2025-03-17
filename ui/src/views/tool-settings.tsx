@@ -4,7 +4,7 @@ import { currentToolAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import { OperationButton } from '~/components';
 import { InputNumber } from '~/components';
-import { Select, Switch } from '~/components';
+import { Select, Slider, Switch } from '~/components';
 import {
   Dialog,
   DialogContent,
@@ -18,6 +18,8 @@ import {
   BigFilesSearchMode,
   DuplicatesAvailableHashType,
   DuplicatesCheckMethod,
+  SimilarImagesHashAlgorithm,
+  SimilarImagesResizeAlgorithm,
   Tools,
 } from '~/consts';
 import { useBoolean } from '~/hooks';
@@ -84,6 +86,10 @@ function AllSettings(props: { currentTool: string }) {
 
   if (currentTool === Tools.BigFiles) {
     return <BigFilesSettings />;
+  }
+
+  if (currentTool === Tools.SimilarImages) {
+    return <SimilarImagesSettings />;
   }
 
   return null;
@@ -154,6 +160,58 @@ function BigFilesSettings() {
         comp="input-number"
       >
         <InputNumber minValue={1} />
+      </FormItem>
+    </>
+  );
+}
+
+function SimilarImagesSettings() {
+  const settings = useAtomValue(settingsAtom);
+
+  return (
+    <>
+      <FormItem name="similarImagesSubHashSize" label="Hash size" comp="select">
+        <Select
+          options={['8', '16', '32', '64'].map((value) => ({
+            label: value,
+            value,
+          }))}
+        />
+      </FormItem>
+      <FormItem
+        name="similarImagesSubResizeAlgorithm"
+        label="Resize algorithm"
+        comp="select"
+      >
+        <Select
+          options={Object.values(SimilarImagesResizeAlgorithm).map((value) => ({
+            label: value,
+            value,
+          }))}
+        />
+      </FormItem>
+      <FormItem name="similarImagesSubHashAlg" label="Hash type" comp="select">
+        <Select
+          options={Object.values(SimilarImagesHashAlgorithm).map((value) => ({
+            label: value,
+            value,
+          }))}
+        />
+      </FormItem>
+      <FormItem
+        name="similarImagesSubIgnoreSameSize"
+        label="Ignore same size"
+        comp="select"
+      >
+        <Switch />
+      </FormItem>
+      <FormItem
+        name="similarImagesSubSimilarity"
+        label="Max difference"
+        comp="slider"
+        suffix={<span>({settings.similarImagesSubSimilarity}/40)</span>}
+      >
+        <Slider min={1} max={40} />
       </FormItem>
     </>
   );

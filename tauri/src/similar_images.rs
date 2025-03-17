@@ -1,0 +1,142 @@
+use czkawka_core::{
+	common_tool::CommonData,
+	similar_images::{
+		get_string_from_similarity, ImagesEntry, SimilarImages,
+		SimilarImagesParameters,
+	},
+};
+use image_hasher::{FilterType, HashAlg};
+use rayon::prelude::*;
+use serde::Serialize;
+use tauri::{AppHandle, Emitter};
+
+use crate::{
+	scaner::{apply_scaner_settings, spawn_scaner_thread},
+	settings::Settings,
+	state::get_stop_rx_and_progress_tx,
+};
+
+#[derive(Serialize, Clone)]
+struct CustomImagesEntry {
+	path: String,
+	size: u64,
+	width: u32,
+	height: u32,
+	modified_date: u64,
+	similarity: String,
+}
+
+#[derive(Serialize, Clone)]
+struct ScanResult {
+	cmd: &'static str,
+	list: Vec<(Option<CustomImagesEntry>, Vec<CustomImagesEntry>)>,
+	message: String,
+}
+
+pub fn scan_similar_images(app: AppHandle, settins: Settings) {
+	let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+
+	spawn_scaner_thread(move || {
+		let hash_alg = match settins.similar_images_sub_hash_alg.as_ref() {
+			"Gradient" => HashAlg::Gradient,
+			"BlockHash" => HashAlg::Blockhash,
+			"VertGradient" => HashAlg::VertGradient,
+			"DoubleGradient" => HashAlg::DoubleGradient,
+			"Median" => HashAlg::Median,
+			_ => HashAlg::Mean,
+		};
+		let resize_algorithm =
+			match settins.similar_images_sub_resize_algorithm.as_ref() {
+				"Gaussian" => FilterType::Gaussian,
+				"CatmullRom" => FilterType::CatmullRom,
+				"Triangle" => FilterType::Triangle,
+				"Nearest" => FilterType::Nearest,
+				_ => FilterType::Lanczos3,
+			};
+		let hash_size = settins
+			.similar_images_sub_hash_size
+			.parse::<u8>()
+			.unwrap_or(16);
+		let mut scaner = SimilarImages::new(SimilarImagesParameters::new(
+			settins.similar_images_sub_similarity as u32,
+			hash_size,
+			hash_alg,
+			resize_algorithm,
+			settins.similar_images_sub_ignore_same_size,
+			settins.similar_images_hide_hard_links,
+		));
+
+		scaner.set_delete_outdated_cache(
+			settins.similar_images_delete_outdated_entries,
+		);
+		apply_scaner_settings(&mut scaner, settins);
+
+		scaner.find_similar_images(Some(&stop_rx), Some(&progress_tx));
+
+		let mut message = scaner.get_text_messages().create_messages_text();
+
+		let mut raw_list;
+		if scaner.get_use_reference() {
+			raw_list = scaner
+				.get_similar_images_referenced()
+				.iter()
+				.cloned()
+				.map(|(original, others)| (Some(original), others))
+				.collect::<Vec<_>>();
+		} else {
+			raw_list = scaner
+				.get_similar_images()
+				.iter()
+				.cloned()
+				.map(|items| (None, items))
+				.collect::<Vec<_>>();
+		}
+
+		for (_, vec_fe) in &mut raw_list {
+			vec_fe.par_sort_unstable_by_key(|e| e.similarity);
+		}
+
+		message = format!(
+			"Found {} similar image files\n{}",
+			raw_list.len(),
+			message
+		);
+
+		let list: Vec<(Option<CustomImagesEntry>, Vec<CustomImagesEntry>)> =
+			raw_list
+				.into_iter()
+				.map(|(ref_item, item)| {
+					(
+						ref_item.map(|v| images_entry_to_custom(v, hash_size)),
+						item.into_iter()
+							.map(|v| images_entry_to_custom(v, hash_size))
+							.collect(),
+					)
+				})
+				.collect();
+
+		app.emit(
+			"scan-result",
+			ScanResult {
+				cmd: "scan_similar_images",
+				list,
+				message,
+			},
+		)
+		.unwrap();
+	});
+}
+
+fn images_entry_to_custom(
+	value: ImagesEntry,
+	hash_size: u8,
+) -> CustomImagesEntry {
+	CustomImagesEntry {
+		path: value.path.to_string_lossy().to_string(),
+		size: value.size,
+		width: value.width,
+		height: value.height,
+		modified_date: value.modified_date,
+		similarity: get_string_from_similarity(&value.similarity, hash_size),
+	}
+}

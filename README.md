@@ -23,7 +23,7 @@ Scan:
 - ✅ Big Files
 - ✅ Empty Files
 - ✅ Temporary Files
-- 🚧 Similar Images
+- ✅ Similar Images
 - 🚧 Similar Videos
 - 🚧 Music Duplicates
 - 🚧 Invalid Symlinks

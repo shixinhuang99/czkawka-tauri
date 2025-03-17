@@ -8,6 +8,7 @@ mod image;
 mod progress;
 mod scaner;
 mod settings;
+mod similar_images;
 mod state;
 mod temporary_files;
 mod utils;
@@ -41,6 +42,7 @@ fn main() {
 			scan_big_files,
 			scan_empty_files,
 			scan_temporary_files,
+			scan_similar_images,
 		])
 		.plugin(tauri_plugin_opener::init())
 		.plugin(tauri_plugin_dialog::init())
@@ -124,4 +126,9 @@ fn scan_empty_files(app: AppHandle, settings: Settings) {
 #[tauri::command]
 fn scan_temporary_files(app: AppHandle, settings: Settings) {
 	temporary_files::scan_temporary_files(app, settings);
+}
+
+#[tauri::command]
+fn scan_similar_images(app: AppHandle, settings: Settings) {
+	similar_images::scan_similar_images(app, settings);
 }

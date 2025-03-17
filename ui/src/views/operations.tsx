@@ -7,6 +7,7 @@ import {
   emptyFilesAtom,
   emptyFoldersAtom,
   progressAtom,
+  similarImagesAtom,
   temporaryFilesAtom,
 } from '~/atom/primitive';
 import { OperationButton } from '~/components';
@@ -23,22 +24,23 @@ export function Operations() {
   const emptyFolders = useAtomValue(emptyFoldersAtom);
   const emptyFiles = useAtomValue(emptyFilesAtom);
   const temporaryFiles = useAtomValue(temporaryFilesAtom);
+  const similarImages = useAtomValue(similarImagesAtom);
 
-  const disabled = (() => {
-    let base = !!progress.tool;
-    if (currentTool === Tools.DuplicateFiles) {
-      base ||= !duplicateFiles.length;
-    } else if (currentTool === Tools.EmptyFolders) {
-      base ||= !emptyFolders.length;
-    } else if (currentTool === Tools.BigFiles) {
-      base ||= !bigFiles.length;
-    } else if (currentTool === Tools.EmptyFiles) {
-      base ||= !emptyFiles.length;
-    } else if (currentTool === Tools.TemporaryFiles) {
-      base ||= !temporaryFiles.length;
-    }
-    return base;
-  })();
+  const disabledMap: Record<string, boolean> = {
+    [Tools.DuplicateFiles]: !duplicateFiles.length,
+    [Tools.EmptyFolders]: !emptyFolders.length,
+    [Tools.BigFiles]: !bigFiles.length,
+    [Tools.EmptyFiles]: !emptyFiles.length,
+    [Tools.TemporaryFiles]: !temporaryFiles.length,
+    [Tools.SimilarImages]: !similarImages.length,
+    // [Tools.SimilarVideos]:
+    // [Tools.MusicDuplicates]:
+    // [Tools.InvalidSymlinks]:
+    // [Tools.BrokenFiles]:
+    // [Tools.BadExtensions]:
+  };
+
+  const disabled = !!progress.tool || disabledMap[currentTool];
 
   return (
     <div className="flex gap-1">

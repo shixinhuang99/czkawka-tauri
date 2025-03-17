@@ -14,6 +14,8 @@ import {
   emptyFoldersRowSelectionAtom,
   logsAtom,
   progressAtom,
+  similarImagesAtom,
+  similarImagesRowSelectionAtom,
   temporaryFilesAtom,
   temporaryFilesRowSelectionAtom,
 } from '~/atom/primitive';
@@ -21,11 +23,12 @@ import { settingsAtom } from '~/atom/settings';
 import { OperationButton } from '~/components';
 import { Tools, getDefaultProgress } from '~/consts';
 import { ipc } from '~/ipc';
-import type { ProgressData, ScanCmd, ScanResult } from '~/types';
+import type { AllScanResult, ProgressData, ScanCmd } from '~/types';
 import {
   convertDuplicateEntries,
   convertFileEntries,
   convertFolderEntries,
+  convertImagesEntries,
   convertTemporaryFileEntries,
 } from '~/utils/common';
 
@@ -62,10 +65,13 @@ export function ScanButton() {
   const setTemporaryFilesRowSelection = useSetAtom(
     temporaryFilesRowSelectionAtom,
   );
+  const setSimilarImages = useSetAtom(similarImagesAtom);
+  const setSimilarImagesRowSelection = useSetAtom(
+    similarImagesRowSelectionAtom,
+  );
 
   useEffect(() => {
-    listen<ScanResult>('scan-result', (e) => {
-      setProgress(getDefaultProgress());
+    listen<AllScanResult>('scan-result', (e) => {
       const { cmd, message, list } = e.payload;
       setLogs(message);
       if (cmd === 'scan_duplicate_files') {
@@ -83,7 +89,11 @@ export function ScanButton() {
       } else if (cmd === 'scan_temporary_files') {
         setTemporaryFiles(convertTemporaryFileEntries(list));
         setTemporaryFilesRowSelection({});
+      } else if (cmd === 'scan_similar_images') {
+        setSimilarImages(convertImagesEntries(list));
+        setSimilarImagesRowSelection({});
       }
+      setProgress(getDefaultProgress());
     });
     ipc.listenScanProgress();
     listen<ProgressData>('scan-progress', (e) => {

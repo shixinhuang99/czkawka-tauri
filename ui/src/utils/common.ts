@@ -5,11 +5,15 @@ import type {
   DuplicateEntry,
   FileEntry,
   FolderEntry,
+  ImagesEntry,
   RawDuplicateEntry,
   RawFileEntry,
   RawFolderOrTemporaryFileEntry,
+  RawImagesEntry,
   TemporaryFileEntry,
 } from '~/types';
+
+const HIDDEN_ROW_PREFIX = '__hidden__';
 
 export function splitStr(s: string): string[] {
   return s
@@ -18,9 +22,10 @@ export function splitStr(s: string): string[] {
     .filter((s) => s.length > 0);
 }
 
+// todo: ignore ref item
 export function getRowSelectionKeys(rowSelection: RowSelection): string[] {
   return Object.entries(rowSelection)
-    .filter((obj) => obj[1] && !obj[0].startsWith('__hidden__'))
+    .filter((obj) => obj[1] && !obj[0].startsWith(HIDDEN_ROW_PREFIX))
     .map((obj) => obj[0]);
 }
 
@@ -66,42 +71,44 @@ function convertDuplicateEntry(
     hash: item.hash,
     isRef,
     hidden: false,
+    isImage: isImage(item.path),
     raw: item,
   };
 }
 
 export function convertDuplicateEntries(
-  list: [[RawDuplicateEntry | null, RawDuplicateEntry[]]],
+  list: [RawDuplicateEntry | null, RawDuplicateEntry[]][],
 ): DuplicateEntry[] {
   list.sort((a, b) => {
     if (!a.length || !b.length) {
       return 0;
     }
-    const aFiles = a[1];
-    const bFiles = b[1];
-    if (!aFiles.length || !bFiles.length) {
+    const aItems = a[1];
+    const bItems = b[1];
+    if (!aItems.length || !bItems.length) {
       return 0;
     }
-    return bFiles[0].size - aFiles[0].size;
+    return bItems[0].size - aItems[0].size;
   });
   let id = 1;
   return list.flatMap((tuple, idx) => {
-    const [ref, files] = tuple;
-    const convertedFiles = files.map((item) =>
+    const [ref, items] = tuple;
+    const convertedItems = items.map((item) =>
       convertDuplicateEntry(item, false),
     );
     if (ref) {
-      convertedFiles.unshift(convertDuplicateEntry(ref, true));
+      convertedItems.unshift(convertDuplicateEntry(ref, true));
     }
     if (idx !== list.length - 1) {
-      convertedFiles.push({
+      convertedItems.push({
         size: '',
         fileName: '',
-        path: `__hidden__${id}`,
+        path: `${HIDDEN_ROW_PREFIX}${id}`,
         modifiedDate: '',
         hash: '',
         isRef: true,
         hidden: true,
+        isImage: false,
         raw: {
           path: '',
           modified_date: 0,
@@ -111,7 +118,7 @@ export function convertDuplicateEntries(
       });
       id += 1;
     }
-    return convertedFiles;
+    return convertedItems;
   });
 }
 
@@ -147,5 +154,65 @@ export function convertTemporaryFileEntries(
       path: item.path,
       modifiedDate: fmtDate(item.modified_date),
     };
+  });
+}
+
+function convertImagesEntry(item: RawImagesEntry, isRef: boolean): ImagesEntry {
+  return {
+    size: fmtFileSize(item.size),
+    fileName: pathBaseName(item.path),
+    path: item.path,
+    modifiedDate: fmtDate(item.modified_date),
+    similarity: item.similarity,
+    dimensions: `${item.width}x${item.height}`,
+    isRef,
+    hidden: false,
+    raw: item,
+  };
+}
+
+export function convertImagesEntries(
+  list: [RawImagesEntry | null, RawImagesEntry[]][],
+): ImagesEntry[] {
+  list.sort((a, b) => {
+    if (!a.length || !b.length) {
+      return 0;
+    }
+    const aItems = a[1];
+    const bItems = b[1];
+    if (!aItems.length || !bItems.length) {
+      return 0;
+    }
+    return bItems[0].size - aItems[0].size;
+  });
+  let id = 1;
+  return list.flatMap((tuple, idx) => {
+    const [ref, items] = tuple;
+    const convertedFiles = items.map((item) => convertImagesEntry(item, false));
+    if (ref) {
+      convertedFiles.unshift(convertImagesEntry(ref, true));
+    }
+    if (idx !== list.length - 1) {
+      convertedFiles.push({
+        size: '',
+        fileName: '',
+        path: `${HIDDEN_ROW_PREFIX}${id}`,
+        modifiedDate: '',
+        similarity: '',
+        dimensions: '',
+        isRef: true,
+        hidden: true,
+        raw: {
+          path: '',
+          size: 0,
+          width: 0,
+          height: 0,
+          modified_date: 0,
+          similarity: '',
+        },
+      });
+      id += 1;
+    }
+    return convertedFiles;
   });
 }
