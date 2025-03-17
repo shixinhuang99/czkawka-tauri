@@ -140,13 +140,19 @@ export interface DuplicateEntry {
   raw: RawDuplicateEntry;
 }
 
-export interface RawFolderEntry {
+export interface RawFolderOrTemporaryFileEntry {
   path: string;
   modified_date: number;
 }
 
 export interface FolderEntry {
   folderName: string;
+  path: string;
+  modifiedDate: string;
+}
+
+export interface TemporaryFileEntry {
+  fileName: string;
   path: string;
   modifiedDate: string;
 }
@@ -159,7 +165,7 @@ export type ScanResult =
     }
   | {
       cmd: 'scan_empty_folders';
-      list: RawFolderEntry[];
+      list: RawFolderOrTemporaryFileEntry[];
       message: string;
     }
   | {
@@ -170,6 +176,11 @@ export type ScanResult =
   | {
       cmd: 'scan_empty_files';
       list: RawFileEntry[];
+      message: string;
+    }
+  | {
+      cmd: 'scan_temporary_files';
+      list: RawFolderOrTemporaryFileEntry[];
       message: string;
     };
 

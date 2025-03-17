@@ -7,7 +7,7 @@ use czkawka_core::{
 	},
 };
 use rayon::prelude::*;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use tauri::{AppHandle, Emitter};
 
 use crate::{
@@ -16,7 +16,7 @@ use crate::{
 	state::get_stop_rx_and_progress_tx,
 };
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Clone)]
 struct ScanResult {
 	cmd: &'static str,
 	list: Vec<(Option<DuplicateEntry>, Vec<DuplicateEntry>)>,

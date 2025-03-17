@@ -6,6 +6,7 @@ import { BigFiles } from './big-files';
 import { DuplicateFiles } from './duplicate-files';
 import { EmptyFiles } from './empty-files';
 import { EmptyFolders } from './empty-folders';
+import { TemporaryFiles } from './temporary-files';
 
 export function AppBody() {
   const progress = useAtomValue(progressAtom);
@@ -72,6 +73,10 @@ function AllTable() {
 
   if (currentTool === Tools.EmptyFiles) {
     return <EmptyFiles />;
+  }
+
+  if (currentTool === Tools.TemporaryFiles) {
+    return <TemporaryFiles />;
   }
 
   return <div>Unknown tool</div>;

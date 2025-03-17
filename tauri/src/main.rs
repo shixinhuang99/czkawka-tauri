@@ -9,6 +9,7 @@ mod progress;
 mod scaner;
 mod settings;
 mod state;
+mod temporary_files;
 mod utils;
 
 use std::sync::Mutex;
@@ -39,6 +40,7 @@ fn main() {
 			scan_empty_folders,
 			scan_big_files,
 			scan_empty_files,
+			scan_temporary_files,
 		])
 		.plugin(tauri_plugin_opener::init())
 		.plugin(tauri_plugin_dialog::init())
@@ -117,4 +119,9 @@ fn scan_empty_folders(app: AppHandle, settings: Settings) {
 #[tauri::command]
 fn scan_empty_files(app: AppHandle, settings: Settings) {
 	empty_files::scan_empty_files(app, settings);
+}
+
+#[tauri::command]
+fn scan_temporary_files(app: AppHandle, settings: Settings) {
+	temporary_files::scan_temporary_files(app, settings);
 }

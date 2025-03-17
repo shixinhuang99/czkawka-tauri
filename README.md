@@ -22,7 +22,7 @@ Scan:
 - ✅ Empty Folders
 - ✅ Big Files
 - ✅ Empty Files
-- 🚧 Temporary Files
+- ✅ Temporary Files
 - 🚧 Similar Images
 - 🚧 Similar Videos
 - 🚧 Music Duplicates

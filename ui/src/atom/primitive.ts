@@ -14,6 +14,7 @@ import type {
   PlatformSettings,
   Preset,
   Progress,
+  TemporaryFileEntry,
   ThemeCfg,
 } from '~/types';
 
@@ -63,3 +64,7 @@ export const bigFilesRowSelectionAtom = atom<RowSelection>({});
 export const emptyFilesAtom = atom<FileEntry[]>([]);
 
 export const emptyFilesRowSelectionAtom = atom<RowSelection>({});
+
+export const temporaryFilesAtom = atom<TemporaryFileEntry[]>([]);
+
+export const temporaryFilesRowSelectionAtom = atom<RowSelection>({});

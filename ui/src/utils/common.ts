@@ -7,7 +7,8 @@ import type {
   FolderEntry,
   RawDuplicateEntry,
   RawFileEntry,
-  RawFolderEntry,
+  RawFolderOrTemporaryFileEntry,
+  TemporaryFileEntry,
 } from '~/types';
 
 export function splitStr(s: string): string[] {
@@ -114,7 +115,9 @@ export function convertDuplicateEntries(
   });
 }
 
-export function convertFolderEntries(list: RawFolderEntry[]): FolderEntry[] {
+export function convertFolderEntries(
+  list: RawFolderOrTemporaryFileEntry[],
+): FolderEntry[] {
   return list.map((item) => {
     return {
       folderName: pathBaseName(item.path),
@@ -128,6 +131,18 @@ export function convertFileEntries(list: RawFileEntry[]): FileEntry[] {
   return list.map((item) => {
     return {
       size: fmtFileSize(item.size),
+      fileName: pathBaseName(item.path),
+      path: item.path,
+      modifiedDate: fmtDate(item.modified_date),
+    };
+  });
+}
+
+export function convertTemporaryFileEntries(
+  list: RawFolderOrTemporaryFileEntry[],
+): TemporaryFileEntry[] {
+  return list.map((item) => {
+    return {
       fileName: pathBaseName(item.path),
       path: item.path,
       modifiedDate: fmtDate(item.modified_date),

@@ -25,7 +25,6 @@ import { useBoolean } from '~/hooks';
 const descMap: Record<string, string> = {
   [Tools.DuplicateFiles]: 'Duplicate files settings',
   [Tools.BigFiles]: 'Big files settings',
-  [Tools.TemporaryFiles]: 'Temporary files settings',
   [Tools.SimilarImages]: 'Similar images settings',
   [Tools.SimilarVideos]: 'Similar videos settings',
   [Tools.MusicDuplicates]: 'Music duplicates settings',
@@ -37,6 +36,7 @@ const descMap: Record<string, string> = {
 const toolsWithoutSettings = new Set<string>([
   Tools.EmptyFolders,
   Tools.EmptyFiles,
+  Tools.TemporaryFiles,
 ]);
 
 export function ToolSettings() {

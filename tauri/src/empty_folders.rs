@@ -3,7 +3,7 @@ use czkawka_core::{
 	empty_folder::EmptyFolder,
 };
 use rayon::prelude::*;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use tauri::{AppHandle, Emitter};
 
 use crate::{
@@ -12,13 +12,13 @@ use crate::{
 	state::get_stop_rx_and_progress_tx,
 };
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Clone)]
 struct FolderEntry {
 	path: String,
 	modified_date: u64,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Clone)]
 struct ScanResult {
 	cmd: &'static str,
 	list: Vec<FolderEntry>,

@@ -14,6 +14,8 @@ import {
   emptyFoldersRowSelectionAtom,
   logsAtom,
   progressAtom,
+  temporaryFilesAtom,
+  temporaryFilesRowSelectionAtom,
 } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import { OperationButton } from '~/components';
@@ -24,6 +26,7 @@ import {
   convertDuplicateEntries,
   convertFileEntries,
   convertFolderEntries,
+  convertTemporaryFileEntries,
 } from '~/utils/common';
 
 const scanCmdMap: Record<string, ScanCmd> = {
@@ -55,6 +58,10 @@ export function ScanButton() {
   const setBigFilesRowSelection = useSetAtom(bigFilesRowSelectionAtom);
   const setEmptyFiles = useSetAtom(emptyFilesAtom);
   const setEmptyFilesRowSelection = useSetAtom(emptyFilesRowSelectionAtom);
+  const setTemporaryFiles = useSetAtom(temporaryFilesAtom);
+  const setTemporaryFilesRowSelection = useSetAtom(
+    temporaryFilesRowSelectionAtom,
+  );
 
   useEffect(() => {
     listen<ScanResult>('scan-result', (e) => {
@@ -73,6 +80,9 @@ export function ScanButton() {
       } else if (cmd === 'scan_empty_files') {
         setEmptyFiles(convertFileEntries(list));
         setEmptyFilesRowSelection({});
+      } else if (cmd === 'scan_temporary_files') {
+        setTemporaryFiles(convertTemporaryFileEntries(list));
+        setTemporaryFilesRowSelection({});
       }
     });
     ipc.listenScanProgress();
@@ -101,19 +111,18 @@ export function ScanButton() {
 
   return (
     <>
-      {!progress.tool && (
+      {progress.tool ? (
+        <OperationButton disabled={progress.stopping} onClick={handleStopScan}>
+          <Ban />
+          Stop
+        </OperationButton>
+      ) : (
         <OperationButton
           disabled={!settings.includedDirectories.length}
           onClick={handleScan}
         >
           <Search />
           Scan
-        </OperationButton>
-      )}
-      {!!progress.tool && (
-        <OperationButton disabled={progress.stopping} onClick={handleStopScan}>
-          <Ban />
-          Stop
         </OperationButton>
       )}
     </>
