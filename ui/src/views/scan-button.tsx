@@ -16,6 +16,8 @@ import {
   progressAtom,
   similarImagesAtom,
   similarImagesRowSelectionAtom,
+  similarVideosAtom,
+  similarVideosRowSelectionAtom,
   temporaryFilesAtom,
   temporaryFilesRowSelectionAtom,
 } from '~/atom/primitive';
@@ -30,6 +32,7 @@ import {
   convertFolderEntries,
   convertImagesEntries,
   convertTemporaryFileEntries,
+  convertVideosEntries,
 } from '~/utils/common';
 
 const scanCmdMap: Record<string, ScanCmd> = {
@@ -69,6 +72,10 @@ export function ScanButton() {
   const setSimilarImagesRowSelection = useSetAtom(
     similarImagesRowSelectionAtom,
   );
+  const setSimilarVideos = useSetAtom(similarVideosAtom);
+  const setSimilarVideosRowSelection = useSetAtom(
+    similarVideosRowSelectionAtom,
+  );
 
   useEffect(() => {
     listen<AllScanResult>('scan-result', (e) => {
@@ -92,6 +99,9 @@ export function ScanButton() {
       } else if (cmd === 'scan_similar_images') {
         setSimilarImages(convertImagesEntries(list));
         setSimilarImagesRowSelection({});
+      } else if (cmd === 'scan_similar_videos') {
+        setSimilarVideos(convertVideosEntries(list));
+        setSimilarVideosRowSelection({});
       }
       setProgress(getDefaultProgress());
     });

@@ -41,6 +41,17 @@ const toolsWithoutSettings = new Set<string>([
   Tools.TemporaryFiles,
 ]);
 
+const settingsCompMap: Record<string, () => React.JSX.Element> = {
+  [Tools.DuplicateFiles]: DuplicateFilesSettings,
+  [Tools.BigFiles]: BigFilesSettings,
+  [Tools.SimilarImages]: SimilarImagesSettings,
+  [Tools.SimilarVideos]: SimilarVideosSettings,
+  // [Tools.MusicDuplicates]:
+  // [Tools.InvalidSymlinks]:
+  // [Tools.BrokenFiles]:
+  // [Tools.BadExtensions]:
+};
+
 export function ToolSettings() {
   const currentTool = useAtomValue(currentToolAtom);
   const [settings, setSettings] = useAtom(settingsAtom);
@@ -56,6 +67,8 @@ export function ToolSettings() {
     setSettings((old) => ({ ...old, ...v }));
   };
 
+  const SettingsComponent = settingsCompMap[currentTool] || null;
+
   return (
     <Dialog open={dialogOpen.value} onOpenChange={dialogOpen.set}>
       <DialogTrigger asChild>
@@ -70,29 +83,11 @@ export function ToolSettings() {
           <DialogDescription>{desc}</DialogDescription>
         </DialogHeader>
         <Form value={settings} onChange={handleSettingsChange}>
-          <AllSettings currentTool={currentTool} />
+          <SettingsComponent />
         </Form>
       </DialogContent>
     </Dialog>
   );
-}
-
-function AllSettings(props: { currentTool: string }) {
-  const { currentTool } = props;
-
-  if (currentTool === Tools.DuplicateFiles) {
-    return <DuplicateFilesSettings />;
-  }
-
-  if (currentTool === Tools.BigFiles) {
-    return <BigFilesSettings />;
-  }
-
-  if (currentTool === Tools.SimilarImages) {
-    return <SimilarImagesSettings />;
-  }
-
-  return null;
 }
 
 function DuplicateFilesSettings() {
@@ -211,7 +206,31 @@ function SimilarImagesSettings() {
         comp="slider"
         suffix={<span>({settings.similarImagesSubSimilarity}/40)</span>}
       >
-        <Slider min={1} max={40} />
+        <Slider min={0} max={40} />
+      </FormItem>
+    </>
+  );
+}
+
+function SimilarVideosSettings() {
+  const settings = useAtomValue(settingsAtom);
+
+  return (
+    <>
+      <FormItem
+        name="similarVideosSubSimilarity"
+        label="Max difference"
+        comp="slider"
+        suffix={<span>({settings.similarVideosSubSimilarity}/20)</span>}
+      >
+        <Slider min={0} max={20} />
+      </FormItem>
+      <FormItem
+        name="similarVideosSubIgnoreSameSize"
+        label="Ignore same size"
+        comp="switch"
+      >
+        <Switch />
       </FormItem>
     </>
   );

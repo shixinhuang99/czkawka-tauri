@@ -74,8 +74,8 @@ pub fn scan_similar_images(app: AppHandle, settins: Settings) {
 		scaner.find_similar_images(Some(&stop_rx), Some(&progress_tx));
 
 		let mut message = scaner.get_text_messages().create_messages_text();
-
 		let mut raw_list;
+
 		if scaner.get_use_reference() {
 			raw_list = scaner
 				.get_similar_images_referenced()
@@ -102,18 +102,17 @@ pub fn scan_similar_images(app: AppHandle, settins: Settings) {
 			message
 		);
 
-		let list: Vec<(Option<CustomImagesEntry>, Vec<CustomImagesEntry>)> =
-			raw_list
-				.into_iter()
-				.map(|(ref_item, item)| {
-					(
-						ref_item.map(|v| images_entry_to_custom(v, hash_size)),
-						item.into_iter()
-							.map(|v| images_entry_to_custom(v, hash_size))
-							.collect(),
-					)
-				})
-				.collect();
+		let list = raw_list
+			.into_iter()
+			.map(|(ref_item, item)| {
+				(
+					ref_item.map(|v| images_entry_to_custom(v, hash_size)),
+					item.into_iter()
+						.map(|v| images_entry_to_custom(v, hash_size))
+						.collect(),
+				)
+			})
+			.collect::<Vec<_>>();
 
 		app.emit(
 			"scan-result",

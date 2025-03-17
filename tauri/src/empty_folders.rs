@@ -49,13 +49,13 @@ pub fn scan_empty_folders(app: AppHandle, settings: Settings) {
 		message =
 			format!("Found {} empty folders\n{}", raw_list.len(), message);
 
-		let list: Vec<CustomFolderEntry> = raw_list
+		let list = raw_list
 			.into_iter()
 			.map(|item| CustomFolderEntry {
 				path: item.path.to_string_lossy().to_string(),
 				modified_date: item.modified_date,
 			})
-			.collect();
+			.collect::<Vec<_>>();
 
 		app.emit(
 			"scan-result",

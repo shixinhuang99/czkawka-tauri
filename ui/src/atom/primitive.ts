@@ -17,6 +17,7 @@ import type {
   Progress,
   TemporaryFileEntry,
   ThemeCfg,
+  VideosEntry,
 } from '~/types';
 
 export const themeAtom = atom<ThemeCfg>({
@@ -73,3 +74,7 @@ export const temporaryFilesRowSelectionAtom = atom<RowSelection>({});
 export const similarImagesAtom = atom<ImagesEntry[]>([]);
 
 export const similarImagesRowSelectionAtom = atom<RowSelection>({});
+
+export const similarVideosAtom = atom<VideosEntry[]>([]);
+
+export const similarVideosRowSelectionAtom = atom<RowSelection>({});

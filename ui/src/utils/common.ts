@@ -10,7 +10,10 @@ import type {
   RawFileEntry,
   RawFolderOrTemporaryFileEntry,
   RawImagesEntry,
+  RawVideosEntry,
   TemporaryFileEntry,
+  TupleWithRefItem,
+  VideosEntry,
 } from '~/types';
 
 const HIDDEN_ROW_PREFIX = '__hidden__';
@@ -43,7 +46,7 @@ function fmtDate(v: number): string {
   return format(v * 1000, 'yyyy/MM/dd HH:mm:ss');
 }
 
-export function isImage(fileName: string): boolean {
+function isImage(fileName: string): boolean {
   const imageExtensions = [
     'bmp',
     'gif',
@@ -57,6 +60,22 @@ export function isImage(fileName: string): boolean {
   ];
   const ext = fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase();
   return imageExtensions.includes(ext);
+}
+
+function sortTupleWithRefItemList<T extends TupleWithRefItem<{ size: number }>>(
+  list: T[],
+) {
+  list.sort((a, b) => {
+    if (!a.length || !b.length) {
+      return 0;
+    }
+    const aItems = a[1];
+    const bItems = b[1];
+    if (!aItems.length || !bItems.length) {
+      return 0;
+    }
+    return bItems[0].size - aItems[0].size;
+  });
 }
 
 function convertDuplicateEntry(
@@ -77,19 +96,9 @@ function convertDuplicateEntry(
 }
 
 export function convertDuplicateEntries(
-  list: [RawDuplicateEntry | null, RawDuplicateEntry[]][],
+  list: TupleWithRefItem<RawDuplicateEntry>[],
 ): DuplicateEntry[] {
-  list.sort((a, b) => {
-    if (!a.length || !b.length) {
-      return 0;
-    }
-    const aItems = a[1];
-    const bItems = b[1];
-    if (!aItems.length || !bItems.length) {
-      return 0;
-    }
-    return bItems[0].size - aItems[0].size;
-  });
+  sortTupleWithRefItemList(list);
   let id = 1;
   return list.flatMap((tuple, idx) => {
     const [ref, items] = tuple;
@@ -100,7 +109,7 @@ export function convertDuplicateEntries(
       convertedItems.unshift(convertDuplicateEntry(ref, true));
     }
     if (idx !== list.length - 1) {
-      convertedItems.push({
+      const hiddenRow: DuplicateEntry = {
         size: '',
         fileName: '',
         path: `${HIDDEN_ROW_PREFIX}${id}`,
@@ -115,7 +124,8 @@ export function convertDuplicateEntries(
           size: 0,
           hash: '',
         },
-      });
+      };
+      convertedItems.push(hiddenRow);
       id += 1;
     }
     return convertedItems;
@@ -172,19 +182,9 @@ function convertImagesEntry(item: RawImagesEntry, isRef: boolean): ImagesEntry {
 }
 
 export function convertImagesEntries(
-  list: [RawImagesEntry | null, RawImagesEntry[]][],
+  list: TupleWithRefItem<RawImagesEntry>[],
 ): ImagesEntry[] {
-  list.sort((a, b) => {
-    if (!a.length || !b.length) {
-      return 0;
-    }
-    const aItems = a[1];
-    const bItems = b[1];
-    if (!aItems.length || !bItems.length) {
-      return 0;
-    }
-    return bItems[0].size - aItems[0].size;
-  });
+  sortTupleWithRefItemList(list);
   let id = 1;
   return list.flatMap((tuple, idx) => {
     const [ref, items] = tuple;
@@ -193,7 +193,7 @@ export function convertImagesEntries(
       convertedFiles.unshift(convertImagesEntry(ref, true));
     }
     if (idx !== list.length - 1) {
-      convertedFiles.push({
+      const hiddenRow: ImagesEntry = {
         size: '',
         fileName: '',
         path: `${HIDDEN_ROW_PREFIX}${id}`,
@@ -210,7 +210,51 @@ export function convertImagesEntries(
           modified_date: 0,
           similarity: '',
         },
-      });
+      };
+      convertedFiles.push(hiddenRow);
+      id += 1;
+    }
+    return convertedFiles;
+  });
+}
+function convertVideosEntry(item: RawVideosEntry, isRef: boolean): VideosEntry {
+  return {
+    size: fmtFileSize(item.size),
+    fileName: pathBaseName(item.path),
+    path: item.path,
+    modifiedDate: fmtDate(item.modified_date),
+    isRef,
+    hidden: false,
+    raw: item,
+  };
+}
+
+export function convertVideosEntries(
+  list: [RawVideosEntry | null, RawVideosEntry[]][],
+): VideosEntry[] {
+  sortTupleWithRefItemList(list);
+  let id = 1;
+  return list.flatMap((tuple, idx) => {
+    const [ref, items] = tuple;
+    const convertedFiles = items.map((item) => convertVideosEntry(item, false));
+    if (ref) {
+      convertedFiles.unshift(convertVideosEntry(ref, true));
+    }
+    if (idx !== list.length - 1) {
+      const hiddenRow: VideosEntry = {
+        size: '',
+        fileName: '',
+        path: `${HIDDEN_ROW_PREFIX}${id}`,
+        modifiedDate: '',
+        isRef: true,
+        hidden: true,
+        raw: {
+          path: '',
+          size: 0,
+          modified_date: 0,
+        },
+      };
+      convertedFiles.push(hiddenRow);
       id += 1;
     }
     return convertedFiles;

@@ -24,7 +24,7 @@ Scan:
 - ✅ Empty Files
 - ✅ Temporary Files
 - ✅ Similar Images
-- 🚧 Similar Videos
+- ✅ Similar Videos
 - 🚧 Music Duplicates
 - 🚧 Invalid Symlinks
 - 🚧 Broken Files

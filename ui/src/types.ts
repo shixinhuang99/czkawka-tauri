@@ -179,42 +179,38 @@ export interface ImagesEntry {
   raw: RawImagesEntry;
 }
 
+export interface RawVideosEntry {
+  path: string;
+  size: number;
+  modified_date: number;
+}
+
+export interface VideosEntry {
+  path: string;
+  fileName: string;
+  size: string;
+  modifiedDate: string;
+  isRef: boolean;
+  hidden: boolean;
+  raw: RawVideosEntry;
+}
+
 interface ScanResult<C extends ScanCmd, L> {
   cmd: C;
   list: L;
   message: string;
 }
 
+export type TupleWithRefItem<T> = [T | null, T[]];
+
 export type AllScanResult =
-  | {
-      cmd: 'scan_duplicate_files';
-      list: [RawDuplicateEntry | null, RawDuplicateEntry[]][];
-      message: string;
-    }
-  | {
-      cmd: 'scan_empty_folders';
-      list: RawFolderOrTemporaryFileEntry[];
-      message: string;
-    }
-  | {
-      cmd: 'scan_big_files';
-      list: RawFileEntry[];
-      message: string;
-    }
-  | {
-      cmd: 'scan_empty_files';
-      list: RawFileEntry[];
-      message: string;
-    }
-  | {
-      cmd: 'scan_temporary_files';
-      list: RawFolderOrTemporaryFileEntry[];
-      message: string;
-    }
-  | ScanResult<
-      'scan_similar_images',
-      [RawImagesEntry | null, RawImagesEntry[]][]
-    >;
+  | ScanResult<'scan_duplicate_files', TupleWithRefItem<RawDuplicateEntry>[]>
+  | ScanResult<'scan_empty_folders', RawFolderOrTemporaryFileEntry[]>
+  | ScanResult<'scan_big_files', RawFileEntry[]>
+  | ScanResult<'scan_empty_files', RawFileEntry[]>
+  | ScanResult<'scan_temporary_files', RawFolderOrTemporaryFileEntry[]>
+  | ScanResult<'scan_similar_images', TupleWithRefItem<RawImagesEntry>[]>
+  | ScanResult<'scan_similar_videos', TupleWithRefItem<RawVideosEntry>[]>;
 
 export interface ImageInfo {
   base64: string;

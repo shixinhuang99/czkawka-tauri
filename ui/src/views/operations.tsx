@@ -8,6 +8,7 @@ import {
   emptyFoldersAtom,
   progressAtom,
   similarImagesAtom,
+  similarVideosAtom,
   temporaryFilesAtom,
 } from '~/atom/primitive';
 import { OperationButton } from '~/components';
@@ -25,6 +26,7 @@ export function Operations() {
   const emptyFiles = useAtomValue(emptyFilesAtom);
   const temporaryFiles = useAtomValue(temporaryFilesAtom);
   const similarImages = useAtomValue(similarImagesAtom);
+  const similarVideos = useAtomValue(similarVideosAtom);
 
   const disabledMap: Record<string, boolean> = {
     [Tools.DuplicateFiles]: !duplicateFiles.length,
@@ -33,7 +35,7 @@ export function Operations() {
     [Tools.EmptyFiles]: !emptyFiles.length,
     [Tools.TemporaryFiles]: !temporaryFiles.length,
     [Tools.SimilarImages]: !similarImages.length,
-    // [Tools.SimilarVideos]:
+    [Tools.SimilarVideos]: !similarVideos.length,
     // [Tools.MusicDuplicates]:
     // [Tools.InvalidSymlinks]:
     // [Tools.BrokenFiles]:
