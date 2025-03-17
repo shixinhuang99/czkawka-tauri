@@ -166,6 +166,11 @@ export type ScanResult =
       cmd: 'scan_big_files';
       list: RawFileEntry[];
       message: string;
+    }
+  | {
+      cmd: 'scan_empty_files';
+      list: RawFileEntry[];
+      message: string;
     };
 
 export interface ImageInfo {

@@ -25,7 +25,6 @@ import { useBoolean } from '~/hooks';
 const descMap: Record<string, string> = {
   [Tools.DuplicateFiles]: 'Duplicate files settings',
   [Tools.BigFiles]: 'Big files settings',
-  [Tools.EmptyFiles]: 'Empty files settings',
   [Tools.TemporaryFiles]: 'Temporary files settings',
   [Tools.SimilarImages]: 'Similar images settings',
   [Tools.SimilarVideos]: 'Similar videos settings',
@@ -35,12 +34,17 @@ const descMap: Record<string, string> = {
   [Tools.BadExtensions]: 'Bad extensions settings',
 };
 
+const toolsWithoutSettings = new Set<string>([
+  Tools.EmptyFolders,
+  Tools.EmptyFiles,
+]);
+
 export function ToolSettings() {
   const currentTool = useAtomValue(currentToolAtom);
   const [settings, setSettings] = useAtom(settingsAtom);
   const dialogOpen = useBoolean();
 
-  if (currentTool === Tools.EmptyFolders) {
+  if (toolsWithoutSettings.has(currentTool)) {
     return null;
   }
 

@@ -59,3 +59,7 @@ export const emptyFoldersRowSelectionAtom = atom<RowSelection>({});
 export const bigFilesAtom = atom<FileEntry[]>([]);
 
 export const bigFilesRowSelectionAtom = atom<RowSelection>({});
+
+export const emptyFilesAtom = atom<FileEntry[]>([]);
+
+export const emptyFilesRowSelectionAtom = atom<RowSelection>({});

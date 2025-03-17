@@ -4,6 +4,7 @@ import { Progress } from '~/components';
 import { Tools } from '~/consts';
 import { BigFiles } from './big-files';
 import { DuplicateFiles } from './duplicate-files';
+import { EmptyFiles } from './empty-files';
 import { EmptyFolders } from './empty-folders';
 
 export function AppBody() {
@@ -67,6 +68,10 @@ function AllTable() {
 
   if (currentTool === Tools.BigFiles) {
     return <BigFiles />;
+  }
+
+  if (currentTool === Tools.EmptyFiles) {
+    return <EmptyFiles />;
   }
 
   return <div>Unknown tool</div>;

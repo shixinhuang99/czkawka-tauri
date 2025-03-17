@@ -21,7 +21,7 @@ Scan:
 - ✅ Duplicate Files
 - ✅ Empty Folders
 - ✅ Big Files
-- 🚧 Empty Files
+- ✅ Empty Files
 - 🚧 Temporary Files
 - 🚧 Similar Images
 - 🚧 Similar Videos

@@ -8,6 +8,8 @@ import {
   currentToolAtom,
   duplicateFilesAtom,
   duplicateFilesRowSelectionAtom,
+  emptyFilesAtom,
+  emptyFilesRowSelectionAtom,
   emptyFoldersAtom,
   emptyFoldersRowSelectionAtom,
   logsAtom,
@@ -51,6 +53,8 @@ export function ScanButton() {
   const setEmptyFoldersRowSelection = useSetAtom(emptyFoldersRowSelectionAtom);
   const setBigFiles = useSetAtom(bigFilesAtom);
   const setBigFilesRowSelection = useSetAtom(bigFilesRowSelectionAtom);
+  const setEmptyFiles = useSetAtom(emptyFilesAtom);
+  const setEmptyFilesRowSelection = useSetAtom(emptyFilesRowSelectionAtom);
 
   useEffect(() => {
     listen<ScanResult>('scan-result', (e) => {
@@ -66,6 +70,9 @@ export function ScanButton() {
       } else if (cmd === 'scan_big_files') {
         setBigFiles(convertFileEntries(list));
         setBigFilesRowSelection({});
+      } else if (cmd === 'scan_empty_files') {
+        setEmptyFiles(convertFileEntries(list));
+        setEmptyFilesRowSelection({});
       }
     });
     ipc.listenScanProgress();

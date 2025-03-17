@@ -4,6 +4,7 @@ import {
   bigFilesAtom,
   currentToolAtom,
   duplicateFilesAtom,
+  emptyFilesAtom,
   emptyFoldersAtom,
   progressAtom,
 } from '~/atom/primitive';
@@ -19,6 +20,7 @@ export function Operations() {
   const bigFiles = useAtomValue(bigFilesAtom);
   const duplicateFiles = useAtomValue(duplicateFilesAtom);
   const emptyFolders = useAtomValue(emptyFoldersAtom);
+  const emptyFiles = useAtomValue(emptyFilesAtom);
 
   const disabled = (() => {
     let base = !!progress.tool;
@@ -28,6 +30,8 @@ export function Operations() {
       base ||= !emptyFolders.length;
     } else if (currentTool === Tools.BigFiles) {
       base ||= !bigFiles.length;
+    } else if (currentTool === Tools.EmptyFiles) {
+      base ||= !emptyFiles.length;
     }
     return base;
   })();
