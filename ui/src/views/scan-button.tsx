@@ -12,6 +12,8 @@ import {
   emptyFilesRowSelectionAtom,
   emptyFoldersAtom,
   emptyFoldersRowSelectionAtom,
+  invalidSymlinksAtom,
+  invalidSymlinksRowSelectionAtom,
   logsAtom,
   musicDuplicatesAtom,
   musicDuplicatesRowSelectionAtom,
@@ -34,6 +36,7 @@ import {
   convertFolderEntries,
   convertImagesEntries,
   convertMusicEntries,
+  convertSymlinksFileEntries,
   convertTemporaryFileEntries,
   convertVideosEntries,
 } from '~/utils/common';
@@ -83,6 +86,10 @@ export function ScanButton() {
   const setMusicDuplicatesRowSelection = useSetAtom(
     musicDuplicatesRowSelectionAtom,
   );
+  const setInvalidSymlinks = useSetAtom(invalidSymlinksAtom);
+  const setInvalidSymlinksRowSelection = useSetAtom(
+    invalidSymlinksRowSelectionAtom,
+  );
 
   useEffect(() => {
     listen<AllScanResult>('scan-result', (e) => {
@@ -112,6 +119,9 @@ export function ScanButton() {
       } else if (cmd === 'scan_music_duplicates') {
         setMusicDuplicates(convertMusicEntries(list));
         setMusicDuplicatesRowSelection({});
+      } else if (cmd === 'scan_invalid_symlinks') {
+        setInvalidSymlinks(convertSymlinksFileEntries(list));
+        setInvalidSymlinksRowSelection({});
       }
       setProgress(getDefaultProgress());
     });

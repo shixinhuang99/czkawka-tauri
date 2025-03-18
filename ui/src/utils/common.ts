@@ -12,7 +12,9 @@ import type {
   RawFolderOrTemporaryFileEntry,
   RawImagesEntry,
   RawMusicEntry,
+  RawSymlinksFileEntry,
   RawVideosEntry,
+  SymlinksFileEntry,
   TemporaryFileEntry,
   TupleWithRefItem,
   VideosEntry,
@@ -323,5 +325,29 @@ export function convertMusicEntries(
       id += 1;
     }
     return convertedFiles;
+  });
+}
+
+export function convertSymlinksFileEntries(
+  list: RawSymlinksFileEntry[],
+): SymlinksFileEntry[] {
+  const displayTypeOfError = (v: string) => {
+    if (v === 'InfiniteRecursion') {
+      return 'Infinite recursion';
+    }
+    if (v === 'NonExistentFile') {
+      return 'Non existent file';
+    }
+    return v;
+  };
+
+  return list.map((item) => {
+    return {
+      path: item.path,
+      symlinkName: pathBaseName(item.path),
+      modifiedDate: fmtDate(item.modified_date),
+      destinationPath: item.symlink_info.destination_path,
+      typeOfError: displayTypeOfError(item.symlink_info.type_of_error),
+    };
   });
 }

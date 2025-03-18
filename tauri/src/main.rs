@@ -5,6 +5,7 @@ mod duplicate_files;
 mod empty_files;
 mod empty_folders;
 mod image;
+mod invalid_symlinks;
 mod music_duplicates;
 mod progress;
 mod scaner;
@@ -47,6 +48,7 @@ fn main() {
 			scan_similar_images,
 			scan_similar_videos,
 			scan_music_duplicates,
+			scan_invalid_symlinks,
 		])
 		.plugin(tauri_plugin_opener::init())
 		.plugin(tauri_plugin_dialog::init())
@@ -145,4 +147,9 @@ fn scan_similar_videos(app: AppHandle, settings: Settings) {
 #[tauri::command]
 fn scan_music_duplicates(app: AppHandle, settings: Settings) {
 	music_duplicates::scan_music_duplicates(app, settings);
+}
+
+#[tauri::command]
+fn scan_invalid_symlinks(app: AppHandle, settings: Settings) {
+	invalid_symlinks::scan_invalid_symlinks(app, settings);
 }

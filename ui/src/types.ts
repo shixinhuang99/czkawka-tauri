@@ -223,6 +223,24 @@ export interface MusicEntry {
   raw: RawMusicEntry;
 }
 
+export interface RawSymlinksFileEntry {
+  path: string;
+  size: number;
+  modified_date: number;
+  symlink_info: {
+    destination_path: string;
+    type_of_error: string;
+  };
+}
+
+export interface SymlinksFileEntry {
+  path: string;
+  symlinkName: string;
+  modifiedDate: string;
+  destinationPath: string;
+  typeOfError: string;
+}
+
 interface ScanResult<C extends ScanCmd, L> {
   cmd: C;
   list: L;
@@ -239,7 +257,8 @@ export type AllScanResult =
   | ScanResult<'scan_temporary_files', RawFolderOrTemporaryFileEntry[]>
   | ScanResult<'scan_similar_images', TupleWithRefItem<RawImagesEntry>[]>
   | ScanResult<'scan_similar_videos', TupleWithRefItem<RawVideosEntry>[]>
-  | ScanResult<'scan_music_duplicates', TupleWithRefItem<RawMusicEntry>[]>;
+  | ScanResult<'scan_music_duplicates', TupleWithRefItem<RawMusicEntry>[]>
+  | ScanResult<'scan_invalid_symlinks', RawSymlinksFileEntry[]>;
 
 export interface ImageInfo {
   base64: string;

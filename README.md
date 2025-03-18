@@ -26,6 +26,6 @@ Scan:
 - ✅ Similar Images
 - ✅ Similar Videos
 - ✅ Music Duplicates
-- 🚧 Invalid Symlinks
+- ✅ Invalid Symlinks
 - 🚧 Broken Files
 - 🚧 Bad Extensions

@@ -16,6 +16,7 @@ import type {
   PlatformSettings,
   Preset,
   Progress,
+  SymlinksFileEntry,
   TemporaryFileEntry,
   ThemeCfg,
   VideosEntry,
@@ -83,3 +84,7 @@ export const similarVideosRowSelectionAtom = atom<RowSelection>({});
 export const musicDuplicatesAtom = atom<MusicEntry[]>([]);
 
 export const musicDuplicatesRowSelectionAtom = atom<RowSelection>({});
+
+export const invalidSymlinksAtom = atom<SymlinksFileEntry[]>([]);
+
+export const invalidSymlinksRowSelectionAtom = atom<RowSelection>({});

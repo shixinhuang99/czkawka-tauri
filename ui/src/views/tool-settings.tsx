@@ -31,7 +31,6 @@ const descMap: Record<string, string> = {
   [Tools.SimilarImages]: 'Similar images settings',
   [Tools.SimilarVideos]: 'Similar videos settings',
   [Tools.MusicDuplicates]: 'Music duplicates settings',
-  [Tools.InvalidSymlinks]: 'Invalid symlinks settings',
   [Tools.BrokenFiles]: 'Broken files settings',
   [Tools.BadExtensions]: 'Bad extensions settings',
 };
@@ -40,6 +39,7 @@ const toolsWithoutSettings = new Set<string>([
   Tools.EmptyFolders,
   Tools.EmptyFiles,
   Tools.TemporaryFiles,
+  Tools.InvalidSymlinks,
 ]);
 
 const settingsCompMap: Record<string, () => React.JSX.Element> = {
@@ -48,7 +48,6 @@ const settingsCompMap: Record<string, () => React.JSX.Element> = {
   [Tools.SimilarImages]: SimilarImagesSettings,
   [Tools.SimilarVideos]: SimilarVideosSettings,
   [Tools.MusicDuplicates]: MusicDuplicatesSettings,
-  // [Tools.InvalidSymlinks]:
   // [Tools.BrokenFiles]:
   // [Tools.BadExtensions]:
 };
@@ -92,7 +91,7 @@ export function ToolSettings() {
 }
 
 function Fallback() {
-  return <div>...</div>;
+  return <div>Something wrong</div>;
 }
 
 function DuplicateFilesSettings() {

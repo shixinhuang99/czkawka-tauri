@@ -6,6 +6,7 @@ import { BigFiles } from './big-files';
 import { DuplicateFiles } from './duplicate-files';
 import { EmptyFiles } from './empty-files';
 import { EmptyFolders } from './empty-folders';
+import { InvalidSymlinks } from './invalid-symlinks';
 import { MusicDuplicates } from './music-duplicates';
 import { SimilarImages } from './similar-images';
 import { SimilarVideos } from './similar-videos';
@@ -20,7 +21,7 @@ const tableMap: Record<string, () => React.JSX.Element> = {
   [Tools.SimilarImages]: SimilarImages,
   [Tools.SimilarVideos]: SimilarVideos,
   [Tools.MusicDuplicates]: MusicDuplicates,
-  // [Tools.InvalidSymlinks]:
+  [Tools.InvalidSymlinks]: InvalidSymlinks,
   // [Tools.BrokenFiles]:
   // [Tools.BadExtensions]:
 };
@@ -29,7 +30,7 @@ export function AppBody() {
   const progress = useAtomValue(progressAtom);
   const currentTool = useAtomValue(currentToolAtom);
 
-  const Table = tableMap[currentTool] || UnknownTool;
+  const Table = tableMap[currentTool] || Fallback;
 
   return (
     <div className="flex-1 flex flex-col w-px">
@@ -75,6 +76,6 @@ function ProgressWrap(props: { label: string; value: number }) {
   );
 }
 
-function UnknownTool() {
-  return <div>Unknown tool</div>;
+function Fallback() {
+  return <div>Something wrong</div>;
 }
