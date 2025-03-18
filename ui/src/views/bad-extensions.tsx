@@ -1,17 +1,20 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { brokenFilesAtom, brokenFilesRowSelectionAtom } from '~/atom/primitive';
+import {
+  badExtensionsAtom,
+  badExtensionsRowSelectionAtom,
+} from '~/atom/primitive';
 import {
   DataTable,
   createActionsColumn,
   createColumns,
 } from '~/components/data-table';
-import type { BrokenEntry } from '~/types';
+import type { BadFileEntry } from '~/types';
 
-const columns = createColumns<BrokenEntry>([
+const columns = createColumns<BadFileEntry>([
   {
     accessorKey: 'fileName',
     header: 'File name',
-    size: 180,
+    size: 170,
     minSize: 100,
   },
   {
@@ -21,16 +24,16 @@ const columns = createColumns<BrokenEntry>([
     minSize: 100,
   },
   {
-    accessorKey: 'errorString',
-    header: 'Type of error',
-    size: 160,
-    minSize: 110,
+    accessorKey: 'currentExtension',
+    header: 'Current extension',
+    size: 140,
+    minSize: 140,
   },
   {
-    accessorKey: 'size',
-    header: 'Size',
-    size: 110,
-    minSize: 50,
+    accessorKey: 'properExtensionsGroup',
+    header: 'Proper extension',
+    size: 140,
+    minSize: 140,
   },
   {
     accessorKey: 'modifiedDate',
@@ -41,9 +44,11 @@ const columns = createColumns<BrokenEntry>([
   createActionsColumn(),
 ]);
 
-export function BrokenFiles() {
-  const data = useAtomValue(brokenFilesAtom);
-  const [rowSelection, setRowSelection] = useAtom(brokenFilesRowSelectionAtom);
+export function BadExtensions() {
+  const data = useAtomValue(badExtensionsAtom);
+  const [rowSelection, setRowSelection] = useAtom(
+    badExtensionsRowSelectionAtom,
+  );
 
   return (
     <DataTable

@@ -8,6 +8,7 @@ import {
   getDefaultProgress,
 } from '~/consts';
 import type {
+  BadFileEntry,
   BrokenEntry,
   DuplicateEntry,
   FileEntry,
@@ -93,3 +94,7 @@ export const invalidSymlinksRowSelectionAtom = atom<RowSelection>({});
 export const brokenFilesAtom = atom<BrokenEntry[]>([]);
 
 export const brokenFilesRowSelectionAtom = atom<RowSelection>({});
+
+export const badExtensionsAtom = atom<BadFileEntry[]>([]);
+
+export const badExtensionsRowSelectionAtom = atom<RowSelection>({});

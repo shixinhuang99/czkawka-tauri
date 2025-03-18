@@ -32,7 +32,6 @@ const descMap: Record<string, string> = {
   [Tools.SimilarVideos]: 'Similar videos settings',
   [Tools.MusicDuplicates]: 'Music duplicates settings',
   [Tools.BrokenFiles]: 'Broken files settings',
-  [Tools.BadExtensions]: 'Bad extensions settings',
 };
 
 const toolsWithoutSettings = new Set<string>([
@@ -40,6 +39,7 @@ const toolsWithoutSettings = new Set<string>([
   Tools.EmptyFiles,
   Tools.TemporaryFiles,
   Tools.InvalidSymlinks,
+  Tools.BadExtensions,
 ]);
 
 const settingsCompMap: Record<string, () => React.JSX.Element> = {
@@ -49,7 +49,6 @@ const settingsCompMap: Record<string, () => React.JSX.Element> = {
   [Tools.SimilarVideos]: SimilarVideosSettings,
   [Tools.MusicDuplicates]: MusicDuplicatesSettings,
   [Tools.BrokenFiles]: BrokenFilesSettings,
-  // [Tools.BadExtensions]:
 };
 
 export function ToolSettings() {

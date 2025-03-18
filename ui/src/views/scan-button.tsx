@@ -3,6 +3,8 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Ban, Search } from 'lucide-react';
 import { useEffect } from 'react';
 import {
+  badExtensionsAtom,
+  badExtensionsRowSelectionAtom,
   bigFilesAtom,
   bigFilesRowSelectionAtom,
   brokenFilesAtom,
@@ -33,6 +35,7 @@ import { Tools, getDefaultProgress } from '~/consts';
 import { ipc } from '~/ipc';
 import type { AllScanResult, ProgressData, ScanCmd } from '~/types';
 import {
+  convertBadFileEntries,
   convertBorkenEntries,
   convertDuplicateEntries,
   convertFileEntries,
@@ -95,6 +98,10 @@ export function ScanButton() {
   );
   const setBrokenFiles = useSetAtom(brokenFilesAtom);
   const setBrokenFilesRowSelection = useSetAtom(brokenFilesRowSelectionAtom);
+  const setBadExtensions = useSetAtom(badExtensionsAtom);
+  const setBadExtensionsRowSelection = useSetAtom(
+    badExtensionsRowSelectionAtom,
+  );
 
   useEffect(() => {
     listen<AllScanResult>('scan-result', (e) => {
@@ -130,6 +137,9 @@ export function ScanButton() {
       } else if (cmd === 'scan_broken_files') {
         setBrokenFiles(convertBorkenEntries(list));
         setBrokenFilesRowSelection({});
+      } else if (cmd === 'scan_bad_extensions') {
+        setBadExtensions(convertBadFileEntries(list));
+        setBadExtensionsRowSelection({});
       }
       setProgress(getDefaultProgress());
     });

@@ -2,12 +2,14 @@ import { format } from 'date-fns';
 import { filesize } from 'filesize';
 import type { RowSelection } from '~/components/data-table';
 import type {
+  BadFileEntry,
   BrokenEntry,
   DuplicateEntry,
   FileEntry,
   FolderEntry,
   ImagesEntry,
   MusicEntry,
+  RawBadFileEntry,
   RawBrokenEntry,
   RawDuplicateEntry,
   RawFileEntry,
@@ -363,6 +365,18 @@ export function convertBorkenEntries(list: RawBrokenEntry[]): BrokenEntry[] {
       modifiedDate: fmtDate(item.modified_date),
       size: fmtFileSize(item.size),
       errorString: item.error_string,
+    };
+  });
+}
+
+export function convertBadFileEntries(list: RawBadFileEntry[]): BadFileEntry[] {
+  return list.map((item) => {
+    return {
+      path: item.path,
+      fileName: pathBaseName(item.path),
+      modifiedDate: fmtDate(item.modified_date),
+      currentExtension: item.current_extension,
+      properExtensionsGroup: item.proper_extensions_group,
     };
   });
 }

@@ -28,4 +28,4 @@ Scan:
 - ✅ Music Duplicates
 - ✅ Invalid Symlinks
 - ✅ Broken Files
-- 🚧 Bad Extensions
+- ✅ Bad Extensions

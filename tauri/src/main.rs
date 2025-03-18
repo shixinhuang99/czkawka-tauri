@@ -1,5 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod bad_extensions;
 mod big_files;
 mod broken_files;
 mod duplicate_files;
@@ -51,6 +52,7 @@ fn main() {
 			scan_music_duplicates,
 			scan_invalid_symlinks,
 			scan_broken_files,
+			scan_bad_extensions,
 		])
 		.plugin(tauri_plugin_opener::init())
 		.plugin(tauri_plugin_dialog::init())
@@ -159,4 +161,9 @@ fn scan_invalid_symlinks(app: AppHandle, settings: Settings) {
 #[tauri::command]
 fn scan_broken_files(app: AppHandle, settings: Settings) {
 	broken_files::scan_broken_files(app, settings);
+}
+
+#[tauri::command]
+fn scan_bad_extensions(app: AppHandle, settings: Settings) {
+	bad_extensions::scan_bad_extensions(app, settings);
 }

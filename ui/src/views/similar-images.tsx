@@ -36,7 +36,7 @@ const columns: ColumnDef<ImagesEntry>[] = [
     accessorKey: 'similarity',
     header: 'Similarity',
     size: 100,
-    minSize: 50,
+    minSize: 80,
   },
   {
     accessorKey: 'size',
@@ -48,7 +48,7 @@ const columns: ColumnDef<ImagesEntry>[] = [
     accessorKey: 'dimensions',
     header: 'Dimensions',
     size: 100,
-    minSize: 50,
+    minSize: 100,
   },
   {
     accessorKey: 'fileName',

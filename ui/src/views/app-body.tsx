@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai';
 import { currentToolAtom, progressAtom } from '~/atom/primitive';
 import { Progress } from '~/components';
 import { Tools } from '~/consts';
+import { BadExtensions } from './bad-extensions';
 import { BigFiles } from './big-files';
 import { BrokenFiles } from './broken-files';
 import { DuplicateFiles } from './duplicate-files';
@@ -24,7 +25,7 @@ const tableMap: Record<string, () => React.JSX.Element> = {
   [Tools.MusicDuplicates]: MusicDuplicates,
   [Tools.InvalidSymlinks]: InvalidSymlinks,
   [Tools.BrokenFiles]: BrokenFiles,
-  // [Tools.BadExtensions]:
+  [Tools.BadExtensions]: BadExtensions,
 };
 
 export function AppBody() {

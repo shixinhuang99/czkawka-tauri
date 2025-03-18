@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { FolderLock, FolderSymlink, Trash2 } from 'lucide-react';
 import {
+  badExtensionsAtom,
   bigFilesAtom,
   brokenFilesAtom,
   currentToolAtom,
@@ -33,6 +34,7 @@ export function Operations() {
   const musicDuplicates = useAtomValue(musicDuplicatesAtom);
   const invalidSymlinks = useAtomValue(invalidSymlinksAtom);
   const brokenFiles = useAtomValue(brokenFilesAtom);
+  const badExtensions = useAtomValue(badExtensionsAtom);
 
   const disabledMap: Record<string, boolean> = {
     [Tools.DuplicateFiles]: !duplicateFiles.length,
@@ -45,7 +47,7 @@ export function Operations() {
     [Tools.MusicDuplicates]: !musicDuplicates.length,
     [Tools.InvalidSymlinks]: !invalidSymlinks.length,
     [Tools.BrokenFiles]: !brokenFiles.length,
-    // [Tools.BadExtensions]:
+    [Tools.BadExtensions]: !badExtensions.length,
   };
 
   const disabled = !!progress.tool || disabledMap[currentTool];
