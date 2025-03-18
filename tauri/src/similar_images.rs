@@ -34,9 +34,9 @@ struct ScanResult {
 }
 
 pub fn scan_similar_images(app: AppHandle, settins: Settings) {
-	let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
-
 	spawn_scaner_thread(move || {
+		let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+
 		let hash_alg = match settins.similar_images_sub_hash_alg.as_ref() {
 			"Gradient" => HashAlg::Gradient,
 			"BlockHash" => HashAlg::Blockhash,

@@ -24,9 +24,9 @@ struct ScanResult {
 }
 
 pub fn scan_duplicate_files(app: AppHandle, settings: Settings) {
-	let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
-
 	spawn_scaner_thread(move || {
+		let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+
 		let hash_type =
 			match settings.duplicates_sub_available_hash_type.as_ref() {
 				"CRC32" => HashType::Crc32,

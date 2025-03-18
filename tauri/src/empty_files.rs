@@ -20,9 +20,9 @@ struct ScanResult {
 }
 
 pub fn scan_empty_files(app: AppHandle, settings: Settings) {
-	let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
-
 	spawn_scaner_thread(move || {
+		let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+
 		let mut scaner = EmptyFiles::new();
 
 		apply_scaner_settings(&mut scaner, settings);

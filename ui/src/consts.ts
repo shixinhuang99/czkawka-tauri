@@ -112,8 +112,8 @@ export function getDefaultSettings(): Settings {
     similarMusicSubBitrate: false,
     similarMusicSubGenre: false,
     similarMusicSubLength: false,
-    similarMusicSubMaximumDifferenceValue: 3.0,
-    similarMusicSubMinimalFragmentDurationValue: 5.0,
+    similarMusicSubMaximumDifferenceValue: 3,
+    similarMusicSubMinimalFragmentDurationValue: 5,
 
     brokenFilesSubAudio: true,
     brokenFilesSubPdf: false,

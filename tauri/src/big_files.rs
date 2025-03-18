@@ -21,9 +21,9 @@ struct ScanResult {
 }
 
 pub fn scan_big_files(app: AppHandle, settings: Settings) {
-	let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
-
 	spawn_scaner_thread(move || {
+		let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+
 		let search_mode = match settings.biggest_files_sub_method.as_ref() {
 			"SmallestFiles" => SearchMode::SmallestFiles,
 			_ => SearchMode::BiggestFiles,

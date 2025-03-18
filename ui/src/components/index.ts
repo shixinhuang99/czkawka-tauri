@@ -16,3 +16,4 @@ export { Checkbox } from './shadcn/checkbox';
 export { Progress } from './shadcn/progress';
 export { OperationButton } from './operation-button';
 export { Select } from './select-composition';
+export { CheckboxWithLabel } from './checkbox-with-label';

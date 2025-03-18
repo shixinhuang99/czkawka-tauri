@@ -15,9 +15,9 @@ use crate::{
 
 #[derive(Serialize, Clone)]
 struct CustomVideosEntry {
-	pub path: String,
-	pub size: u64,
-	pub modified_date: u64,
+	path: String,
+	size: u64,
+	modified_date: u64,
 }
 
 #[derive(Serialize, Clone)]
@@ -28,9 +28,9 @@ struct ScanResult {
 }
 
 pub fn scan_similar_videos(app: AppHandle, settins: Settings) {
-	let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
-
 	spawn_scaner_thread(move || {
+		let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+
 		let mut scaner = SimilarVideos::new(SimilarVideosParameters::new(
 			settins.similar_videos_sub_similarity,
 			settins.similar_videos_sub_ignore_same_size,

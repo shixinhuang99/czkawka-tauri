@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tailwindcss -i input.css -o output.css && tsc && vite build",
     "preview": "vite preview",
     "tailwindcss": "tailwindcss -i input.css -o output.css --watch"
   },

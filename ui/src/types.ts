@@ -195,6 +195,34 @@ export interface VideosEntry {
   raw: RawVideosEntry;
 }
 
+export interface RawMusicEntry {
+  size: number;
+  path: string;
+  modified_date: number;
+  track_title: string;
+  track_artist: string;
+  year: string;
+  length: string;
+  genre: string;
+  bitrate: number;
+}
+
+export interface MusicEntry {
+  size: string;
+  path: string;
+  fileName: string;
+  modifiedDate: string;
+  trackTitle: string;
+  trackArtist: string;
+  year: string;
+  length: string;
+  genre: string;
+  bitrate: string;
+  isRef: boolean;
+  hidden: boolean;
+  raw: RawMusicEntry;
+}
+
 interface ScanResult<C extends ScanCmd, L> {
   cmd: C;
   list: L;
@@ -210,7 +238,8 @@ export type AllScanResult =
   | ScanResult<'scan_empty_files', RawFileEntry[]>
   | ScanResult<'scan_temporary_files', RawFolderOrTemporaryFileEntry[]>
   | ScanResult<'scan_similar_images', TupleWithRefItem<RawImagesEntry>[]>
-  | ScanResult<'scan_similar_videos', TupleWithRefItem<RawVideosEntry>[]>;
+  | ScanResult<'scan_similar_videos', TupleWithRefItem<RawVideosEntry>[]>
+  | ScanResult<'scan_music_duplicates', TupleWithRefItem<RawMusicEntry>[]>;
 
 export interface ImageInfo {
   base64: string;

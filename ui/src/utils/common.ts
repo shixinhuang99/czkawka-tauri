@@ -6,10 +6,12 @@ import type {
   FileEntry,
   FolderEntry,
   ImagesEntry,
+  MusicEntry,
   RawDuplicateEntry,
   RawFileEntry,
   RawFolderOrTemporaryFileEntry,
   RawImagesEntry,
+  RawMusicEntry,
   RawVideosEntry,
   TemporaryFileEntry,
   TupleWithRefItem,
@@ -217,6 +219,7 @@ export function convertImagesEntries(
     return convertedFiles;
   });
 }
+
 function convertVideosEntry(item: RawVideosEntry, isRef: boolean): VideosEntry {
   return {
     size: fmtFileSize(item.size),
@@ -230,7 +233,7 @@ function convertVideosEntry(item: RawVideosEntry, isRef: boolean): VideosEntry {
 }
 
 export function convertVideosEntries(
-  list: [RawVideosEntry | null, RawVideosEntry[]][],
+  list: TupleWithRefItem<RawVideosEntry>[],
 ): VideosEntry[] {
   sortTupleWithRefItemList(list);
   let id = 1;
@@ -252,6 +255,68 @@ export function convertVideosEntries(
           path: '',
           size: 0,
           modified_date: 0,
+        },
+      };
+      convertedFiles.push(hiddenRow);
+      id += 1;
+    }
+    return convertedFiles;
+  });
+}
+
+function convertMusicEntry(item: RawMusicEntry, isRef: boolean): MusicEntry {
+  return {
+    size: fmtFileSize(item.size),
+    fileName: pathBaseName(item.path),
+    path: item.path,
+    modifiedDate: fmtDate(item.modified_date),
+    trackTitle: item.track_title,
+    trackArtist: item.track_artist,
+    year: item.year,
+    length: item.length,
+    genre: item.genre,
+    bitrate: item.bitrate.toString(),
+    isRef,
+    hidden: false,
+    raw: item,
+  };
+}
+
+export function convertMusicEntries(
+  list: TupleWithRefItem<RawMusicEntry>[],
+): MusicEntry[] {
+  sortTupleWithRefItemList(list);
+  let id = 1;
+  return list.flatMap((tuple, idx) => {
+    const [ref, items] = tuple;
+    const convertedFiles = items.map((item) => convertMusicEntry(item, false));
+    if (ref) {
+      convertedFiles.unshift(convertMusicEntry(ref, true));
+    }
+    if (idx !== list.length - 1) {
+      const hiddenRow: MusicEntry = {
+        size: '',
+        fileName: '',
+        path: `${HIDDEN_ROW_PREFIX}${id}`,
+        modifiedDate: '',
+        trackTitle: '',
+        trackArtist: '',
+        year: '',
+        length: '',
+        genre: '',
+        bitrate: '',
+        isRef: true,
+        hidden: true,
+        raw: {
+          path: '',
+          size: 0,
+          modified_date: 0,
+          track_title: '',
+          track_artist: '',
+          year: '',
+          length: '',
+          genre: '',
+          bitrate: 0,
         },
       };
       convertedFiles.push(hiddenRow);

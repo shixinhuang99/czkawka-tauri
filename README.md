@@ -25,7 +25,7 @@ Scan:
 - ✅ Temporary Files
 - ✅ Similar Images
 - ✅ Similar Videos
-- 🚧 Music Duplicates
+- ✅ Music Duplicates
 - 🚧 Invalid Symlinks
 - 🚧 Broken Files
 - 🚧 Bad Extensions

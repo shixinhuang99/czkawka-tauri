@@ -4,7 +4,7 @@ import { currentToolAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import { OperationButton } from '~/components';
 import { InputNumber } from '~/components';
-import { Select, Slider, Switch } from '~/components';
+import { CheckboxWithLabel, Select, Slider, Switch } from '~/components';
 import {
   Dialog,
   DialogContent,
@@ -20,6 +20,7 @@ import {
   DuplicatesCheckMethod,
   SimilarImagesHashAlgorithm,
   SimilarImagesResizeAlgorithm,
+  SimilarMusicAudioCheckType,
   Tools,
 } from '~/consts';
 import { useBoolean } from '~/hooks';
@@ -46,7 +47,7 @@ const settingsCompMap: Record<string, () => React.JSX.Element> = {
   [Tools.BigFiles]: BigFilesSettings,
   [Tools.SimilarImages]: SimilarImagesSettings,
   [Tools.SimilarVideos]: SimilarVideosSettings,
-  // [Tools.MusicDuplicates]:
+  [Tools.MusicDuplicates]: MusicDuplicatesSettings,
   // [Tools.InvalidSymlinks]:
   // [Tools.BrokenFiles]:
   // [Tools.BadExtensions]:
@@ -67,7 +68,7 @@ export function ToolSettings() {
     setSettings((old) => ({ ...old, ...v }));
   };
 
-  const SettingsComponent = settingsCompMap[currentTool] || null;
+  const SettingsComponent = settingsCompMap[currentTool] || Fallback;
 
   return (
     <Dialog open={dialogOpen.value} onOpenChange={dialogOpen.set}>
@@ -88,6 +89,10 @@ export function ToolSettings() {
       </DialogContent>
     </Dialog>
   );
+}
+
+function Fallback() {
+  return <div>...</div>;
 }
 
 function DuplicateFilesSettings() {
@@ -232,6 +237,94 @@ function SimilarVideosSettings() {
       >
         <Switch />
       </FormItem>
+    </>
+  );
+}
+
+function MusicDuplicatesSettings() {
+  const settings = useAtomValue(settingsAtom);
+
+  return (
+    <>
+      <FormItem
+        name="similarMusicSubAudioCheckType"
+        label="Audio check type"
+        comp="select"
+      >
+        <Select
+          options={Object.values(SimilarMusicAudioCheckType).map((value) => ({
+            label: value,
+            value,
+          }))}
+        />
+      </FormItem>
+      {settings.similarMusicSubAudioCheckType ===
+        SimilarMusicAudioCheckType.Tags && (
+        <>
+          <FormItem
+            name="similarMusicSubApproximateComparison"
+            label="Approximate tag comparison"
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+          <span className="text-center">Compared tags</span>
+          <div className="grid grid-cols-3 gap-2">
+            <FormItem name="similarMusicSubTitle" comp="checkbox">
+              <CheckboxWithLabel label="Title" />
+            </FormItem>
+            <FormItem name="similarMusicSubArtist" comp="checkbox">
+              <CheckboxWithLabel label="Artist" />
+            </FormItem>
+            <FormItem name="similarMusicSubBitrate" comp="checkbox">
+              <CheckboxWithLabel label="Bitrate" />
+            </FormItem>
+            <FormItem name="similarMusicSubGenre" comp="checkbox">
+              <CheckboxWithLabel label="Genre" />
+            </FormItem>
+            <FormItem name="similarMusicSubYear" comp="checkbox">
+              <CheckboxWithLabel label="Year" />
+            </FormItem>
+            <FormItem name="similarMusicSubLength" comp="checkbox">
+              <CheckboxWithLabel label="Length" />
+            </FormItem>
+          </div>
+        </>
+      )}
+      {settings.similarMusicSubAudioCheckType ===
+        SimilarMusicAudioCheckType.Fingerprint && (
+        <>
+          <FormItem
+            name="similarMusicSubMaximumDifferenceValue"
+            label="Max difference"
+            comp="slider"
+            suffix={
+              <span>({settings.similarMusicSubMaximumDifferenceValue}/10)</span>
+            }
+          >
+            <Slider min={0} max={10} />
+          </FormItem>
+          <FormItem
+            name="similarMusicSubMinimalFragmentDurationValue"
+            label="Minimal fragment duration"
+            comp="slider"
+            suffix={
+              <span>
+                {settings.similarMusicSubMinimalFragmentDurationValue}
+              </span>
+            }
+          >
+            <Slider min={0} max={180} />
+          </FormItem>
+          <FormItem
+            name="similarMusicCompareFingerprintsOnlyWithSimilarTitles"
+            label="Compare only with similar titles"
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+        </>
+      )}
     </>
   );
 }

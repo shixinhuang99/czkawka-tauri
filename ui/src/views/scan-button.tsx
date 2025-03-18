@@ -13,6 +13,8 @@ import {
   emptyFoldersAtom,
   emptyFoldersRowSelectionAtom,
   logsAtom,
+  musicDuplicatesAtom,
+  musicDuplicatesRowSelectionAtom,
   progressAtom,
   similarImagesAtom,
   similarImagesRowSelectionAtom,
@@ -31,6 +33,7 @@ import {
   convertFileEntries,
   convertFolderEntries,
   convertImagesEntries,
+  convertMusicEntries,
   convertTemporaryFileEntries,
   convertVideosEntries,
 } from '~/utils/common';
@@ -76,6 +79,10 @@ export function ScanButton() {
   const setSimilarVideosRowSelection = useSetAtom(
     similarVideosRowSelectionAtom,
   );
+  const setMusicDuplicates = useSetAtom(musicDuplicatesAtom);
+  const setMusicDuplicatesRowSelection = useSetAtom(
+    musicDuplicatesRowSelectionAtom,
+  );
 
   useEffect(() => {
     listen<AllScanResult>('scan-result', (e) => {
@@ -102,6 +109,9 @@ export function ScanButton() {
       } else if (cmd === 'scan_similar_videos') {
         setSimilarVideos(convertVideosEntries(list));
         setSimilarVideosRowSelection({});
+      } else if (cmd === 'scan_music_duplicates') {
+        setMusicDuplicates(convertMusicEntries(list));
+        setMusicDuplicatesRowSelection({});
       }
       setProgress(getDefaultProgress());
     });

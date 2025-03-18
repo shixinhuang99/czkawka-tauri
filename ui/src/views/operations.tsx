@@ -6,6 +6,7 @@ import {
   duplicateFilesAtom,
   emptyFilesAtom,
   emptyFoldersAtom,
+  musicDuplicatesAtom,
   progressAtom,
   similarImagesAtom,
   similarVideosAtom,
@@ -27,6 +28,7 @@ export function Operations() {
   const temporaryFiles = useAtomValue(temporaryFilesAtom);
   const similarImages = useAtomValue(similarImagesAtom);
   const similarVideos = useAtomValue(similarVideosAtom);
+  const musicDuplicates = useAtomValue(musicDuplicatesAtom);
 
   const disabledMap: Record<string, boolean> = {
     [Tools.DuplicateFiles]: !duplicateFiles.length,
@@ -36,7 +38,7 @@ export function Operations() {
     [Tools.TemporaryFiles]: !temporaryFiles.length,
     [Tools.SimilarImages]: !similarImages.length,
     [Tools.SimilarVideos]: !similarVideos.length,
-    // [Tools.MusicDuplicates]:
+    [Tools.MusicDuplicates]: !musicDuplicates.length,
     // [Tools.InvalidSymlinks]:
     // [Tools.BrokenFiles]:
     // [Tools.BadExtensions]:

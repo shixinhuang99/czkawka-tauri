@@ -12,6 +12,7 @@ import type {
   FileEntry,
   FolderEntry,
   ImagesEntry,
+  MusicEntry,
   PlatformSettings,
   Preset,
   Progress,
@@ -78,3 +79,7 @@ export const similarImagesRowSelectionAtom = atom<RowSelection>({});
 export const similarVideosAtom = atom<VideosEntry[]>([]);
 
 export const similarVideosRowSelectionAtom = atom<RowSelection>({});
+
+export const musicDuplicatesAtom = atom<MusicEntry[]>([]);
+
+export const musicDuplicatesRowSelectionAtom = atom<RowSelection>({});

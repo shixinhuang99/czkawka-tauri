@@ -6,6 +6,7 @@ import { BigFiles } from './big-files';
 import { DuplicateFiles } from './duplicate-files';
 import { EmptyFiles } from './empty-files';
 import { EmptyFolders } from './empty-folders';
+import { MusicDuplicates } from './music-duplicates';
 import { SimilarImages } from './similar-images';
 import { SimilarVideos } from './similar-videos';
 import { TemporaryFiles } from './temporary-files';
@@ -18,7 +19,7 @@ const tableMap: Record<string, () => React.JSX.Element> = {
   [Tools.TemporaryFiles]: TemporaryFiles,
   [Tools.SimilarImages]: SimilarImages,
   [Tools.SimilarVideos]: SimilarVideos,
-  // [Tools.MusicDuplicates]:
+  [Tools.MusicDuplicates]: MusicDuplicates,
   // [Tools.InvalidSymlinks]:
   // [Tools.BrokenFiles]:
   // [Tools.BadExtensions]:

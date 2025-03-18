@@ -19,7 +19,7 @@ const FormContext = createContext<IFormContext>({
   onChange: () => {},
 });
 
-export const Form = (props: FormProps) => {
+export function Form(props: FormProps) {
   const { value, onChange, className, children, ...restProps } = props;
 
   const contextValue = useMemo(() => {
@@ -38,14 +38,21 @@ export const Form = (props: FormProps) => {
       </FormContext.Provider>
     </form>
   );
-};
-Form.displayName = 'Form';
+}
+
+type CompType =
+  | 'textarea'
+  | 'input-number'
+  | 'switch'
+  | 'slider'
+  | 'select'
+  | 'checkbox';
 
 export function FormItem(
   props: React.PropsWithChildren<{
     name: string;
     label?: React.ReactNode;
-    comp: 'textarea' | 'input-number' | 'switch' | 'slider' | 'select';
+    comp: CompType;
     suffix?: React.ReactNode;
   }>,
 ) {
@@ -53,51 +60,48 @@ export function FormItem(
 
   const { value, onChange } = useContext(FormContext);
 
-  const slotProps = (() => {
-    if (comp === 'switch') {
-      return {
-        name,
-        checked: value[name],
-        onCheckedChange: (v: boolean) => {
-          onChange({ [name]: v });
+  const slotProps: Record<string, any> = useMemo(() => {
+    const compPropsMap: Record<CompType, Record<string, any>> = {
+      textarea: {
+        value: value[name],
+        onChange: (e: React.FormEvent<HTMLTextAreaElement>) => {
+          onChange({ [name]: e.currentTarget.value });
         },
-      };
-    }
-    if (comp === 'slider') {
-      return {
-        name,
-        value: [value[name]],
-        onValueChange: (values: number[]) => {
-          onChange({ [name]: values[0] });
-        },
-      };
-    }
-    if (comp === 'input-number') {
-      return {
-        name,
+      },
+      'input-number': {
         value: value[name],
         onChange: (e: React.FormEvent<HTMLInputElement>) => {
           onChange({ [name]: e.currentTarget.valueAsNumber });
         },
-      };
-    }
-    if (comp === 'select') {
-      return {
-        name,
-        value: value[name],
-        onChange: (v: any) => {
+      },
+      switch: {
+        checked: value[name],
+        onCheckedChange: (v: boolean) => {
           onChange({ [name]: v });
         },
-      };
-    }
-    return {
-      name,
-      value: value[name],
-      onChange: (e: React.FormEvent<HTMLTextAreaElement>) => {
-        onChange({ [name]: e.currentTarget.value });
+      },
+      slider: {
+        value: [value[name]],
+        onValueChange: (values: number[]) => {
+          onChange({ [name]: values[0] });
+        },
+      },
+      select: {
+        value: value[name],
+        onChange: (v: string) => {
+          onChange({ [name]: v });
+        },
+      },
+      checkbox: {
+        checked: value[name],
+        onCheckedChange: (v: boolean | string) => {
+          onChange({ [name]: !!v });
+        },
       },
     };
-  })();
+    const compProps = compPropsMap[comp] || {};
+    return { name, ...compProps };
+  }, [value, name, comp, onChange]);
 
   if (!label) {
     return (
@@ -119,4 +123,3 @@ export function FormItem(
     </div>
   );
 }
-FormItem.displayName = 'FormItem';
