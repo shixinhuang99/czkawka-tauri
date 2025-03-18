@@ -239,6 +239,22 @@ export interface SymlinksFileEntry {
   modifiedDate: string;
   destinationPath: string;
   typeOfError: string;
+  size: string;
+}
+
+export interface RawBrokenEntry {
+  path: string;
+  modified_date: number;
+  size: number;
+  error_string: string;
+}
+
+export interface BrokenEntry {
+  path: string;
+  fileName: string;
+  modifiedDate: string;
+  size: string;
+  errorString: string;
 }
 
 interface ScanResult<C extends ScanCmd, L> {
@@ -258,7 +274,8 @@ export type AllScanResult =
   | ScanResult<'scan_similar_images', TupleWithRefItem<RawImagesEntry>[]>
   | ScanResult<'scan_similar_videos', TupleWithRefItem<RawVideosEntry>[]>
   | ScanResult<'scan_music_duplicates', TupleWithRefItem<RawMusicEntry>[]>
-  | ScanResult<'scan_invalid_symlinks', RawSymlinksFileEntry[]>;
+  | ScanResult<'scan_invalid_symlinks', RawSymlinksFileEntry[]>
+  | ScanResult<'scan_broken_files', RawBrokenEntry[]>;
 
 export interface ImageInfo {
   base64: string;

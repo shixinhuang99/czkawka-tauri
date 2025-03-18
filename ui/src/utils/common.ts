@@ -2,11 +2,13 @@ import { format } from 'date-fns';
 import { filesize } from 'filesize';
 import type { RowSelection } from '~/components/data-table';
 import type {
+  BrokenEntry,
   DuplicateEntry,
   FileEntry,
   FolderEntry,
   ImagesEntry,
   MusicEntry,
+  RawBrokenEntry,
   RawDuplicateEntry,
   RawFileEntry,
   RawFolderOrTemporaryFileEntry,
@@ -348,6 +350,19 @@ export function convertSymlinksFileEntries(
       modifiedDate: fmtDate(item.modified_date),
       destinationPath: item.symlink_info.destination_path,
       typeOfError: displayTypeOfError(item.symlink_info.type_of_error),
+      size: fmtFileSize(item.size),
+    };
+  });
+}
+
+export function convertBorkenEntries(list: RawBrokenEntry[]): BrokenEntry[] {
+  return list.map((item) => {
+    return {
+      path: item.path,
+      fileName: pathBaseName(item.path),
+      modifiedDate: fmtDate(item.modified_date),
+      size: fmtFileSize(item.size),
+      errorString: item.error_string,
     };
   });
 }

@@ -5,6 +5,8 @@ import { useEffect } from 'react';
 import {
   bigFilesAtom,
   bigFilesRowSelectionAtom,
+  brokenFilesAtom,
+  brokenFilesRowSelectionAtom,
   currentToolAtom,
   duplicateFilesAtom,
   duplicateFilesRowSelectionAtom,
@@ -31,6 +33,7 @@ import { Tools, getDefaultProgress } from '~/consts';
 import { ipc } from '~/ipc';
 import type { AllScanResult, ProgressData, ScanCmd } from '~/types';
 import {
+  convertBorkenEntries,
   convertDuplicateEntries,
   convertFileEntries,
   convertFolderEntries,
@@ -90,6 +93,8 @@ export function ScanButton() {
   const setInvalidSymlinksRowSelection = useSetAtom(
     invalidSymlinksRowSelectionAtom,
   );
+  const setBrokenFiles = useSetAtom(brokenFilesAtom);
+  const setBrokenFilesRowSelection = useSetAtom(brokenFilesRowSelectionAtom);
 
   useEffect(() => {
     listen<AllScanResult>('scan-result', (e) => {
@@ -122,6 +127,9 @@ export function ScanButton() {
       } else if (cmd === 'scan_invalid_symlinks') {
         setInvalidSymlinks(convertSymlinksFileEntries(list));
         setInvalidSymlinksRowSelection({});
+      } else if (cmd === 'scan_broken_files') {
+        setBrokenFiles(convertBorkenEntries(list));
+        setBrokenFilesRowSelection({});
       }
       setProgress(getDefaultProgress());
     });

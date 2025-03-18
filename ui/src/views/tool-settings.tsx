@@ -48,7 +48,7 @@ const settingsCompMap: Record<string, () => React.JSX.Element> = {
   [Tools.SimilarImages]: SimilarImagesSettings,
   [Tools.SimilarVideos]: SimilarVideosSettings,
   [Tools.MusicDuplicates]: MusicDuplicatesSettings,
-  // [Tools.BrokenFiles]:
+  [Tools.BrokenFiles]: BrokenFilesSettings,
   // [Tools.BadExtensions]:
 };
 
@@ -268,7 +268,7 @@ function MusicDuplicatesSettings() {
             <Switch />
           </FormItem>
           <span className="text-center">Compared tags</span>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 *:pl-4">
             <FormItem name="similarMusicSubTitle" comp="checkbox">
               <CheckboxWithLabel label="Title" />
             </FormItem>
@@ -324,6 +324,28 @@ function MusicDuplicatesSettings() {
           </FormItem>
         </>
       )}
+    </>
+  );
+}
+
+function BrokenFilesSettings() {
+  return (
+    <>
+      <span className="text-center">Type of files to check</span>
+      <div className="grid grid-cols-4 justify-items-center">
+        <FormItem name="brokenFilesSubAudio" comp="checkbox">
+          <CheckboxWithLabel label="Audio" />
+        </FormItem>
+        <FormItem name="brokenFilesSubPdf" comp="checkbox">
+          <CheckboxWithLabel label="Pdf" />
+        </FormItem>
+        <FormItem name="brokenFilesSubArchive" comp="checkbox">
+          <CheckboxWithLabel label="Archive" />
+        </FormItem>
+        <FormItem name="brokenFilesSubImage" comp="checkbox">
+          <CheckboxWithLabel label="Image" />
+        </FormItem>
+      </div>
     </>
   );
 }

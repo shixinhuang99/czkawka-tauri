@@ -27,5 +27,5 @@ Scan:
 - ✅ Similar Videos
 - ✅ Music Duplicates
 - ✅ Invalid Symlinks
-- 🚧 Broken Files
+- ✅ Broken Files
 - 🚧 Bad Extensions

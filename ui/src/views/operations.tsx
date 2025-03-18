@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai';
 import { FolderLock, FolderSymlink, Trash2 } from 'lucide-react';
 import {
   bigFilesAtom,
+  brokenFilesAtom,
   currentToolAtom,
   duplicateFilesAtom,
   emptyFilesAtom,
@@ -31,6 +32,7 @@ export function Operations() {
   const similarVideos = useAtomValue(similarVideosAtom);
   const musicDuplicates = useAtomValue(musicDuplicatesAtom);
   const invalidSymlinks = useAtomValue(invalidSymlinksAtom);
+  const brokenFiles = useAtomValue(brokenFilesAtom);
 
   const disabledMap: Record<string, boolean> = {
     [Tools.DuplicateFiles]: !duplicateFiles.length,
@@ -42,7 +44,7 @@ export function Operations() {
     [Tools.SimilarVideos]: !similarVideos.length,
     [Tools.MusicDuplicates]: !musicDuplicates.length,
     [Tools.InvalidSymlinks]: !invalidSymlinks.length,
-    // [Tools.BrokenFiles]:
+    [Tools.BrokenFiles]: !brokenFiles.length,
     // [Tools.BadExtensions]:
   };
 

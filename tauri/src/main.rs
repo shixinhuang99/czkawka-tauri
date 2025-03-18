@@ -1,6 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod big_files;
+mod broken_files;
 mod duplicate_files;
 mod empty_files;
 mod empty_folders;
@@ -49,6 +50,7 @@ fn main() {
 			scan_similar_videos,
 			scan_music_duplicates,
 			scan_invalid_symlinks,
+			scan_broken_files,
 		])
 		.plugin(tauri_plugin_opener::init())
 		.plugin(tauri_plugin_dialog::init())
@@ -152,4 +154,9 @@ fn scan_music_duplicates(app: AppHandle, settings: Settings) {
 #[tauri::command]
 fn scan_invalid_symlinks(app: AppHandle, settings: Settings) {
 	invalid_symlinks::scan_invalid_symlinks(app, settings);
+}
+
+#[tauri::command]
+fn scan_broken_files(app: AppHandle, settings: Settings) {
+	broken_files::scan_broken_files(app, settings);
 }

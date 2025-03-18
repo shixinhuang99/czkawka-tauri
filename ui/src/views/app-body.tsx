@@ -3,6 +3,7 @@ import { currentToolAtom, progressAtom } from '~/atom/primitive';
 import { Progress } from '~/components';
 import { Tools } from '~/consts';
 import { BigFiles } from './big-files';
+import { BrokenFiles } from './broken-files';
 import { DuplicateFiles } from './duplicate-files';
 import { EmptyFiles } from './empty-files';
 import { EmptyFolders } from './empty-folders';
@@ -22,7 +23,7 @@ const tableMap: Record<string, () => React.JSX.Element> = {
   [Tools.SimilarVideos]: SimilarVideos,
   [Tools.MusicDuplicates]: MusicDuplicates,
   [Tools.InvalidSymlinks]: InvalidSymlinks,
-  // [Tools.BrokenFiles]:
+  [Tools.BrokenFiles]: BrokenFiles,
   // [Tools.BadExtensions]:
 };
 

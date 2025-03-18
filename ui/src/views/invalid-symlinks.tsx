@@ -37,6 +37,12 @@ const columns = createColumns<SymlinksFileEntry>([
     size: 160,
     minSize: 120,
   },
+  {
+    accessorKey: 'size',
+    header: 'Size',
+    size: 80,
+    minSize: 50,
+  },
 ]);
 
 export function InvalidSymlinks() {
