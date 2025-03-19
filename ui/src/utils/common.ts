@@ -3,6 +3,7 @@ import { filesize } from 'filesize';
 import type { RowSelection } from '~/components/data-table';
 import type {
   BadFileEntry,
+  BaseEntry,
   BrokenEntry,
   DuplicateEntry,
   FileEntry,
@@ -18,6 +19,7 @@ import type {
   RawMusicEntry,
   RawSymlinksFileEntry,
   RawVideosEntry,
+  RefEntry,
   SymlinksFileEntry,
   TemporaryFileEntry,
   TupleWithRefItem,
@@ -33,11 +35,24 @@ export function splitStr(s: string): string[] {
     .filter((s) => s.length > 0);
 }
 
-// todo: ignore ref item
-export function getRowSelectionKeys(rowSelection: RowSelection): string[] {
-  return Object.entries(rowSelection)
-    .filter((obj) => obj[1] && !obj[0].startsWith(HIDDEN_ROW_PREFIX))
-    .map((obj) => obj[0]);
+export function getRowSelectionKeys(rowSelection: RowSelection): Set<string> {
+  const keys: Set<string> = new Set();
+  for (const kv of Object.entries(rowSelection)) {
+    if (kv[1] && !kv[0].startsWith(HIDDEN_ROW_PREFIX)) {
+      keys.add(kv[0]);
+    }
+  }
+  return keys;
+}
+
+export function getPathsFromEntries<T extends BaseEntry>(list: T[]): string[] {
+  return list.map((v) => v.path);
+}
+
+export function getPathsFromRefEntries<T extends BaseEntry & RefEntry>(
+  list: T[],
+) {
+  return list.filter((v) => !(v.isRef || v.hidden)).map((v) => v.path);
 }
 
 function fmtFileSize(v: number): string {
@@ -89,6 +104,7 @@ function sortTupleWithRefItemList<T extends TupleWithRefItem<{ size: number }>>(
 function convertDuplicateEntry(
   item: RawDuplicateEntry,
   isRef: boolean,
+  groupId?: number,
 ): DuplicateEntry {
   return {
     size: fmtFileSize(item.size),
@@ -100,6 +116,7 @@ function convertDuplicateEntry(
     hidden: false,
     isImage: isImage(item.path),
     raw: item,
+    groupId,
   };
 }
 
@@ -110,9 +127,9 @@ export function convertDuplicateEntries(
   let id = 1;
   return list.flatMap((tuple, idx) => {
     const [ref, items] = tuple;
-    const convertedItems = items.map((item) =>
-      convertDuplicateEntry(item, false),
-    );
+    const convertedItems = items.map((item) => {
+      return convertDuplicateEntry(item, false, id);
+    });
     if (ref) {
       convertedItems.unshift(convertDuplicateEntry(ref, true));
     }
@@ -175,7 +192,11 @@ export function convertTemporaryFileEntries(
   });
 }
 
-function convertImagesEntry(item: RawImagesEntry, isRef: boolean): ImagesEntry {
+function convertImagesEntry(
+  item: RawImagesEntry,
+  isRef: boolean,
+  groupId?: number,
+): ImagesEntry {
   return {
     size: fmtFileSize(item.size),
     fileName: pathBaseName(item.path),
@@ -186,6 +207,7 @@ function convertImagesEntry(item: RawImagesEntry, isRef: boolean): ImagesEntry {
     isRef,
     hidden: false,
     raw: item,
+    groupId,
   };
 }
 
@@ -196,7 +218,9 @@ export function convertImagesEntries(
   let id = 1;
   return list.flatMap((tuple, idx) => {
     const [ref, items] = tuple;
-    const convertedFiles = items.map((item) => convertImagesEntry(item, false));
+    const convertedFiles = items.map((item) =>
+      convertImagesEntry(item, false, id),
+    );
     if (ref) {
       convertedFiles.unshift(convertImagesEntry(ref, true));
     }
@@ -226,7 +250,11 @@ export function convertImagesEntries(
   });
 }
 
-function convertVideosEntry(item: RawVideosEntry, isRef: boolean): VideosEntry {
+function convertVideosEntry(
+  item: RawVideosEntry,
+  isRef: boolean,
+  groupId?: number,
+): VideosEntry {
   return {
     size: fmtFileSize(item.size),
     fileName: pathBaseName(item.path),
@@ -235,6 +263,7 @@ function convertVideosEntry(item: RawVideosEntry, isRef: boolean): VideosEntry {
     isRef,
     hidden: false,
     raw: item,
+    groupId,
   };
 }
 
@@ -245,7 +274,9 @@ export function convertVideosEntries(
   let id = 1;
   return list.flatMap((tuple, idx) => {
     const [ref, items] = tuple;
-    const convertedFiles = items.map((item) => convertVideosEntry(item, false));
+    const convertedFiles = items.map((item) =>
+      convertVideosEntry(item, false, id),
+    );
     if (ref) {
       convertedFiles.unshift(convertVideosEntry(ref, true));
     }
@@ -270,7 +301,11 @@ export function convertVideosEntries(
   });
 }
 
-function convertMusicEntry(item: RawMusicEntry, isRef: boolean): MusicEntry {
+function convertMusicEntry(
+  item: RawMusicEntry,
+  isRef: boolean,
+  groupId?: number,
+): MusicEntry {
   return {
     size: fmtFileSize(item.size),
     fileName: pathBaseName(item.path),
@@ -285,6 +320,7 @@ function convertMusicEntry(item: RawMusicEntry, isRef: boolean): MusicEntry {
     isRef,
     hidden: false,
     raw: item,
+    groupId,
   };
 }
 
@@ -295,7 +331,9 @@ export function convertMusicEntries(
   let id = 1;
   return list.flatMap((tuple, idx) => {
     const [ref, items] = tuple;
-    const convertedFiles = items.map((item) => convertMusicEntry(item, false));
+    const convertedFiles = items.map((item) =>
+      convertMusicEntry(item, false, id),
+    );
     if (ref) {
       convertedFiles.unshift(convertMusicEntry(ref, true));
     }

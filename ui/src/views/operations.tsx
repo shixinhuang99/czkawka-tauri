@@ -24,9 +24,10 @@ import { ToolSettings } from './tool-settings';
 export function Operations() {
   const currentTool = useAtomValue(currentToolAtom);
   const progress = useAtomValue(progressAtom);
-  const bigFiles = useAtomValue(bigFilesAtom);
+
   const duplicateFiles = useAtomValue(duplicateFilesAtom);
   const emptyFolders = useAtomValue(emptyFoldersAtom);
+  const bigFiles = useAtomValue(bigFilesAtom);
   const emptyFiles = useAtomValue(emptyFilesAtom);
   const temporaryFiles = useAtomValue(temporaryFilesAtom);
   const similarImages = useAtomValue(similarImagesAtom);

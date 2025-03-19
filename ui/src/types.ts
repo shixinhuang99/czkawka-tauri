@@ -109,6 +109,16 @@ export interface ProgressData {
   stepName: string;
 }
 
+export interface BaseEntry {
+  path: string;
+}
+
+export interface RefEntry {
+  isRef: boolean;
+  hidden: boolean;
+  groupId?: number;
+}
+
 export interface RawFileEntry {
   path: string;
   size: number;
@@ -129,14 +139,12 @@ export interface RawDuplicateEntry {
   hash: string;
 }
 
-export interface DuplicateEntry {
+export interface DuplicateEntry extends RefEntry {
   size: string;
   fileName: string;
   path: string;
   modifiedDate: string;
   hash: string;
-  isRef: boolean;
-  hidden: boolean;
   isImage: boolean;
   raw: RawDuplicateEntry;
 }
@@ -167,15 +175,13 @@ export interface RawImagesEntry {
   similarity: string;
 }
 
-export interface ImagesEntry {
+export interface ImagesEntry extends RefEntry {
   path: string;
   fileName: string;
   size: string;
   modifiedDate: string;
   similarity: string;
   dimensions: string;
-  isRef: boolean;
-  hidden: boolean;
   raw: RawImagesEntry;
 }
 
@@ -185,13 +191,11 @@ export interface RawVideosEntry {
   modified_date: number;
 }
 
-export interface VideosEntry {
+export interface VideosEntry extends RefEntry {
   path: string;
   fileName: string;
   size: string;
   modifiedDate: string;
-  isRef: boolean;
-  hidden: boolean;
   raw: RawVideosEntry;
 }
 
@@ -207,7 +211,7 @@ export interface RawMusicEntry {
   bitrate: number;
 }
 
-export interface MusicEntry {
+export interface MusicEntry extends RefEntry {
   size: string;
   path: string;
   fileName: string;
@@ -218,8 +222,6 @@ export interface MusicEntry {
   length: string;
   genre: string;
   bitrate: string;
-  isRef: boolean;
-  hidden: boolean;
   raw: RawMusicEntry;
 }
 

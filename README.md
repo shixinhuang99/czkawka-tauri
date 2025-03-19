@@ -11,7 +11,7 @@ Because the Czkawka on my computer can't be used halfway, the functionality and 
 ## Current progress
 
 - ✅ General settings
-- 🚧 Select
+- ✅ Select
 - 🚧 Move
 - 🚧 Delete
 - 🚧 Save

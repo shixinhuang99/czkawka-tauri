@@ -66,39 +66,41 @@ export function ScanButton() {
   const settings = useAtomValue(settingsAtom);
   const [progress, setProgress] = useAtom(progressAtom);
   const setLogs = useSetAtom(logsAtom);
+
   const setDuplicateFiles = useSetAtom(duplicateFilesAtom);
+  const setEmptyFolders = useSetAtom(emptyFoldersAtom);
+  const setBigFiles = useSetAtom(bigFilesAtom);
+  const setEmptyFiles = useSetAtom(emptyFilesAtom);
+  const setTemporaryFiles = useSetAtom(temporaryFilesAtom);
+  const setSimilarImages = useSetAtom(similarImagesAtom);
+  const setSimilarVideos = useSetAtom(similarVideosAtom);
+  const setMusicDuplicates = useSetAtom(musicDuplicatesAtom);
+  const setInvalidSymlinks = useSetAtom(invalidSymlinksAtom);
+  const setBrokenFiles = useSetAtom(brokenFilesAtom);
+  const setBadExtensions = useSetAtom(badExtensionsAtom);
+
   const setDuplicateFilesRowSelection = useSetAtom(
     duplicateFilesRowSelectionAtom,
   );
-  const setEmptyFolders = useSetAtom(emptyFoldersAtom);
   const setEmptyFoldersRowSelection = useSetAtom(emptyFoldersRowSelectionAtom);
-  const setBigFiles = useSetAtom(bigFilesAtom);
   const setBigFilesRowSelection = useSetAtom(bigFilesRowSelectionAtom);
-  const setEmptyFiles = useSetAtom(emptyFilesAtom);
   const setEmptyFilesRowSelection = useSetAtom(emptyFilesRowSelectionAtom);
-  const setTemporaryFiles = useSetAtom(temporaryFilesAtom);
   const setTemporaryFilesRowSelection = useSetAtom(
     temporaryFilesRowSelectionAtom,
   );
-  const setSimilarImages = useSetAtom(similarImagesAtom);
   const setSimilarImagesRowSelection = useSetAtom(
     similarImagesRowSelectionAtom,
   );
-  const setSimilarVideos = useSetAtom(similarVideosAtom);
   const setSimilarVideosRowSelection = useSetAtom(
     similarVideosRowSelectionAtom,
   );
-  const setMusicDuplicates = useSetAtom(musicDuplicatesAtom);
   const setMusicDuplicatesRowSelection = useSetAtom(
     musicDuplicatesRowSelectionAtom,
   );
-  const setInvalidSymlinks = useSetAtom(invalidSymlinksAtom);
   const setInvalidSymlinksRowSelection = useSetAtom(
     invalidSymlinksRowSelectionAtom,
   );
-  const setBrokenFiles = useSetAtom(brokenFilesAtom);
   const setBrokenFilesRowSelection = useSetAtom(brokenFilesRowSelectionAtom);
-  const setBadExtensions = useSetAtom(badExtensionsAtom);
   const setBadExtensionsRowSelection = useSetAtom(
     badExtensionsRowSelectionAtom,
   );

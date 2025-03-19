@@ -44,7 +44,6 @@ export function BigFiles() {
       className="flex-1 rounded-none border-none grow"
       data={data}
       columns={columns}
-      rowIdField="path"
       rowSelection={rowSelection}
       onRowSelectionChange={setRowSelection}
     />

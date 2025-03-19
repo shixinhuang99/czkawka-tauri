@@ -11,6 +11,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { revealItemInDir } from '@tauri-apps/plugin-opener';
 import { FolderOpen } from 'lucide-react';
 import { useRef } from 'react';
+import type { BaseEntry } from '~/types';
 import { cn } from '~/utils/cn';
 import { Checkbox } from './shadcn/checkbox';
 import {
@@ -29,14 +30,13 @@ interface DataTableProps<T> {
   className?: string;
   emptyTip?: React.ReactNode;
   layout?: 'grid' | 'resizeable';
-  rowIdField: keyof T;
   rowSelection: RowSelectionState;
   onRowSelectionChange: (v: RowSelectionState) => void;
 }
 
 export type RowSelection = RowSelectionState;
 
-export function DataTable<T>(props: DataTableProps<T>) {
+export function DataTable<T extends BaseEntry>(props: DataTableProps<T>) {
   'use no memo';
 
   const {
@@ -45,7 +45,6 @@ export function DataTable<T>(props: DataTableProps<T>) {
     className,
     emptyTip,
     layout = 'resizeable',
-    rowIdField,
     rowSelection,
     onRowSelectionChange,
   } = props;
@@ -54,13 +53,18 @@ export function DataTable<T>(props: DataTableProps<T>) {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getRowId: (row) => row[rowIdField] as string,
+    getRowId: (row) => row.path,
     onRowSelectionChange: (updater) => {
-      if (typeof updater === 'function') {
-        onRowSelectionChange(updater(rowSelection));
-        return;
+      const newSelection =
+        typeof updater === 'function' ? updater(rowSelection) : updater;
+      onRowSelectionChange(newSelection);
+    },
+    enableRowSelection: (row) => {
+      const original = row.original as { isRef?: boolean; hidden?: boolean };
+      if (original.isRef || original.hidden) {
+        return false;
       }
-      onRowSelectionChange(updater);
+      return true;
     },
     state: {
       rowSelection,
@@ -226,8 +230,8 @@ export function TableRowSelectionHeader<T>(props: { table: TTable<T> }) {
   return (
     <Checkbox
       checked={
-        table.getIsAllPageRowsSelected() ||
-        (table.getIsSomePageRowsSelected() && 'indeterminate')
+        table.getIsAllRowsSelected() ||
+        (table.getIsSomeRowsSelected() && 'indeterminate')
       }
       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
       aria-label="Select all"

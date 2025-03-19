@@ -119,7 +119,10 @@ function IncludedDirsTable() {
   const handleRowSelectionChagne = (v: RowSelection) => {
     setRowSelection(v);
     setSettings((old) => {
-      return { ...old, includedDirectoriesReferenced: getRowSelectionKeys(v) };
+      return {
+        ...old,
+        includedDirectoriesReferenced: Array.from(getRowSelectionKeys(v)),
+      };
     });
   };
 
@@ -139,7 +142,6 @@ function IncludedDirsTable() {
         columns={columns}
         emptyTip="Please add path"
         layout="grid"
-        rowIdField="path"
         rowSelection={rowSelection}
         onRowSelectionChange={handleRowSelectionChagne}
       />
@@ -175,7 +177,6 @@ function ExcludedDirsTable() {
         columns={columns}
         emptyTip="Please add path"
         layout="grid"
-        rowIdField="path"
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
       />
@@ -221,15 +222,13 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
 
   const handleRemovePaths = () => {
     const selectedPaths = getRowSelectionKeys(rowSelection);
-    if (!selectedPaths.length) {
+    if (!selectedPaths.size) {
       return;
     }
     setSettings((settings) => {
       return {
         ...settings,
-        [field]: settings[field].filter(
-          (path) => !selectedPaths.includes(path),
-        ),
+        [field]: settings[field].filter((path) => !selectedPaths.has(path)),
       };
     });
     onRowSelectionChange({});
