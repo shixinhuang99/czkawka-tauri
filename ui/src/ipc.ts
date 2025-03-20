@@ -10,6 +10,17 @@ interface MoveFilesOptions {
   overrideMode: boolean;
 }
 
+interface DeleteFilesOptions {
+  paths: string[];
+  moveDeletedFilesToTrash: boolean;
+  isEmptyFoldersTool: boolean;
+}
+
+interface SaveResultOptions {
+  currentTool: string;
+  destination: string;
+}
+
 export const ipc = {
   getPlatformSettings(): Promise<PlatformSettings> {
     return invoke('get_platform_settings');
@@ -37,6 +48,14 @@ export const ipc = {
 
   moveFiles(options: MoveFilesOptions) {
     return invoke('move_files', { options });
+  },
+
+  deleteFiles(options: DeleteFilesOptions) {
+    return invoke('delete_files', { options });
+  },
+
+  saveResult(options: SaveResultOptions) {
+    return invoke('save_result', { options });
   },
 };
 

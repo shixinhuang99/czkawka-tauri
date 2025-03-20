@@ -3,6 +3,7 @@
 mod bad_extensions;
 mod big_files;
 mod broken_files;
+mod delete_files;
 mod duplicate_files;
 mod empty_files;
 mod empty_folders;
@@ -11,6 +12,7 @@ mod invalid_symlinks;
 mod move_files;
 mod music_duplicates;
 mod progress;
+mod save_result;
 mod scaner;
 mod settings;
 mod similar_images;
@@ -55,6 +57,8 @@ fn main() {
 			scan_broken_files,
 			scan_bad_extensions,
 			move_files,
+			delete_files,
+			save_result,
 		])
 		.plugin(tauri_plugin_opener::init())
 		.plugin(tauri_plugin_dialog::init())
@@ -173,4 +177,14 @@ fn scan_bad_extensions(app: AppHandle, settings: Settings) {
 #[tauri::command]
 fn move_files(app: AppHandle, options: move_files::Options) {
 	move_files::move_files(app, options);
+}
+
+#[tauri::command]
+fn delete_files(app: AppHandle, options: delete_files::Options) {
+	delete_files::delete_files(app, options);
+}
+
+#[tauri::command]
+fn save_result(app: AppHandle, options: save_result::Options) {
+	save_result::save_result(app, options);
 }

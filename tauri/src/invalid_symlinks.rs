@@ -48,5 +48,12 @@ pub fn scan_invalid_symlinks(app: AppHandle, settings: Settings) {
 			},
 		)
 		.unwrap();
+
+		set_scaner_state(app, scaner);
 	});
 }
+
+crate::gen_set_scaner_state_fn!(
+	same_invalid_symlinks,
+	czkawka_core::invalid_symlinks::InvalidSymlinks
+);

@@ -66,5 +66,12 @@ pub fn scan_empty_folders(app: AppHandle, settings: Settings) {
 			},
 		)
 		.unwrap();
+
+		set_scaner_state(app, scaner);
 	});
 }
+
+crate::gen_set_scaner_state_fn!(
+	empty_folders_state,
+	czkawka_core::empty_folder::EmptyFolder
+);

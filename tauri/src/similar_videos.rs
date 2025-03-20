@@ -94,6 +94,8 @@ pub fn scan_similar_videos(app: AppHandle, settins: Settings) {
 			},
 		)
 		.unwrap();
+
+		set_scaner_state(app, scaner);
 	});
 }
 
@@ -104,3 +106,8 @@ fn videos_entry_to_custom(value: VideosEntry) -> CustomVideosEntry {
 		modified_date: value.modified_date,
 	}
 }
+
+crate::gen_set_scaner_state_fn!(
+	similar_videos_state,
+	czkawka_core::similar_videos::SimilarVideos
+);

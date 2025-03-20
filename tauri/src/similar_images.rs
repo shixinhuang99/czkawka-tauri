@@ -123,6 +123,8 @@ pub fn scan_similar_images(app: AppHandle, settins: Settings) {
 			},
 		)
 		.unwrap();
+
+		set_scaner_state(app, scaner);
 	});
 }
 
@@ -139,3 +141,8 @@ fn images_entry_to_custom(
 		similarity: get_string_from_similarity(&value.similarity, hash_size),
 	}
 }
+
+crate::gen_set_scaner_state_fn!(
+	similar_images_state,
+	czkawka_core::similar_images::SimilarImages
+);

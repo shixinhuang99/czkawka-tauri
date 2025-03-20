@@ -131,6 +131,8 @@ pub fn scan_music_duplicates(app: AppHandle, settins: Settings) {
 			},
 		)
 		.unwrap();
+
+		set_scaner_state(app, scaner);
 	});
 }
 
@@ -147,3 +149,8 @@ fn music_entry_to_custom(value: MusicEntry) -> CustomMusicEntry {
 		bitrate: value.bitrate,
 	}
 }
+
+crate::gen_set_scaner_state_fn!(
+	same_music_state,
+	czkawka_core::same_music::SameMusic
+);

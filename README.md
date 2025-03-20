@@ -12,9 +12,9 @@ Because the Czkawka on my computer can't be used halfway, the functionality and 
 
 - ✅ General settings
 - ✅ Select
-- 🚧 Move
-- 🚧 Delete
-- 🚧 Save
+- ✅ Move
+- ✅ Delete
+- ✅ Save
 
 Scan:
 

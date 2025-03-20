@@ -162,5 +162,12 @@ pub fn scan_duplicate_files(app: AppHandle, settings: Settings) {
 			},
 		)
 		.unwrap();
+
+		set_scaner_state(app, scaner);
 	});
 }
+
+crate::gen_set_scaner_state_fn!(
+	duplication_state,
+	czkawka_core::duplicate::DuplicateFinder
+);

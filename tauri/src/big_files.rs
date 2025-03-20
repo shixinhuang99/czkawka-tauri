@@ -57,5 +57,12 @@ pub fn scan_big_files(app: AppHandle, settings: Settings) {
 			},
 		)
 		.unwrap();
+
+		set_scaner_state(app, scaner);
 	});
 }
+
+crate::gen_set_scaner_state_fn!(
+	big_files_state,
+	czkawka_core::big_file::BigFile
+);

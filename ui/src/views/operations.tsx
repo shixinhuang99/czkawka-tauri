@@ -1,10 +1,10 @@
 import { useAtomValue } from 'jotai';
-import { FolderLock, Trash2 } from 'lucide-react';
 import { progressAtom } from '~/atom/primitive';
 import { currentToolDataAtom } from '~/atom/tools';
-import { OperationButton } from '~/components';
-import { MoveOperation } from './move-operation';
+import { DeleteFiles } from './delete-files';
+import { MoveFiles } from './move-files';
 import { RowSelectionMenu } from './row-selection-menu';
+import { SaveResult } from './save-result';
 import { ScanButton } from './scan-button';
 import { ToolSettings } from './tool-settings';
 
@@ -18,15 +18,9 @@ export function Operations() {
       <ScanButton />
       <ToolSettings />
       <RowSelectionMenu disabled={disabled} />
-      <MoveOperation disabled={disabled} />
-      <OperationButton disabled={disabled}>
-        <Trash2 />
-        Delete
-      </OperationButton>
-      <OperationButton disabled={disabled}>
-        <FolderLock />
-        Save
-      </OperationButton>
+      <MoveFiles disabled={disabled} />
+      <DeleteFiles disabled={disabled} />
+      <SaveResult disabled={disabled} />
     </div>
   );
 }

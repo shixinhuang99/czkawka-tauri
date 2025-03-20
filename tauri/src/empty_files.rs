@@ -47,5 +47,12 @@ pub fn scan_empty_files(app: AppHandle, settings: Settings) {
 			},
 		)
 		.unwrap();
+
+		set_scaner_state(app, scaner);
 	});
 }
+
+crate::gen_set_scaner_state_fn!(
+	empty_files_state,
+	czkawka_core::empty_files::EmptyFiles
+);

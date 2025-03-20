@@ -11,7 +11,7 @@ import { useBoolean, useListenEffect } from '~/hooks';
 import { ipc } from '~/ipc';
 import { getRowSelectionKeys } from '~/utils/common';
 
-interface MoveOperationProps {
+interface MoveFilesProps {
   disabled: boolean;
 }
 
@@ -34,7 +34,7 @@ const getDefaultOptions = (): Options => {
   };
 };
 
-export function MoveOperation(props: MoveOperationProps) {
+export function MoveFiles(props: MoveFilesProps) {
   const { disabled } = props;
 
   const [destination, setDestination] = useState('');
@@ -76,7 +76,7 @@ export function MoveOperation(props: MoveOperationProps) {
     open.set(v);
   };
 
-  const handleChooseOutpath = async () => {
+  const handleChooseDestination = async () => {
     const dir = await openFileDialog({ multiple: false, directory: true });
     if (!dir) {
       return;
@@ -97,7 +97,7 @@ export function MoveOperation(props: MoveOperationProps) {
     <>
       <OperationButton
         disabled={disabled || !paths.length}
-        onClick={handleChooseOutpath}
+        onClick={handleChooseDestination}
       >
         <FolderSymlink />
         Move
