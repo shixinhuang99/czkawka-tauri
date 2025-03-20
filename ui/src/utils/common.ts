@@ -418,6 +418,7 @@ export function convertBadFileEntries(list: RawBadFileEntry[]): BadFileEntry[] {
       modifiedDate: fmtDate(item.modified_date),
       currentExtension: item.current_extension,
       properExtensionsGroup: item.proper_extensions_group,
+      properExtension: item.proper_extension,
     };
   });
 }

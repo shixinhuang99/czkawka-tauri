@@ -21,6 +21,13 @@ interface SaveResultOptions {
   destination: string;
 }
 
+interface RenameExtOptions {
+  items: {
+    path: string;
+    ext: string;
+  }[];
+}
+
 export const ipc = {
   getPlatformSettings(): Promise<PlatformSettings> {
     return invoke('get_platform_settings');
@@ -56,6 +63,10 @@ export const ipc = {
 
   saveResult(options: SaveResultOptions) {
     return invoke('save_result', { options });
+  },
+
+  renameExt(options: RenameExtOptions) {
+    return invoke('rename_ext', { options });
   },
 };
 

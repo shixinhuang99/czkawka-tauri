@@ -264,6 +264,7 @@ export interface BadFileEntry extends BaseEntry {
   modifiedDate: string;
   currentExtension: string;
   properExtensionsGroup: string;
+  properExtension: string;
 }
 
 interface ScanResult<C extends ScanCmd, L> {

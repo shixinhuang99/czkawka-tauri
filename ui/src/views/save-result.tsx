@@ -1,6 +1,6 @@
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { FolderLock } from 'lucide-react';
+import { FileJson } from 'lucide-react';
 import { currentToolAtom, logsAtom } from '~/atom/primitive';
 import { currentToolDataAtom } from '~/atom/tools';
 import { OperationButton } from '~/components';
@@ -53,7 +53,7 @@ export function SaveResult(props: SaveResultProps) {
         disabled={disabled || !currentToolData.length}
         onClick={open.on}
       >
-        <FolderLock />
+        <FileJson />
         Save
       </OperationButton>
       <OneAlertDialog

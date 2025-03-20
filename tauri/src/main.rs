@@ -12,6 +12,7 @@ mod invalid_symlinks;
 mod move_files;
 mod music_duplicates;
 mod progress;
+mod rename_ext;
 mod save_result;
 mod scaner;
 mod settings;
@@ -59,6 +60,7 @@ fn main() {
 			move_files,
 			delete_files,
 			save_result,
+			rename_ext,
 		])
 		.plugin(tauri_plugin_opener::init())
 		.plugin(tauri_plugin_dialog::init())
@@ -187,4 +189,9 @@ fn delete_files(app: AppHandle, options: delete_files::Options) {
 #[tauri::command]
 fn save_result(app: AppHandle, options: save_result::Options) {
 	save_result::save_result(app, options);
+}
+
+#[tauri::command]
+fn rename_ext(app: AppHandle, options: rename_ext::Options) {
+	rename_ext::rename_ext(app, options);
 }
