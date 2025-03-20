@@ -35,7 +35,7 @@
     ],
     "category": "DeveloperTool",
     "licenseFile": "../LICENSE",
-    "shortDescription": "Another GUI of Czkawka built for macOS and Windows",
+    "shortDescription": "A Tauri frontend of Czkawka on macOS and Windows",
     "useLocalToolsDir": true,
     "windows": {
       "allowDowngrades": true,

@@ -1,6 +1,6 @@
 # required cli tools: taplo-cli,cargo-edit
 
-alias rp := release-pr
+alias pr := prepare-release
 alias pt := push-tag
 
 default:
@@ -32,11 +32,11 @@ typecheck:
 	node --run typecheck:ui
 	node --run typecheck:other
 
-release-pr tag:
+prepare-release tag:
 	pnpm tsx ./scripts/set-pkg-version.ts {{tag}}
 	cargo set-version {{tag}}
 	just fmt
-	git commit -am "chore(release): {{tag}}"
+	git commit -am "prepare release {{tag}}"
 
 push-tag tag:
 	git tag {{tag}}
