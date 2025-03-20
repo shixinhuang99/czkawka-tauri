@@ -9,7 +9,7 @@ use serde::Serialize;
 use tauri::{AppHandle, Emitter};
 
 use crate::{
-	scaner::{apply_scaner_settings, spawn_scaner_thread},
+	scaner::{set_scaner_common_settings, spawn_scaner_thread},
 	settings::Settings,
 	state::get_stop_rx_and_progress_tx,
 };
@@ -77,7 +77,11 @@ pub fn scan_music_duplicates(app: AppHandle, settins: Settings) {
 			settins.similar_music_compare_fingerprints_only_with_similar_titles,
 		));
 
-		apply_scaner_settings(&mut scaner, settins);
+		scaner.set_delete_outdated_cache(
+			settins.similar_music_delete_outdated_entries,
+		);
+
+		set_scaner_common_settings(&mut scaner, settins);
 
 		scaner.find_same_music(Some(&stop_rx), Some(&progress_tx));
 

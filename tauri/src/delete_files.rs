@@ -57,7 +57,9 @@ fn delete_files_impl(options: Options) -> DeleteFilesResult {
 
 			match fs_result {
 				Ok(_) => result.success_paths.push(path_str.clone()),
-				Err(err) => result.errors.push(err),
+				Err(err) => result
+					.errors
+					.push(format!("`{}` Failed, reason: {}", path_str, err)),
 			}
 
 			result

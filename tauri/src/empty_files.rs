@@ -7,7 +7,7 @@ use serde::Serialize;
 use tauri::{AppHandle, Emitter};
 
 use crate::{
-	scaner::{apply_scaner_settings, spawn_scaner_thread},
+	scaner::{set_scaner_common_settings, spawn_scaner_thread},
 	settings::Settings,
 	state::get_stop_rx_and_progress_tx,
 };
@@ -25,7 +25,7 @@ pub fn scan_empty_files(app: AppHandle, settings: Settings) {
 
 		let mut scaner = EmptyFiles::new();
 
-		apply_scaner_settings(&mut scaner, settings);
+		set_scaner_common_settings(&mut scaner, settings);
 
 		scaner.find_empty_files(Some(&stop_rx), Some(&progress_tx));
 

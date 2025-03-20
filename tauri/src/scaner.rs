@@ -12,7 +12,7 @@ pub fn spawn_scaner_thread<F: FnOnce() + Send + 'static>(f: F) {
 		.expect("Failed to spawn scaner thread");
 }
 
-pub fn apply_scaner_settings<T: CommonData>(
+pub fn set_scaner_common_settings<T: CommonData>(
 	scaner: &mut T,
 	settings: Settings,
 ) {

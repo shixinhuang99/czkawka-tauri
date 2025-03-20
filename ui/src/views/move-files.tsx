@@ -1,6 +1,6 @@
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtom, useSetAtom } from 'jotai';
-import { FolderSymlink } from 'lucide-react';
+import { FolderSymlink, LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { logsAtom } from '~/atom/primitive';
 import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
@@ -41,6 +41,7 @@ export function MoveFiles(props: MoveFilesProps) {
   const [options, setOptions] = useState<Options>(getDefaultOptions());
   const open = useBoolean();
   const loading = useBoolean();
+  const openFileDialogLoading = useBoolean();
   const setLogs = useSetAtom(logsAtom);
   const [currentToolData, setCurrentToolData] = useAtom(currentToolDataAtom);
   const [currentToolRowSelection, setCurrentToolRowSelection] = useAtom(
@@ -77,7 +78,9 @@ export function MoveFiles(props: MoveFilesProps) {
   };
 
   const handleChooseDestination = async () => {
+    openFileDialogLoading.on();
     const dir = await openFileDialog({ multiple: false, directory: true });
+    openFileDialogLoading.off();
     if (!dir) {
       return;
     }
@@ -99,7 +102,11 @@ export function MoveFiles(props: MoveFilesProps) {
         disabled={disabled || !paths.length}
         onClick={handleChooseDestination}
       >
-        <FolderSymlink />
+        {openFileDialogLoading.value ? (
+          <LoaderCircle className="animate-spin" />
+        ) : (
+          <FolderSymlink />
+        )}
         Move
       </OperationButton>
       <OneAlertDialog

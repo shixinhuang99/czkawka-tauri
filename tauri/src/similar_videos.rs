@@ -8,7 +8,7 @@ use serde::Serialize;
 use tauri::{AppHandle, Emitter};
 
 use crate::{
-	scaner::{apply_scaner_settings, spawn_scaner_thread},
+	scaner::{set_scaner_common_settings, spawn_scaner_thread},
 	settings::Settings,
 	state::get_stop_rx_and_progress_tx,
 };
@@ -40,7 +40,7 @@ pub fn scan_similar_videos(app: AppHandle, settins: Settings) {
 		scaner.set_delete_outdated_cache(
 			settins.similar_videos_delete_outdated_entries,
 		);
-		apply_scaner_settings(&mut scaner, settins);
+		set_scaner_common_settings(&mut scaner, settins);
 
 		scaner.find_similar_videos(Some(&stop_rx), Some(&progress_tx));
 

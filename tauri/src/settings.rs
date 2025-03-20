@@ -5,8 +5,7 @@ use czkawka_core::{
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 
-// todo: remove Serialize
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Settings {
 	pub included_directories: Vec<String>,
@@ -20,16 +19,12 @@ pub struct Settings {
 	pub recursive_search: bool,
 	pub use_cache: bool,
 	pub save_also_as_json: bool,
-	pub move_deleted_files_to_trash: bool,
-	pub thread_number: i32,
-	pub duplicate_image_preview: bool,
 	pub duplicate_hide_hard_links: bool,
 	pub duplicate_use_prehash: bool,
 	pub duplicate_minimal_hash_cache_size: i32,
 	pub duplicate_minimal_prehash_cache_size: i32,
 	pub duplicate_delete_outdated_entries: bool,
 	pub similar_images_hide_hard_links: bool,
-	pub similar_images_show_image_preview: bool,
 	pub similar_images_delete_outdated_entries: bool,
 	pub similar_videos_delete_outdated_entries: bool,
 	pub similar_music_delete_outdated_entries: bool,
@@ -63,7 +58,7 @@ pub struct Settings {
 	pub broken_files_sub_image: bool,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PlatformSettings {
 	pub included_directories: Vec<String>,

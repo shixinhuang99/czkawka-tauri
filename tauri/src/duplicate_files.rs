@@ -11,7 +11,7 @@ use serde::Serialize;
 use tauri::{AppHandle, Emitter};
 
 use crate::{
-	scaner::{apply_scaner_settings, spawn_scaner_thread},
+	scaner::{set_scaner_common_settings, spawn_scaner_thread},
 	settings::Settings,
 	state::get_stop_rx_and_progress_tx,
 };
@@ -52,7 +52,7 @@ pub fn scan_duplicate_files(app: AppHandle, settings: Settings) {
 		scaner.set_delete_outdated_cache(
 			settings.duplicate_delete_outdated_entries,
 		);
-		apply_scaner_settings(&mut scaner, settings);
+		set_scaner_common_settings(&mut scaner, settings);
 
 		scaner.find_duplicates(Some(&stop_rx), Some(&progress_tx));
 

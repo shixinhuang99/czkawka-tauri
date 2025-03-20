@@ -5,6 +5,7 @@ import {
   Folder,
   FolderPen,
   FolderPlus,
+  LoaderCircle,
   ScrollText,
   Trash2,
 } from 'lucide-react';
@@ -218,6 +219,7 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
   const setSettings = useSetAtom(settingsAtom);
   const manualAddDialogOpen = useBoolean();
   const [manualAddPaths, setManualAddPaths] = useState('');
+  const openFileDialogLoading = useBoolean();
 
   const handleRemovePaths = () => {
     const selected = new Set(getRowSelectionKeys(rowSelection));
@@ -234,7 +236,9 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
   };
 
   const handleAddPath = async () => {
+    openFileDialogLoading.on();
     const dir = await openFileDialog({ multiple: false, directory: true });
+    openFileDialogLoading.off();
     if (!dir) {
       return;
     }
@@ -264,7 +268,11 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
   return (
     <div>
       <TooltipButton tooltip="Add" onClick={handleAddPath}>
-        <FolderPlus />
+        {openFileDialogLoading.value ? (
+          <LoaderCircle className="animate-spin" />
+        ) : (
+          <FolderPlus />
+        )}
       </TooltipButton>
       <Dialog
         open={manualAddDialogOpen.value}
