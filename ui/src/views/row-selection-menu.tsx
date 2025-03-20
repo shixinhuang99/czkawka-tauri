@@ -1,30 +1,7 @@
 import { useAtomValue, useSetAtom } from 'jotai';
 import { SquareMousePointer } from 'lucide-react';
-import {
-  badExtensionsAtom,
-  badExtensionsRowSelectionAtom,
-  bigFilesAtom,
-  bigFilesRowSelectionAtom,
-  brokenFilesAtom,
-  brokenFilesRowSelectionAtom,
-  currentToolAtom,
-  duplicateFilesAtom,
-  duplicateFilesRowSelectionAtom,
-  emptyFilesAtom,
-  emptyFilesRowSelectionAtom,
-  emptyFoldersAtom,
-  emptyFoldersRowSelectionAtom,
-  invalidSymlinksAtom,
-  invalidSymlinksRowSelectionAtom,
-  musicDuplicatesAtom,
-  musicDuplicatesRowSelectionAtom,
-  similarImagesAtom,
-  similarImagesRowSelectionAtom,
-  similarVideosAtom,
-  similarVideosRowSelectionAtom,
-  temporaryFilesAtom,
-  temporaryFilesRowSelectionAtom,
-} from '~/atom/primitive';
+import { currentToolAtom } from '~/atom/primitive';
+import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
 import { OperationButton } from '~/components';
 import type { RowSelection } from '~/components/data-table';
 import {
@@ -35,15 +12,7 @@ import {
 } from '~/components/shadcn/dropdown-menu';
 import { Tools } from '~/consts';
 import type { BaseEntry, RefEntry } from '~/types';
-import {
-  getPathsFromEntries,
-  getPathsFromRefEntries,
-  getRowSelectionKeys,
-} from '~/utils/common';
-
-interface RowSelectionMenuProps {
-  disabled: boolean;
-}
+import { getPathsFromEntries, getRowSelectionKeys } from '~/utils/common';
 
 const toolsWithSizeAndDateSelect = new Set<string>([
   Tools.DuplicateFiles,
@@ -52,88 +21,25 @@ const toolsWithSizeAndDateSelect = new Set<string>([
   Tools.MusicDuplicates,
 ]);
 
-export function RowSelectionMenu(props: RowSelectionMenuProps) {
+export function RowSelectionMenu(props: { disabled: boolean }) {
   const { disabled } = props;
 
   const currentTool = useAtomValue(currentToolAtom);
-
-  const duplicateFiles = useAtomValue(duplicateFilesAtom);
-  const emptyFolders = useAtomValue(emptyFoldersAtom);
-  const bigFiles = useAtomValue(bigFilesAtom);
-  const emptyFiles = useAtomValue(emptyFilesAtom);
-  const temporaryFiles = useAtomValue(temporaryFilesAtom);
-  const similarImages = useAtomValue(similarImagesAtom);
-  const similarVideos = useAtomValue(similarVideosAtom);
-  const musicDuplicates = useAtomValue(musicDuplicatesAtom);
-  const invalidSymlinks = useAtomValue(invalidSymlinksAtom);
-  const brokenFiles = useAtomValue(brokenFilesAtom);
-  const badExtensions = useAtomValue(badExtensionsAtom);
-
-  const setDuplicateFilesRowSelection = useSetAtom(
-    duplicateFilesRowSelectionAtom,
-  );
-  const setEmptyFoldersRowSelection = useSetAtom(emptyFoldersRowSelectionAtom);
-  const setBigFilesRowSelection = useSetAtom(bigFilesRowSelectionAtom);
-  const setEmptyFilesRowSelection = useSetAtom(emptyFilesRowSelectionAtom);
-  const setTemporaryFilesRowSelection = useSetAtom(
-    temporaryFilesRowSelectionAtom,
-  );
-  const setSimilarImagesRowSelection = useSetAtom(
-    similarImagesRowSelectionAtom,
-  );
-  const setSimilarVideosRowSelection = useSetAtom(
-    similarVideosRowSelectionAtom,
-  );
-  const setMusicDuplicatesRowSelection = useSetAtom(
-    musicDuplicatesRowSelectionAtom,
-  );
-  const setInvalidSymlinksRowSelection = useSetAtom(
-    invalidSymlinksRowSelectionAtom,
-  );
-  const setBrokenFilesRowSelection = useSetAtom(brokenFilesRowSelectionAtom);
-  const setBadExtensionsRowSelection = useSetAtom(
-    badExtensionsRowSelectionAtom,
-  );
+  const currentToolData = useAtomValue(currentToolDataAtom);
+  const setCurrentToolRowSelection = useSetAtom(currentToolRowSelectionAtom);
 
   const handleInvertSelection = () => {
-    if (currentTool === Tools.DuplicateFiles) {
-      invertRefSelection(duplicateFiles, setDuplicateFilesRowSelection);
-    } else if (currentTool === Tools.EmptyFolders) {
-      invertSelection(emptyFolders, setEmptyFoldersRowSelection);
-    } else if (currentTool === Tools.BigFiles) {
-      invertSelection(bigFiles, setBigFilesRowSelection);
-    } else if (currentTool === Tools.EmptyFiles) {
-      invertSelection(emptyFiles, setEmptyFilesRowSelection);
-    } else if (currentTool === Tools.TemporaryFiles) {
-      invertSelection(temporaryFiles, setTemporaryFilesRowSelection);
-    } else if (currentTool === Tools.SimilarImages) {
-      invertRefSelection(similarImages, setSimilarImagesRowSelection);
-    } else if (currentTool === Tools.SimilarVideos) {
-      invertRefSelection(similarVideos, setSimilarVideosRowSelection);
-    } else if (currentTool === Tools.MusicDuplicates) {
-      invertRefSelection(musicDuplicates, setMusicDuplicatesRowSelection);
-    } else if (currentTool === Tools.InvalidSymlinks) {
-      invertSelection(invalidSymlinks, setInvalidSymlinksRowSelection);
-    } else if (currentTool === Tools.BrokenFiles) {
-      invertSelection(brokenFiles, setBrokenFilesRowSelection);
-    } else if (currentTool === Tools.BadExtensions) {
-      invertSelection(badExtensions, setBadExtensionsRowSelection);
-    }
+    invertSelection(currentToolData, setCurrentToolRowSelection);
   };
 
   const handleSelectXXX = (
     type: 'size' | 'date' | 'resolution',
     dir: 'asc' | 'desc',
   ) => {
-    if (currentTool === Tools.DuplicateFiles) {
-      setDuplicateFilesRowSelection(selectItem(duplicateFiles, type, dir));
-    } else if (currentTool === Tools.SimilarImages) {
-      setSimilarImagesRowSelection(selectItem(similarImages, type, dir));
-    } else if (currentTool === Tools.SimilarVideos) {
-      setSimilarVideosRowSelection(selectItem(similarVideos, type, dir));
-    } else if (currentTool === Tools.MusicDuplicates) {
-      setMusicDuplicatesRowSelection(selectItem(musicDuplicates, type, dir));
+    if (!toolsWithSizeAndDateSelect.has(currentTool)) {
+      return;
     }
+    setCurrentToolRowSelection(selectItem(currentToolData, type, dir));
   };
 
   return (
@@ -183,7 +89,7 @@ export function RowSelectionMenu(props: RowSelectionMenuProps) {
   );
 }
 
-function invertSelection<T extends BaseEntry>(
+function invertSelection<T extends BaseEntry & Partial<RefEntry>>(
   data: T[],
   setFn: (updater: (v: RowSelection) => RowSelection) => void,
 ) {
@@ -191,16 +97,8 @@ function invertSelection<T extends BaseEntry>(
   setFn((old) => convertRowSelection(old, paths));
 }
 
-function invertRefSelection<T extends BaseEntry & RefEntry>(
-  data: T[],
-  setFn: (updater: (v: RowSelection) => RowSelection) => void,
-) {
-  const paths = getPathsFromRefEntries(data);
-  setFn((old) => convertRowSelection(old, paths));
-}
-
 function convertRowSelection(old: RowSelection, paths: string[]): RowSelection {
-  const selected = getRowSelectionKeys(old);
+  const selected = new Set(getRowSelectionKeys(old));
   const unselected = paths.filter((v) => !selected.has(v));
   const result = pathsToRowSelection(unselected);
   return result;

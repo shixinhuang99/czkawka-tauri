@@ -125,10 +125,9 @@ export interface RawFileEntry {
   modified_date: number;
 }
 
-export interface FileEntry {
+export interface FileEntry extends BaseEntry {
   size: string;
   fileName: string;
-  path: string;
   modifiedDate: string;
 }
 
@@ -139,10 +138,9 @@ export interface RawDuplicateEntry {
   hash: string;
 }
 
-export interface DuplicateEntry extends RefEntry {
+export interface DuplicateEntry extends BaseEntry, RefEntry {
   size: string;
   fileName: string;
-  path: string;
   modifiedDate: string;
   hash: string;
   isImage: boolean;
@@ -154,15 +152,13 @@ export interface RawFolderOrTemporaryFileEntry {
   modified_date: number;
 }
 
-export interface FolderEntry {
+export interface FolderEntry extends BaseEntry {
   folderName: string;
-  path: string;
   modifiedDate: string;
 }
 
-export interface TemporaryFileEntry {
+export interface TemporaryFileEntry extends BaseEntry {
   fileName: string;
-  path: string;
   modifiedDate: string;
 }
 
@@ -175,8 +171,7 @@ export interface RawImagesEntry {
   similarity: string;
 }
 
-export interface ImagesEntry extends RefEntry {
-  path: string;
+export interface ImagesEntry extends BaseEntry, RefEntry {
   fileName: string;
   size: string;
   modifiedDate: string;
@@ -191,8 +186,7 @@ export interface RawVideosEntry {
   modified_date: number;
 }
 
-export interface VideosEntry extends RefEntry {
-  path: string;
+export interface VideosEntry extends BaseEntry, RefEntry {
   fileName: string;
   size: string;
   modifiedDate: string;
@@ -211,9 +205,8 @@ export interface RawMusicEntry {
   bitrate: number;
 }
 
-export interface MusicEntry extends RefEntry {
+export interface MusicEntry extends BaseEntry, RefEntry {
   size: string;
-  path: string;
   fileName: string;
   modifiedDate: string;
   trackTitle: string;
@@ -235,8 +228,7 @@ export interface RawSymlinksFileEntry {
   };
 }
 
-export interface SymlinksFileEntry {
-  path: string;
+export interface SymlinksFileEntry extends BaseEntry {
   symlinkName: string;
   modifiedDate: string;
   destinationPath: string;
@@ -251,8 +243,7 @@ export interface RawBrokenEntry {
   error_string: string;
 }
 
-export interface BrokenEntry {
-  path: string;
+export interface BrokenEntry extends BaseEntry {
   fileName: string;
   modifiedDate: string;
   size: string;
@@ -268,8 +259,7 @@ export interface RawBadFileEntry {
   proper_extension: string;
 }
 
-export interface BadFileEntry {
-  path: string;
+export interface BadFileEntry extends BaseEntry {
   fileName: string;
   modifiedDate: string;
   currentExtension: string;

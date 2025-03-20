@@ -22,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from './shadcn/table';
+import { toastError } from './toast';
 import { TooltipButton } from './tooltip-button';
 
 interface DataTableProps<T> {
@@ -280,7 +281,11 @@ export function TableActions(props: { path: string }) {
   return (
     <TooltipButton
       tooltip={`Reveal in ${PLATFORM === 'darwin' ? 'Finder' : 'File Explorer'}`}
-      onClick={() => revealItemInDir(path)}
+      onClick={() =>
+        revealItemInDir(path).catch((err) =>
+          toastError('Opreation failed', err),
+        )
+      }
     >
       <FolderOpen />
     </TooltipButton>

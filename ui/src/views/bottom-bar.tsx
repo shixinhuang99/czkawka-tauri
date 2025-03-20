@@ -1,5 +1,4 @@
 import type { Table } from '@tanstack/react-table';
-import { isTauri } from '@tauri-apps/api/core';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
@@ -121,7 +120,7 @@ function IncludedDirsTable() {
     setSettings((old) => {
       return {
         ...old,
-        includedDirectoriesReferenced: Array.from(getRowSelectionKeys(v)),
+        includedDirectoriesReferenced: getRowSelectionKeys(v),
       };
     });
   };
@@ -221,23 +220,20 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
   const [manualAddPaths, setManualAddPaths] = useState('');
 
   const handleRemovePaths = () => {
-    const selectedPaths = getRowSelectionKeys(rowSelection);
-    if (!selectedPaths.size) {
+    const selected = new Set(getRowSelectionKeys(rowSelection));
+    if (!selected.size) {
       return;
     }
     setSettings((settings) => {
       return {
         ...settings,
-        [field]: settings[field].filter((path) => !selectedPaths.has(path)),
+        [field]: settings[field].filter((path) => !selected.has(path)),
       };
     });
     onRowSelectionChange({});
   };
 
   const handleAddPath = async () => {
-    if (!isTauri()) {
-      return;
-    }
     const dir = await openFileDialog({ multiple: false, directory: true });
     if (!dir) {
       return;
@@ -296,10 +292,10 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
             className="resize-none"
           />
           <DialogFooter>
-            <Button onClick={handleManualAddOk}>Ok</Button>
             <Button variant="secondary" onClick={manualAddDialogOpen.off}>
               Cancel
             </Button>
+            <Button onClick={handleManualAddOk}>Ok</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

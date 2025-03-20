@@ -1,37 +1,12 @@
-import { listen } from '@tauri-apps/api/event';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Ban, Search } from 'lucide-react';
 import { useEffect } from 'react';
-import {
-  badExtensionsAtom,
-  badExtensionsRowSelectionAtom,
-  bigFilesAtom,
-  bigFilesRowSelectionAtom,
-  brokenFilesAtom,
-  brokenFilesRowSelectionAtom,
-  currentToolAtom,
-  duplicateFilesAtom,
-  duplicateFilesRowSelectionAtom,
-  emptyFilesAtom,
-  emptyFilesRowSelectionAtom,
-  emptyFoldersAtom,
-  emptyFoldersRowSelectionAtom,
-  invalidSymlinksAtom,
-  invalidSymlinksRowSelectionAtom,
-  logsAtom,
-  musicDuplicatesAtom,
-  musicDuplicatesRowSelectionAtom,
-  progressAtom,
-  similarImagesAtom,
-  similarImagesRowSelectionAtom,
-  similarVideosAtom,
-  similarVideosRowSelectionAtom,
-  temporaryFilesAtom,
-  temporaryFilesRowSelectionAtom,
-} from '~/atom/primitive';
+import { currentToolAtom, logsAtom, progressAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
+import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
 import { OperationButton } from '~/components';
 import { Tools, getDefaultProgress } from '~/consts';
+import { useListenEffect } from '~/hooks';
 import { ipc } from '~/ipc';
 import type { AllScanResult, ProgressData, ScanCmd } from '~/types';
 import {
@@ -61,97 +36,47 @@ const scanCmdMap: Record<string, ScanCmd> = {
   [Tools.BadExtensions]: 'scan_bad_extensions',
 };
 
+const convertFnMap: Record<ScanCmd, (v: any[]) => any[]> = {
+  scan_duplicate_files: convertDuplicateEntries,
+  scan_empty_folders: convertFolderEntries,
+  scan_big_files: convertFileEntries,
+  scan_empty_files: convertFileEntries,
+  scan_temporary_files: convertTemporaryFileEntries,
+  scan_similar_images: convertImagesEntries,
+  scan_similar_videos: convertVideosEntries,
+  scan_music_duplicates: convertMusicEntries,
+  scan_invalid_symlinks: convertSymlinksFileEntries,
+  scan_broken_files: convertBorkenEntries,
+  scan_bad_extensions: convertBadFileEntries,
+};
+
 export function ScanButton() {
   const currentTool = useAtomValue(currentToolAtom);
   const settings = useAtomValue(settingsAtom);
   const [progress, setProgress] = useAtom(progressAtom);
   const setLogs = useSetAtom(logsAtom);
-
-  const setDuplicateFiles = useSetAtom(duplicateFilesAtom);
-  const setEmptyFolders = useSetAtom(emptyFoldersAtom);
-  const setBigFiles = useSetAtom(bigFilesAtom);
-  const setEmptyFiles = useSetAtom(emptyFilesAtom);
-  const setTemporaryFiles = useSetAtom(temporaryFilesAtom);
-  const setSimilarImages = useSetAtom(similarImagesAtom);
-  const setSimilarVideos = useSetAtom(similarVideosAtom);
-  const setMusicDuplicates = useSetAtom(musicDuplicatesAtom);
-  const setInvalidSymlinks = useSetAtom(invalidSymlinksAtom);
-  const setBrokenFiles = useSetAtom(brokenFilesAtom);
-  const setBadExtensions = useSetAtom(badExtensionsAtom);
-
-  const setDuplicateFilesRowSelection = useSetAtom(
-    duplicateFilesRowSelectionAtom,
-  );
-  const setEmptyFoldersRowSelection = useSetAtom(emptyFoldersRowSelectionAtom);
-  const setBigFilesRowSelection = useSetAtom(bigFilesRowSelectionAtom);
-  const setEmptyFilesRowSelection = useSetAtom(emptyFilesRowSelectionAtom);
-  const setTemporaryFilesRowSelection = useSetAtom(
-    temporaryFilesRowSelectionAtom,
-  );
-  const setSimilarImagesRowSelection = useSetAtom(
-    similarImagesRowSelectionAtom,
-  );
-  const setSimilarVideosRowSelection = useSetAtom(
-    similarVideosRowSelectionAtom,
-  );
-  const setMusicDuplicatesRowSelection = useSetAtom(
-    musicDuplicatesRowSelectionAtom,
-  );
-  const setInvalidSymlinksRowSelection = useSetAtom(
-    invalidSymlinksRowSelectionAtom,
-  );
-  const setBrokenFilesRowSelection = useSetAtom(brokenFilesRowSelectionAtom);
-  const setBadExtensionsRowSelection = useSetAtom(
-    badExtensionsRowSelectionAtom,
-  );
+  const setCurrentToolData = useSetAtom(currentToolDataAtom);
+  const setCurrentToolRowSelection = useSetAtom(currentToolRowSelectionAtom);
 
   useEffect(() => {
-    listen<AllScanResult>('scan-result', (e) => {
-      const { cmd, message, list } = e.payload;
-      setLogs(message);
-      if (cmd === 'scan_duplicate_files') {
-        setDuplicateFiles(convertDuplicateEntries(list));
-        setDuplicateFilesRowSelection({});
-      } else if (cmd === 'scan_empty_folders') {
-        setEmptyFolders(convertFolderEntries(list));
-        setEmptyFoldersRowSelection({});
-      } else if (cmd === 'scan_big_files') {
-        setBigFiles(convertFileEntries(list));
-        setBigFilesRowSelection({});
-      } else if (cmd === 'scan_empty_files') {
-        setEmptyFiles(convertFileEntries(list));
-        setEmptyFilesRowSelection({});
-      } else if (cmd === 'scan_temporary_files') {
-        setTemporaryFiles(convertTemporaryFileEntries(list));
-        setTemporaryFilesRowSelection({});
-      } else if (cmd === 'scan_similar_images') {
-        setSimilarImages(convertImagesEntries(list));
-        setSimilarImagesRowSelection({});
-      } else if (cmd === 'scan_similar_videos') {
-        setSimilarVideos(convertVideosEntries(list));
-        setSimilarVideosRowSelection({});
-      } else if (cmd === 'scan_music_duplicates') {
-        setMusicDuplicates(convertMusicEntries(list));
-        setMusicDuplicatesRowSelection({});
-      } else if (cmd === 'scan_invalid_symlinks') {
-        setInvalidSymlinks(convertSymlinksFileEntries(list));
-        setInvalidSymlinksRowSelection({});
-      } else if (cmd === 'scan_broken_files') {
-        setBrokenFiles(convertBorkenEntries(list));
-        setBrokenFilesRowSelection({});
-      } else if (cmd === 'scan_bad_extensions') {
-        setBadExtensions(convertBadFileEntries(list));
-        setBadExtensionsRowSelection({});
-      }
-      setProgress(getDefaultProgress());
-    });
-    ipc.listenScanProgress();
-    listen<ProgressData>('scan-progress', (e) => {
-      setProgress((old) => {
-        return { ...old, data: e.payload };
-      });
-    });
+    ipc.startListenScanProgress();
   }, []);
+
+  useListenEffect('scan-result', (result: AllScanResult) => {
+    const { cmd, message, list } = result;
+    setLogs(message);
+    const convertFn = convertFnMap[cmd];
+    const data = convertFn(list);
+    setCurrentToolData(data);
+    setCurrentToolRowSelection({});
+    setProgress(getDefaultProgress());
+  });
+
+  useListenEffect('scan-progress', (result: ProgressData) => {
+    setProgress((old) => {
+      return { ...old, data: result };
+    });
+  });
 
   const handleScan = () => {
     if (progress.tool) {

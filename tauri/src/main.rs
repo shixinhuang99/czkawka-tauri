@@ -8,6 +8,7 @@ mod empty_files;
 mod empty_folders;
 mod image;
 mod invalid_symlinks;
+mod move_files;
 mod music_duplicates;
 mod progress;
 mod scaner;
@@ -53,6 +54,7 @@ fn main() {
 			scan_invalid_symlinks,
 			scan_broken_files,
 			scan_bad_extensions,
+			move_files,
 		])
 		.plugin(tauri_plugin_opener::init())
 		.plugin(tauri_plugin_dialog::init())
@@ -166,4 +168,9 @@ fn scan_broken_files(app: AppHandle, settings: Settings) {
 #[tauri::command]
 fn scan_bad_extensions(app: AppHandle, settings: Settings) {
 	bad_extensions::scan_bad_extensions(app, settings);
+}
+
+#[tauri::command]
+fn move_files(app: AppHandle, options: move_files::Options) {
+	move_files::move_files(app, options);
 }

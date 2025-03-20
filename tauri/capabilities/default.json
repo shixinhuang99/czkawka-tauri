@@ -15,6 +15,7 @@
     },
     "dialog:allow-open",
     "core:event:allow-listen",
+    "core:event:allow-unlisten",
     "opener:allow-reveal-item-in-dir",
     "opener:allow-open-path",
     {

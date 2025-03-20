@@ -2,6 +2,14 @@ import { invoke, isTauri } from '@tauri-apps/api/core';
 import { mockIPC } from '@tauri-apps/api/mocks';
 import type { ImageInfo, PlatformSettings, ScanCmd, Settings } from '~/types';
 
+interface MoveFilesOptions {
+  paths: string[];
+  destination: string;
+  copyMode: boolean;
+  preserveStructure: boolean;
+  overrideMode: boolean;
+}
+
 export const ipc = {
   getPlatformSettings(): Promise<PlatformSettings> {
     return invoke('get_platform_settings');
@@ -15,7 +23,7 @@ export const ipc = {
     return invoke(scanCmd, { settings });
   },
 
-  listenScanProgress() {
+  startListenScanProgress() {
     return invoke('listen_scan_progress');
   },
 
@@ -25,6 +33,10 @@ export const ipc = {
 
   readImage(path: string): Promise<ImageInfo> {
     return invoke('read_image', { path });
+  },
+
+  moveFiles(options: MoveFilesOptions) {
+    return invoke('move_files', { options });
   },
 };
 

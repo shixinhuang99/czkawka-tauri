@@ -35,24 +35,27 @@ export function splitStr(s: string): string[] {
     .filter((s) => s.length > 0);
 }
 
-export function getRowSelectionKeys(rowSelection: RowSelection): Set<string> {
-  const keys: Set<string> = new Set();
+export function getRowSelectionKeys(rowSelection: RowSelection): string[] {
+  const keys: string[] = [];
   for (const kv of Object.entries(rowSelection)) {
     if (kv[1] && !kv[0].startsWith(HIDDEN_ROW_PREFIX)) {
-      keys.add(kv[0]);
+      keys.push(kv[0]);
     }
   }
   return keys;
 }
 
-export function getPathsFromEntries<T extends BaseEntry>(list: T[]): string[] {
-  return list.map((v) => v.path);
-}
-
-export function getPathsFromRefEntries<T extends BaseEntry & RefEntry>(
+export function getPathsFromEntries<T extends BaseEntry & Partial<RefEntry>>(
   list: T[],
-) {
-  return list.filter((v) => !(v.isRef || v.hidden)).map((v) => v.path);
+): string[] {
+  const paths: string[] = [];
+  for (const item of list) {
+    if (item.isRef || item.hidden) {
+      continue;
+    }
+    paths.push(item.path);
+  }
+  return paths;
 }
 
 function fmtFileSize(v: number): string {

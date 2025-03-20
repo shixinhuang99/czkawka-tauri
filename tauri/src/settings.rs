@@ -2,9 +2,10 @@ use czkawka_core::{
 	common::get_all_available_threads,
 	common_items::{DEFAULT_EXCLUDED_DIRECTORIES, DEFAULT_EXCLUDED_ITEMS},
 };
-use directories_next::ProjectDirs;
+use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 
+// todo: remove Serialize
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Settings {
