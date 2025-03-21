@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-13
+          - os: macos-latest
           - os: windows-latest
 
     steps:
@@ -34,26 +34,23 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.os == 'macos-13' && 'aarch64-apple-darwin' || '' }}
+          targets: ${{ matrix.os == 'macos-latest' && 'x86_64-apple-darwin' || '' }}
 
       - name: macos bundles
-        if: matrix.os == 'macos-13'
+        if: matrix.os == 'macos-latest'
         run: |
           npm i pnpm -g
           pnpm i
           node --run build:ui
           node --run build:tauri
           node --run bundle
-          node --run build:tauri:mac-arm64
-          node --run bundle:mac-arm64
 
       - uses: softprops/action-gh-release@v2
-        if: matrix.os == 'macos-13'
+        if: matrix.os == 'macos-latest'
         with:
           draft: true
           files: |
-            ./target/release/bundle/dmg/*.dmg
-            ./target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
+            ./target/universal-apple-darwin/release/bundle/dmg/*.dmg
 
       - name: windows bundles
         if: matrix.os == 'windows-latest'

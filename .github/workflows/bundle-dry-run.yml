@@ -9,7 +9,7 @@ env:
 
 jobs:
   bundle:
-    runs-on: macos-13
+    runs-on: macos-latest
     name: bundle dry run
 
     steps:
@@ -31,5 +31,3 @@ jobs:
           node --run build:ui
           node --run build:tauri
           node --run bundle
-          node --run build:tauri:mac-arm64
-          node --run bundle:mac-arm64
