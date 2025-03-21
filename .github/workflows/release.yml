@@ -1,0 +1,100 @@
+name: release
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "[0-9]+.*"
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+
+jobs:
+  check:
+    runs-on: ${{ matrix.os }}
+    name: check (${{ matrix.os }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+          - os: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just,taplo-cli
+
+      - name: run check
+        run: just check
+
+  release:
+    needs: check
+    runs-on: ${{ matrix.os }}
+    name: release (${{ matrix.os }})
+
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+          - os: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.os == 'macos-latest' && 'x86_64-apple-darwin' || '' }}
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
+
+      - name: macos bundles
+        if: matrix.os == 'macos-latest'
+        run: |
+          npm i pnpm -g
+          pnpm i
+          node --run build:ui
+          node --run build:tauri
+          node --run bundle
+          node --run build:tauri:mac-x86
+          node --run bundle:mac-x86
+
+      - uses: softprops/action-gh-release@v2
+        if: matrix.os == 'macos-latest'
+        with:
+          draft: true
+          files: |
+            ./target/release/bundle/dmg/*.dmg
+            ./target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
+
+      - name: windows bundles
+        if: matrix.os == 'windows-latest'
+        run: |
+          npm i pnpm -g
+          pnpm i
+          node --run build:ui
+          node --run build:tauri
+          node --run bundle
+
+      - uses: softprops/action-gh-release@v2
+        if: matrix.os == 'windows-latest'
+        with:
+          draft: true
+          files: |
+            ./target/release/bundle/nsis/*.exe

@@ -828,8 +828,8 @@ body {
   height: 1px;
 }
 
-.h-\[250px\] {
-  height: 250px;
+.h-\[200px\] {
+  height: 200px;
 }
 
 .h-\[450px\] {
@@ -854,10 +854,6 @@ body {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-\[200px\] {
-  height: 200px;
 }
 
 .max-h-96 {

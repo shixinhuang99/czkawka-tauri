@@ -19,7 +19,9 @@
     "run:browser": "tsx ./scripts/run-browser.ts",
     "build:ui": "pnpm run --filter ./ui build",
     "build:tauri": "pnpm tauri build --no-bundle",
-    "bundle": "pnpm tauri bundle"
+    "build:tauri:mac-x86": "pnpm tauri build --no-bundle --target x86_64-apple-darwin",
+    "bundle": "pnpm tauri bundle",
+    "bundle:mac-x86": "pnpm tauri bundle --target x86_64-apple-darwin"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
