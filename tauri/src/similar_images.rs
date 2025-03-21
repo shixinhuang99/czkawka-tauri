@@ -1,8 +1,8 @@
 use czkawka_core::{
 	common_tool::CommonData,
-	similar_images::{
-		get_string_from_similarity, ImagesEntry, SimilarImages,
-		SimilarImagesParameters,
+	tools::similar_images::{
+		ImagesEntry, SimilarImages, SimilarImagesParameters,
+		get_string_from_similarity,
 	},
 };
 use image_hasher::{FilterType, HashAlg};
@@ -13,7 +13,7 @@ use tauri::{AppHandle, Emitter};
 use crate::{
 	scaner::{set_scaner_common_settings, spawn_scaner_thread},
 	settings::Settings,
-	state::get_stop_rx_and_progress_tx,
+	state::get_stop_flag_and_progress_tx,
 };
 
 #[derive(Serialize, Clone)]
@@ -35,7 +35,7 @@ struct ScanResult {
 
 pub fn scan_similar_images(app: AppHandle, settins: Settings) {
 	spawn_scaner_thread(move || {
-		let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+		let (stop_flag, progress_tx) = get_stop_flag_and_progress_tx(&app);
 
 		let hash_alg = match settins.similar_images_sub_hash_alg.as_ref() {
 			"Gradient" => HashAlg::Gradient,
@@ -71,26 +71,24 @@ pub fn scan_similar_images(app: AppHandle, settins: Settings) {
 		);
 		set_scaner_common_settings(&mut scaner, settins);
 
-		scaner.find_similar_images(Some(&stop_rx), Some(&progress_tx));
+		scaner.find_similar_images(Some(&stop_flag), Some(&progress_tx));
 
 		let mut message = scaner.get_text_messages().create_messages_text();
-		let mut raw_list;
-
-		if scaner.get_use_reference() {
-			raw_list = scaner
+		let mut raw_list: Vec<_> = if scaner.get_use_reference() {
+			scaner
 				.get_similar_images_referenced()
 				.iter()
 				.cloned()
 				.map(|(original, others)| (Some(original), others))
-				.collect::<Vec<_>>();
+				.collect()
 		} else {
-			raw_list = scaner
+			scaner
 				.get_similar_images()
 				.iter()
 				.cloned()
 				.map(|items| (None, items))
-				.collect::<Vec<_>>();
-		}
+				.collect()
+		};
 
 		for (_, vec_fe) in &mut raw_list {
 			vec_fe.par_sort_unstable_by_key(|e| e.similarity);
@@ -144,5 +142,5 @@ fn images_entry_to_custom(
 
 crate::gen_set_scaner_state_fn!(
 	similar_images_state,
-	czkawka_core::similar_images::SimilarImages
+	czkawka_core::tools::similar_images::SimilarImages
 );

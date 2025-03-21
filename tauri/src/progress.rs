@@ -2,9 +2,10 @@ use czkawka_core::{
 	common_dir_traversal::ToolType,
 	progress_data::{CurrentStage, ProgressData},
 };
-use serde::{Deserialize, Serialize};
+use humansize::{DECIMAL, format_size};
+use serde::Serialize;
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ProgressToSend {
 	pub current_progress: i32,
@@ -77,72 +78,46 @@ fn progress_collect_items(item: &ProgressData, files: bool) -> ProgressToSend {
 }
 
 fn progress_default(item: &ProgressData) -> ProgressToSend {
+	let items_stats =
+		format!("{}/{}", item.entries_checked, item.entries_to_check);
+	let size_stats = format!(
+		"{}/{}",
+		format_size(item.bytes_checked, DECIMAL),
+		format_size(item.bytes_to_check, DECIMAL)
+	);
 	let step_name = match item.sstage {
 		CurrentStage::SameMusicReadingTags => {
-			format!(
-				"Checking tags of {}/{} audio file",
-				item.entries_checked, item.entries_to_check
-			)
+			format!("Checked tags of {items_stats}")
 		}
 		CurrentStage::SameMusicCalculatingFingerprints => {
-			format!(
-				"Checking content of {}/{} audio file",
-				item.entries_checked, item.entries_to_check
-			)
+			format!("Checked content of {items_stats} ({size_stats})")
 		}
 		CurrentStage::SameMusicComparingTags => {
-			format!(
-				"Comparing tags of {}/{} audio file",
-				item.entries_checked, item.entries_to_check
-			)
+			format!("Compared tags of {items_stats}")
 		}
 		CurrentStage::SameMusicComparingFingerprints => {
-			format!(
-				"Comparing content of {}/{} audio file",
-				item.entries_checked, item.entries_to_check
-			)
+			format!("Compared content of {items_stats}")
 		}
 		CurrentStage::SimilarImagesCalculatingHashes => {
-			format!(
-				"Hashing of {}/{} image",
-				item.entries_checked, item.entries_to_check
-			)
+			format!("Hashed of {items_stats} image ({size_stats})")
 		}
 		CurrentStage::SimilarImagesComparingHashes => {
-			format!(
-				"Comparing {}/{} image hash",
-				item.entries_checked, item.entries_to_check
-			)
+			format!("Compared {items_stats} image hash")
 		}
 		CurrentStage::SimilarVideosCalculatingHashes => {
-			format!(
-				"Hashing of {}/{} video",
-				item.entries_checked, item.entries_to_check
-			)
+			format!("Hashed of {items_stats} video")
 		}
 		CurrentStage::BrokenFilesChecking => {
-			format!(
-				"Checking {}/{} file",
-				item.entries_checked, item.entries_to_check
-			)
+			format!("Checked {items_stats} file ({size_stats})")
 		}
 		CurrentStage::BadExtensionsChecking => {
-			format!(
-				"Checking {}/{} file",
-				item.entries_checked, item.entries_to_check
-			)
+			format!("Checked {items_stats} file")
 		}
-		CurrentStage::DuplicatePreHashing => {
-			format!(
-				"Analyzing partial hash of {}/{} files",
-				item.entries_checked, item.entries_to_check
-			)
-		}
+		CurrentStage::DuplicatePreHashing => format!(
+			"Analyzed partial hash of {items_stats} files ({size_stats})"
+		),
 		CurrentStage::DuplicateFullHashing => {
-			format!(
-				"Analyzing full hash of {}/{} files",
-				item.entries_checked, item.entries_to_check
-			)
+			format!("Analyzed full hash of {items_stats} files ({size_stats})")
 		}
 		_ => unreachable!(),
 	};

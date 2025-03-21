@@ -1,8 +1,7 @@
 use czkawka_core::{
-	common::get_all_available_threads,
+	common::{get_all_available_threads, get_config_cache_path},
 	common_items::{DEFAULT_EXCLUDED_DIRECTORIES, DEFAULT_EXCLUDED_ITEMS},
 };
-use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
@@ -75,8 +74,10 @@ impl Default for PlatformSettings {
 			excluded_directories: default_excluded_directories(),
 			excluded_items: default_excluded_items(),
 			available_thread_number: get_all_available_threads(),
-			cache_dir_path: ProjectDirs::from("pl", "Qarmin", "Czkawka")
-				.map(|dirs| dirs.cache_dir().to_string_lossy().to_string())
+			cache_dir_path: get_config_cache_path()
+				.map(|config_cache| {
+					config_cache.cache_folder.to_string_lossy().to_string()
+				})
 				.unwrap_or_default(),
 		}
 	}

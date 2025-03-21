@@ -1,4 +1,4 @@
-edition = "2021"
+edition = "2024"
 max_width = 80
 use_field_init_shorthand = true
 hard_tabs = true

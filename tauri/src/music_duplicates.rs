@@ -2,7 +2,9 @@ use czkawka_core::{
 	common::split_path_compare,
 	common_dir_traversal::CheckingMethod,
 	common_tool::CommonData,
-	same_music::{MusicEntry, MusicSimilarity, SameMusic, SameMusicParameters},
+	tools::same_music::{
+		MusicEntry, MusicSimilarity, SameMusic, SameMusicParameters,
+	},
 };
 use rayon::prelude::*;
 use serde::Serialize;
@@ -11,7 +13,7 @@ use tauri::{AppHandle, Emitter};
 use crate::{
 	scaner::{set_scaner_common_settings, spawn_scaner_thread},
 	settings::Settings,
-	state::get_stop_rx_and_progress_tx,
+	state::get_stop_flag_and_progress_tx,
 };
 
 #[derive(Serialize, Clone)]
@@ -36,7 +38,7 @@ struct ScanResult {
 
 pub fn scan_music_duplicates(app: AppHandle, settins: Settings) {
 	spawn_scaner_thread(move || {
-		let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+		let (stop_flag, progress_tx) = get_stop_flag_and_progress_tx(&app);
 
 		let mut music_similarity: MusicSimilarity = MusicSimilarity::NONE;
 		if settins.similar_music_sub_title {
@@ -83,26 +85,24 @@ pub fn scan_music_duplicates(app: AppHandle, settins: Settings) {
 
 		set_scaner_common_settings(&mut scaner, settins);
 
-		scaner.find_same_music(Some(&stop_rx), Some(&progress_tx));
+		scaner.find_same_music(Some(&stop_flag), Some(&progress_tx));
 
 		let mut message = scaner.get_text_messages().create_messages_text();
-		let mut raw_list;
-
-		if scaner.get_use_reference() {
-			raw_list = scaner
+		let mut raw_list: Vec<_> = if scaner.get_use_reference() {
+			scaner
 				.get_similar_music_referenced()
 				.iter()
 				.cloned()
 				.map(|(original, others)| (Some(original), others))
-				.collect::<Vec<_>>();
+				.collect()
 		} else {
-			raw_list = scaner
+			scaner
 				.get_duplicated_music_entries()
 				.iter()
 				.cloned()
 				.map(|items| (None, items))
-				.collect::<Vec<_>>();
-		}
+				.collect()
+		};
 
 		for (_, vec_fe) in &mut raw_list {
 			vec_fe.par_sort_unstable_by(|a, b| {
@@ -156,5 +156,5 @@ fn music_entry_to_custom(value: MusicEntry) -> CustomMusicEntry {
 
 crate::gen_set_scaner_state_fn!(
 	same_music_state,
-	czkawka_core::same_music::SameMusic
+	czkawka_core::tools::same_music::SameMusic
 );

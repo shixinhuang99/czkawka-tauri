@@ -24,7 +24,9 @@ mod utils;
 
 use std::sync::Mutex;
 
-use czkawka_core::common::{get_number_of_threads, set_number_of_threads};
+use czkawka_core::common::{
+	get_number_of_threads, set_config_cache_path, set_number_of_threads,
+};
 use tauri::{AppHandle, Emitter, Manager, State};
 
 use crate::{
@@ -35,6 +37,8 @@ use crate::{
 };
 
 fn main() {
+	set_config_cache_path("Czkawka", "Krokiet");
+
 	tauri::Builder::default()
 		.setup(move |app| {
 			app.manage(Mutex::new(AppState::default()));
@@ -89,8 +93,10 @@ fn setup_number_of_threads(
 
 #[tauri::command]
 fn stop_scan(state: State<'_, Mutex<AppState>>) {
+	use std::sync::atomic::Ordering;
+
 	let state = state.lock().unwrap();
-	state.stop_tx.send(()).unwrap();
+	state.stop_flag.store(true, Ordering::Relaxed);
 }
 
 #[tauri::command]
@@ -105,14 +111,16 @@ fn listen_scan_progress(app: AppHandle) {
 
 	drop(state);
 
-	std::thread::spawn(move || loop {
-		let Ok(progress_data) = progress_rx.recv() else {
-			return;
-		};
+	std::thread::spawn(move || {
+		loop {
+			let Ok(progress_data) = progress_rx.recv() else {
+				return;
+			};
 
-		let data = process_progress_data(progress_data);
+			let data = process_progress_data(progress_data);
 
-		app.emit("scan-progress", data).unwrap();
+			app.emit("scan-progress", data).unwrap();
+		}
 	});
 }
 

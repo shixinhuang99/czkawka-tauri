@@ -2,7 +2,7 @@ use czkawka_core::{
 	common::split_path_compare,
 	common_dir_traversal::CheckingMethod,
 	common_tool::CommonData,
-	duplicate::{
+	tools::duplicate::{
 		DuplicateEntry, DuplicateFinder, DuplicateFinderParameters, HashType,
 	},
 };
@@ -13,7 +13,7 @@ use tauri::{AppHandle, Emitter};
 use crate::{
 	scaner::{set_scaner_common_settings, spawn_scaner_thread},
 	settings::Settings,
-	state::get_stop_rx_and_progress_tx,
+	state::get_stop_flag_and_progress_tx,
 };
 
 #[derive(Serialize, Clone)]
@@ -25,7 +25,7 @@ struct ScanResult {
 
 pub fn scan_duplicate_files(app: AppHandle, settings: Settings) {
 	spawn_scaner_thread(move || {
-		let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+		let (stop_flag, progress_tx) = get_stop_flag_and_progress_tx(&app);
 
 		let hash_type =
 			match settings.duplicates_sub_available_hash_type.as_ref() {
@@ -54,7 +54,7 @@ pub fn scan_duplicate_files(app: AppHandle, settings: Settings) {
 		);
 		set_scaner_common_settings(&mut scaner, settings);
 
-		scaner.find_duplicates(Some(&stop_rx), Some(&progress_tx));
+		scaner.find_duplicates(Some(&stop_flag), Some(&progress_tx));
 
 		let mut message = scaner.get_text_messages().create_messages_text();
 		let mut list;
@@ -169,5 +169,5 @@ pub fn scan_duplicate_files(app: AppHandle, settings: Settings) {
 
 crate::gen_set_scaner_state_fn!(
 	duplication_state,
-	czkawka_core::duplicate::DuplicateFinder
+	czkawka_core::tools::duplicate::DuplicateFinder
 );

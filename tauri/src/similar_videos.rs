@@ -1,7 +1,9 @@
 use czkawka_core::{
 	common::split_path_compare,
 	common_tool::CommonData,
-	similar_videos::{SimilarVideos, SimilarVideosParameters, VideosEntry},
+	tools::similar_videos::{
+		SimilarVideos, SimilarVideosParameters, VideosEntry,
+	},
 };
 use rayon::prelude::*;
 use serde::Serialize;
@@ -10,7 +12,7 @@ use tauri::{AppHandle, Emitter};
 use crate::{
 	scaner::{set_scaner_common_settings, spawn_scaner_thread},
 	settings::Settings,
-	state::get_stop_rx_and_progress_tx,
+	state::get_stop_flag_and_progress_tx,
 };
 
 #[derive(Serialize, Clone)]
@@ -29,7 +31,7 @@ struct ScanResult {
 
 pub fn scan_similar_videos(app: AppHandle, settins: Settings) {
 	spawn_scaner_thread(move || {
-		let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+		let (stop_flag, progress_tx) = get_stop_flag_and_progress_tx(&app);
 
 		let mut scaner = SimilarVideos::new(SimilarVideosParameters::new(
 			settins.similar_videos_sub_similarity,
@@ -42,26 +44,24 @@ pub fn scan_similar_videos(app: AppHandle, settins: Settings) {
 		);
 		set_scaner_common_settings(&mut scaner, settins);
 
-		scaner.find_similar_videos(Some(&stop_rx), Some(&progress_tx));
+		scaner.find_similar_videos(Some(&stop_flag), Some(&progress_tx));
 
 		let mut message = scaner.get_text_messages().create_messages_text();
-		let mut raw_list;
-
-		if scaner.get_use_reference() {
-			raw_list = scaner
+		let mut raw_list: Vec<_> = if scaner.get_use_reference() {
+			scaner
 				.get_similar_videos_referenced()
 				.iter()
 				.cloned()
 				.map(|(original, others)| (Some(original), others))
-				.collect::<Vec<_>>();
+				.collect()
 		} else {
-			raw_list = scaner
+			scaner
 				.get_similar_videos()
 				.iter()
 				.cloned()
 				.map(|items| (None, items))
-				.collect::<Vec<_>>();
-		}
+				.collect()
+		};
 
 		for (_, vec_fe) in &mut raw_list {
 			vec_fe.par_sort_unstable_by(|a, b| {
@@ -109,5 +109,5 @@ fn videos_entry_to_custom(value: VideosEntry) -> CustomVideosEntry {
 
 crate::gen_set_scaner_state_fn!(
 	similar_videos_state,
-	czkawka_core::similar_videos::SimilarVideos
+	czkawka_core::tools::similar_videos::SimilarVideos
 );

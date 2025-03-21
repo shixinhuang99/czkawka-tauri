@@ -1,7 +1,7 @@
 use czkawka_core::{
 	common::split_path_compare,
 	common_tool::CommonData,
-	temporary::{Temporary, TemporaryFileEntry},
+	tools::temporary::{Temporary, TemporaryFileEntry},
 };
 use rayon::prelude::*;
 use serde::Serialize;
@@ -10,7 +10,7 @@ use tauri::{AppHandle, Emitter};
 use crate::{
 	scaner::{set_scaner_common_settings, spawn_scaner_thread},
 	settings::Settings,
-	state::get_stop_rx_and_progress_tx,
+	state::get_stop_flag_and_progress_tx,
 };
 
 #[derive(Serialize, Clone)]
@@ -22,13 +22,13 @@ struct ScanResult {
 
 pub fn scan_temporary_files(app: AppHandle, settings: Settings) {
 	spawn_scaner_thread(move || {
-		let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+		let (stop_flag, progress_tx) = get_stop_flag_and_progress_tx(&app);
 
 		let mut scaner = Temporary::new();
 
 		set_scaner_common_settings(&mut scaner, settings);
 
-		scaner.find_temporary_files(Some(&stop_rx), Some(&progress_tx));
+		scaner.find_temporary_files(Some(&stop_flag), Some(&progress_tx));
 
 		let mut list = scaner.get_temporary_files().clone();
 		let mut message = scaner.get_text_messages().create_messages_text();
@@ -55,5 +55,5 @@ pub fn scan_temporary_files(app: AppHandle, settings: Settings) {
 
 crate::gen_set_scaner_state_fn!(
 	temporary_files_state,
-	czkawka_core::temporary::Temporary
+	czkawka_core::tools::temporary::Temporary
 );

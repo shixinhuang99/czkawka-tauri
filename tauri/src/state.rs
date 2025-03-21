@@ -1,21 +1,23 @@
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex, atomic::AtomicBool};
 
-use crossbeam_channel::{unbounded, Receiver, Sender};
+use crossbeam_channel::{Receiver, Sender, unbounded};
 use czkawka_core::{
-	bad_extensions::BadExtensions, big_file::BigFile,
-	broken_files::BrokenFiles, duplicate::DuplicateFinder,
-	empty_files::EmptyFiles, empty_folder::EmptyFolder,
-	invalid_symlinks::InvalidSymlinks, progress_data::ProgressData,
-	same_music::SameMusic, similar_images::SimilarImages,
-	similar_videos::SimilarVideos, temporary::Temporary,
+	progress_data::ProgressData,
+	tools::{
+		bad_extensions::BadExtensions, big_file::BigFile,
+		broken_files::BrokenFiles, duplicate::DuplicateFinder,
+		empty_files::EmptyFiles, empty_folder::EmptyFolder,
+		invalid_symlinks::InvalidSymlinks, same_music::SameMusic,
+		similar_images::SimilarImages, similar_videos::SimilarVideos,
+		temporary::Temporary,
+	},
 };
 use tauri::{AppHandle, Manager};
 
 pub struct AppState {
 	pub is_number_of_threads_setup: bool,
 	pub is_progress_thread_setup: bool,
-	pub stop_tx: Sender<()>,
-	pub stop_rx: Receiver<()>,
+	pub stop_flag: Arc<AtomicBool>,
 	pub progress_tx: Sender<ProgressData>,
 	pub progress_rx: Receiver<ProgressData>,
 	pub duplication_state: Option<DuplicateFinder>,
@@ -33,14 +35,12 @@ pub struct AppState {
 
 impl Default for AppState {
 	fn default() -> Self {
-		let (stop_tx, stop_rx) = unbounded();
 		let (progress_tx, progress_rx) = unbounded();
 
 		AppState {
 			is_number_of_threads_setup: false,
 			is_progress_thread_setup: false,
-			stop_tx,
-			stop_rx,
+			stop_flag: Arc::new(AtomicBool::new(false)),
 			progress_tx,
 			progress_rx,
 			duplication_state: None,
@@ -58,12 +58,16 @@ impl Default for AppState {
 	}
 }
 
-pub fn get_stop_rx_and_progress_tx(
+pub fn get_stop_flag_and_progress_tx(
 	app: &AppHandle,
-) -> (Receiver<()>, Sender<ProgressData>) {
+) -> (Arc<AtomicBool>, Sender<ProgressData>) {
+	use std::sync::atomic::Ordering;
+
 	let state_mutex = app.state::<Mutex<AppState>>();
 	let state = state_mutex.lock().unwrap();
-	(state.stop_rx.clone(), state.progress_tx.clone())
+	state.stop_flag.store(false, Ordering::Relaxed);
+
+	(state.stop_flag.clone(), state.progress_tx.clone())
 }
 
 #[macro_export]

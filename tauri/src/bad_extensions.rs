@@ -1,7 +1,9 @@
 use czkawka_core::{
-	bad_extensions::{BadExtensions, BadExtensionsParameters, BadFileEntry},
 	common::split_path_compare,
 	common_tool::CommonData,
+	tools::bad_extensions::{
+		BadExtensions, BadExtensionsParameters, BadFileEntry,
+	},
 };
 use rayon::prelude::*;
 use serde::Serialize;
@@ -10,7 +12,7 @@ use tauri::{AppHandle, Emitter};
 use crate::{
 	scaner::{set_scaner_common_settings, spawn_scaner_thread},
 	settings::Settings,
-	state::get_stop_rx_and_progress_tx,
+	state::get_stop_flag_and_progress_tx,
 };
 
 #[derive(Serialize, Clone)]
@@ -22,13 +24,13 @@ struct ScanResult {
 
 pub fn scan_bad_extensions(app: AppHandle, settings: Settings) {
 	spawn_scaner_thread(move || {
-		let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+		let (stop_flag, progress_tx) = get_stop_flag_and_progress_tx(&app);
 
 		let mut scaner = BadExtensions::new(BadExtensionsParameters::new());
 
 		set_scaner_common_settings(&mut scaner, settings);
 
-		scaner.find_bad_extensions_files(Some(&stop_rx), Some(&progress_tx));
+		scaner.find_bad_extensions_files(Some(&stop_flag), Some(&progress_tx));
 
 		let mut list = scaner.get_bad_extensions_files().clone();
 		let mut message = scaner.get_text_messages().create_messages_text();
@@ -52,5 +54,12 @@ pub fn scan_bad_extensions(app: AppHandle, settings: Settings) {
 			},
 		)
 		.unwrap();
+
+		set_scaner_state(app, scaner);
 	});
 }
+
+crate::gen_set_scaner_state_fn!(
+	bad_extensions_state,
+	czkawka_core::tools::bad_extensions::BadExtensions
+);

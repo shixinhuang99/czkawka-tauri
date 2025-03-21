@@ -856,6 +856,10 @@ body {
   height: 100vh;
 }
 
+.h-\[200px\] {
+  height: 200px;
+}
+
 .max-h-96 {
   max-height: 24rem;
 }

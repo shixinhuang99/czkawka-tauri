@@ -1,9 +1,9 @@
 use czkawka_core::{
-	broken_files::{
-		BrokenEntry, BrokenFiles, BrokenFilesParameters, CheckedTypes,
-	},
 	common::split_path_compare,
 	common_tool::CommonData,
+	tools::broken_files::{
+		BrokenEntry, BrokenFiles, BrokenFilesParameters, CheckedTypes,
+	},
 };
 use rayon::prelude::*;
 use serde::Serialize;
@@ -12,7 +12,7 @@ use tauri::{AppHandle, Emitter};
 use crate::{
 	scaner::{set_scaner_common_settings, spawn_scaner_thread},
 	settings::Settings,
-	state::get_stop_rx_and_progress_tx,
+	state::get_stop_flag_and_progress_tx,
 };
 
 #[derive(Serialize, Clone)]
@@ -24,7 +24,7 @@ struct ScanResult {
 
 pub fn scan_broken_files(app: AppHandle, settings: Settings) {
 	spawn_scaner_thread(move || {
-		let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+		let (stop_flag, progress_tx) = get_stop_flag_and_progress_tx(&app);
 
 		let mut checked_types: CheckedTypes = CheckedTypes::NONE;
 		if settings.broken_files_sub_audio {
@@ -48,7 +48,7 @@ pub fn scan_broken_files(app: AppHandle, settings: Settings) {
 
 		set_scaner_common_settings(&mut scaner, settings);
 
-		scaner.find_broken_files(Some(&stop_rx), Some(&progress_tx));
+		scaner.find_broken_files(Some(&stop_flag), Some(&progress_tx));
 
 		let mut list = scaner.get_broken_files().clone();
 		let mut message = scaner.get_text_messages().create_messages_text();
@@ -75,5 +75,5 @@ pub fn scan_broken_files(app: AppHandle, settings: Settings) {
 
 crate::gen_set_scaner_state_fn!(
 	broken_files_state,
-	czkawka_core::broken_files::BrokenFiles
+	czkawka_core::tools::broken_files::BrokenFiles
 );

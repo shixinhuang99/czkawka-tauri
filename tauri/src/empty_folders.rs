@@ -1,6 +1,6 @@
 use czkawka_core::{
 	common::split_path_compare, common_tool::CommonData,
-	empty_folder::EmptyFolder,
+	tools::empty_folder::EmptyFolder,
 };
 use rayon::prelude::*;
 use serde::Serialize;
@@ -9,7 +9,7 @@ use tauri::{AppHandle, Emitter};
 use crate::{
 	scaner::{set_scaner_common_settings, spawn_scaner_thread},
 	settings::Settings,
-	state::get_stop_rx_and_progress_tx,
+	state::get_stop_flag_and_progress_tx,
 };
 
 #[derive(Serialize, Clone)]
@@ -27,13 +27,13 @@ struct ScanResult {
 
 pub fn scan_empty_folders(app: AppHandle, settings: Settings) {
 	spawn_scaner_thread(move || {
-		let (stop_rx, progress_tx) = get_stop_rx_and_progress_tx(&app);
+		let (stop_flag, progress_tx) = get_stop_flag_and_progress_tx(&app);
 
 		let mut scaner = EmptyFolder::new();
 
 		set_scaner_common_settings(&mut scaner, settings);
 
-		scaner.find_empty_folders(Some(&stop_rx), Some(&progress_tx));
+		scaner.find_empty_folders(Some(&stop_flag), Some(&progress_tx));
 
 		let mut raw_list = scaner
 			.get_empty_folder_list()
@@ -73,5 +73,5 @@ pub fn scan_empty_folders(app: AppHandle, settings: Settings) {
 
 crate::gen_set_scaner_state_fn!(
 	empty_folders_state,
-	czkawka_core::empty_folder::EmptyFolder
+	czkawka_core::tools::empty_folder::EmptyFolder
 );

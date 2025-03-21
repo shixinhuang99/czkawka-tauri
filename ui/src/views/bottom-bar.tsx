@@ -2,6 +2,7 @@ import type { Table } from '@tanstack/react-table';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
+  ArrowDownFromLine,
   Folder,
   FolderPen,
   FolderPlus,
@@ -40,6 +41,7 @@ import { Operations } from './operations';
 const DisplayType = {
   Dirs: 'dirs',
   Logs: 'logs',
+  None: 'none',
 } as const;
 
 interface TableData {
@@ -79,7 +81,7 @@ export function BottomBar() {
   const [displayType, setDisplayType] = useState<string>(DisplayType.Dirs);
 
   return (
-    <div className="h-[250px] flex flex-col px-2 py-1 gap-1 border-t">
+    <div className="flex flex-col px-2 py-1 gap-1 border-t">
       <div className="flex justify-between items-center">
         <Operations />
         <Tabs value={displayType} onValueChange={setDisplayType}>
@@ -90,11 +92,14 @@ export function BottomBar() {
             <TabsTrigger value={DisplayType.Logs}>
               <ScrollText />
             </TabsTrigger>
+            <TabsTrigger value={DisplayType.None}>
+              <ArrowDownFromLine />
+            </TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
       {displayType === DisplayType.Dirs && (
-        <div className="flex gap-1 flex-1 h-px">
+        <div className="flex gap-1 h-[200px]">
           <IncludedDirsTable />
           <ExcludedDirsTable />
         </div>
@@ -249,7 +254,7 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
       }
       return {
         ...settings,
-        [field]: dirs.concat(dir),
+        [field]: [dir, ...dirs],
       };
     });
   };
@@ -259,7 +264,7 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
     setSettings((settings) => {
       return {
         ...settings,
-        [field]: Array.from(new Set(settings[field].concat(...paths))),
+        [field]: Array.from(new Set([...paths, ...settings[field]])),
       };
     });
     manualAddDialogOpen.off();
@@ -318,7 +323,7 @@ function Logs() {
   const logs = useAtomValue(logsAtom);
 
   return (
-    <ScrollArea className="flex-1 rounded-md border bg-card text-card-foreground px-2 py-1">
+    <ScrollArea className="h-[200px] rounded-md border bg-card text-card-foreground px-2 py-1">
       <div className="whitespace-break-spaces">{logs}</div>
     </ScrollArea>
   );
