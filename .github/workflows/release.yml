@@ -72,8 +72,8 @@ jobs:
           node --run build:ui
           node --run build:tauri
           node --run bundle
-          node --run build:tauri:mac-x86
-          node --run bundle:mac-x86
+          node --run build:tauri:mac-x86_64
+          node --run bundle:mac-x86_64
 
       - uses: softprops/action-gh-release@v2
         if: matrix.os == 'macos-latest'

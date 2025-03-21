@@ -10,7 +10,7 @@ env:
 jobs:
   bundle:
     runs-on: ${{ matrix.os }}
-    name: release (${{ matrix.os }})
+    name: bundle (${{ matrix.os }})
 
     strategy:
       matrix:
@@ -42,8 +42,8 @@ jobs:
           node --run build:ui
           node --run build:tauri
           node --run bundle
-          node --run build:tauri:mac-x86
-          node --run bundle:mac-x86
+          node --run build:tauri:mac-x86_64
+          node --run bundle:mac-x86_64
 
       - name: windows bundles
         if: matrix.os == 'windows-latest'
