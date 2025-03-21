@@ -99,6 +99,7 @@ export function BottomBar() {
           <TooltipButton
             tooltip={minimizeBottomBar.value ? 'Expand' : 'Collapse'}
             onClick={minimizeBottomBar.toggle}
+            variant="outline"
           >
             <ArrowDownFromLine
               className={cn(
