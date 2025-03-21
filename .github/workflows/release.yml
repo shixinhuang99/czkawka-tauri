@@ -58,8 +58,8 @@ jobs:
           npm i pnpm -g
           pnpm i
           node --run build:ui
-          node --run build:tauri
-          node --run bundle
+          node --run build:tauri:win
+          node --run bundle:win
 
       - uses: softprops/action-gh-release@v2
         if: matrix.os == 'windows-latest'
