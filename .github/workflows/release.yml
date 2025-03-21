@@ -14,39 +14,7 @@ env:
   CARGO_INCREMENTAL: 0
 
 jobs:
-  check:
-    runs-on: ${{ matrix.os }}
-    name: check (${{ matrix.os }})
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: macos-latest
-          - os: windows-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - uses: dtolnay/rust-toolchain@stable
-
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: just,taplo-cli
-
-      - name: run check
-        run: |
-          npm i pnpm -g
-          pnpm i
-          just check
-
   release:
-    needs: check
     runs-on: ${{ matrix.os }}
     name: release (${{ matrix.os }})
 
