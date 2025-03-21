@@ -28,6 +28,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - uses: dtolnay/rust-toolchain@stable
 
       - uses: taiki-e/install-action@v2
@@ -35,7 +40,10 @@ jobs:
           tool: just,taplo-cli
 
       - name: run check
-        run: just check
+        run: |
+          npm i pnpm -g
+          pnpm i
+          just check
 
   release:
     needs: check
