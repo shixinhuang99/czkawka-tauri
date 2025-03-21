@@ -14,5 +14,8 @@ export function useBoolean() {
     set(v: boolean) {
       setValue(v);
     },
+    toggle() {
+      setValue((old) => !old);
+    },
   };
 }

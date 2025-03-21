@@ -35,13 +35,13 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
 import { useBoolean } from '~/hooks/use-boolean';
 import type { DirsType } from '~/types';
+import { cn } from '~/utils/cn';
 import { getRowSelectionKeys, splitStr } from '~/utils/common';
 import { Operations } from './operations';
 
 const DisplayType = {
   Dirs: 'dirs',
   Logs: 'logs',
-  None: 'none',
 } as const;
 
 interface TableData {
@@ -79,32 +79,43 @@ const columns = createColumns<TableData>([
 
 export function BottomBar() {
   const [displayType, setDisplayType] = useState<string>(DisplayType.Dirs);
+  const minimizeBottomBar = useBoolean();
 
   return (
     <div className="flex flex-col px-2 py-1 gap-1 border-t">
       <div className="flex justify-between items-center">
         <Operations />
-        <Tabs value={displayType} onValueChange={setDisplayType}>
-          <TabsList>
-            <TabsTrigger value={DisplayType.Dirs}>
-              <Folder />
-            </TabsTrigger>
-            <TabsTrigger value={DisplayType.Logs}>
-              <ScrollText />
-            </TabsTrigger>
-            <TabsTrigger value={DisplayType.None}>
-              <ArrowDownFromLine />
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex items-center gap-1">
+          <Tabs value={displayType} onValueChange={setDisplayType}>
+            <TabsList>
+              <TabsTrigger value={DisplayType.Dirs}>
+                <Folder />
+              </TabsTrigger>
+              <TabsTrigger value={DisplayType.Logs}>
+                <ScrollText />
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <TooltipButton
+            tooltip={minimizeBottomBar.value ? 'Expand' : 'Collapse'}
+            onClick={minimizeBottomBar.toggle}
+          >
+            <ArrowDownFromLine
+              className={cn(
+                'transition-transform duration-300',
+                minimizeBottomBar.value && 'rotate-180',
+              )}
+            />
+          </TooltipButton>
+        </div>
       </div>
-      {displayType === DisplayType.Dirs && (
+      {displayType === DisplayType.Dirs && !minimizeBottomBar.value && (
         <div className="flex gap-1 h-[200px]">
           <IncludedDirsTable />
           <ExcludedDirsTable />
         </div>
       )}
-      {displayType === DisplayType.Logs && <Logs />}
+      {displayType === DisplayType.Logs && !minimizeBottomBar.value && <Logs />}
     </div>
   );
 }
