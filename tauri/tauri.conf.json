@@ -45,6 +45,9 @@
       "nsis": {
         "installerIcon": "../assets/icon.ico"
       }
+    },
+    "macOS": {
+      "minimumSystemVersion": "12.0.1"
     }
   }
 }

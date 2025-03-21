@@ -12,5 +12,11 @@ Since Czkawka on my computer started crashing upon opening after just a few uses
 
 ### Differences with Krokiet:
 
-- Use full paths for paths
-- Use decimal for file sizes
+- Use full paths for paths.
+- Use decimal for file sizes.
+- The default scan directory is the user directory.
+- When deleting files, they are moved to the recycle bin by default.
+
+### Note
+
+- Because the default directory is the user directory, some directory permissions may be requested during the first use. You can choose "Deny" or "Allow" as needed.
