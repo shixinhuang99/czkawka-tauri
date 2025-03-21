@@ -9,47 +9,20 @@ env:
 
 jobs:
   bundle:
-    runs-on: ${{ matrix.os }}
-    name: bundle (${{ matrix.os }})
-
-    strategy:
-      matrix:
-        include:
-          - os: macos-latest
-          - os: windows-latest
+    runs-on: macos-13
+    name: bundle dry run
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.os == 'macos-latest' && 'x86_64-apple-darwin' || '' }}
-
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: just
+          targets: "aarch64-apple-darwin"
 
       - name: macos bundles
-        if: matrix.os == 'macos-latest'
         run: |
           npm i pnpm -g
           pnpm i
           node --run build:ui
           node --run build:tauri
           node --run bundle
-          node --run build:tauri:mac-x86_64
-          node --run bundle:mac-x86_64
-
-      - name: windows bundles
-        if: matrix.os == 'windows-latest'
-        run: |
-          npm i pnpm -g
-          pnpm i
-          node --run build:ui
-          node --run build:tauri
-          node --run bundle
+          node --run build:tauri:mac-arm64
+          node --run bundle:mac-arm64

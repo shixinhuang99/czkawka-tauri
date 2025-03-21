@@ -34,7 +34,6 @@
       "../assets/icon.png"
     ],
     "category": "DeveloperTool",
-    "licenseFile": "../LICENSE",
     "shortDescription": "A Tauri frontend of Czkawka on macOS and Windows",
     "useLocalToolsDir": true,
     "windows": {
