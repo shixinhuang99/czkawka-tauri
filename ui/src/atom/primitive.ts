@@ -21,6 +21,7 @@ import type {
   SymlinksFileEntry,
   TemporaryFileEntry,
   ThemeCfg,
+  ToolsValues,
   VideosEntry,
 } from '~/types';
 
@@ -40,7 +41,7 @@ export const platformSettingsAtom = atom<PlatformSettings>(
   getDefaultPlatformSettings(),
 );
 
-export const currentToolAtom = atomWithStorage<string>(
+export const currentToolAtom = atomWithStorage<ToolsValues>(
   'currentTool',
   Tools.DuplicateFiles,
   undefined,

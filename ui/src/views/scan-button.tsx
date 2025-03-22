@@ -3,7 +3,10 @@ import { Ban, Search } from 'lucide-react';
 import { useEffect } from 'react';
 import { currentToolAtom, logsAtom, progressAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
-import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
+import {
+  toolInProgressDataAtom,
+  toolInProgressRowSelectionAtom,
+} from '~/atom/tools';
 import { OperationButton } from '~/components';
 import { Tools, getDefaultProgress } from '~/consts';
 import { useListenEffect } from '~/hooks';
@@ -55,8 +58,10 @@ export function ScanButton() {
   const settings = useAtomValue(settingsAtom);
   const [progress, setProgress] = useAtom(progressAtom);
   const setLogs = useSetAtom(logsAtom);
-  const setCurrentToolData = useSetAtom(currentToolDataAtom);
-  const setCurrentToolRowSelection = useSetAtom(currentToolRowSelectionAtom);
+  const setToolInProgressData = useSetAtom(toolInProgressDataAtom);
+  const setToolInProgressRowSelection = useSetAtom(
+    toolInProgressRowSelectionAtom,
+  );
 
   useEffect(() => {
     ipc.startListenScanProgress();
@@ -67,8 +72,8 @@ export function ScanButton() {
     setLogs(message);
     const convertFn = convertFnMap[cmd];
     const data = convertFn(list);
-    setCurrentToolData(data);
-    setCurrentToolRowSelection({});
+    setToolInProgressData(data);
+    setToolInProgressRowSelection({});
     setProgress(getDefaultProgress());
   });
 

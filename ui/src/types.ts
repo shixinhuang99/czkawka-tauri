@@ -1,3 +1,9 @@
+import type { Tools } from './consts';
+
+type ValueOf<T> = T[keyof T];
+
+export type ToolsValues = ValueOf<typeof Tools>;
+
 export interface ThemeCfg {
   display: string;
   className: string;
@@ -98,7 +104,7 @@ export type ScanCmd =
   | 'scan_bad_extensions';
 
 export interface Progress {
-  tool: string;
+  tool: ToolsValues | '';
   stopping: boolean;
   data: ProgressData;
 }

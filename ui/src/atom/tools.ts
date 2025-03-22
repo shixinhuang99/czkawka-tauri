@@ -1,6 +1,7 @@
 import { type PrimitiveAtom, atom } from 'jotai';
 import type { RowSelection } from '~/components/data-table';
 import { Tools } from '~/consts';
+import type { ToolsValues } from '~/types';
 import {
   badExtensionsAtom,
   badExtensionsRowSelectionAtom,
@@ -19,6 +20,7 @@ import {
   invalidSymlinksRowSelectionAtom,
   musicDuplicatesAtom,
   musicDuplicatesRowSelectionAtom,
+  progressAtom,
   similarImagesAtom,
   similarImagesRowSelectionAtom,
   similarVideosAtom,
@@ -27,7 +29,7 @@ import {
   temporaryFilesRowSelectionAtom,
 } from './primitive';
 
-const dataAtomMap: Record<string, PrimitiveAtom<any[]>> = {
+const dataAtomMap: Record<ToolsValues, PrimitiveAtom<any[]>> = {
   [Tools.DuplicateFiles]: duplicateFilesAtom,
   [Tools.EmptyFolders]: emptyFoldersAtom,
   [Tools.BigFiles]: bigFilesAtom,
@@ -41,7 +43,7 @@ const dataAtomMap: Record<string, PrimitiveAtom<any[]>> = {
   [Tools.BadExtensions]: badExtensionsAtom,
 };
 
-const rowSelectionAtomMap: Record<string, PrimitiveAtom<RowSelection>> = {
+const rowSelectionAtomMap: Record<ToolsValues, PrimitiveAtom<RowSelection>> = {
   [Tools.DuplicateFiles]: duplicateFilesRowSelectionAtom,
   [Tools.EmptyFolders]: emptyFoldersRowSelectionAtom,
   [Tools.BigFiles]: bigFilesRowSelectionAtom,
@@ -79,6 +81,44 @@ export const currentToolRowSelectionAtom = atom(
   (get, set, updater: Updater) => {
     const currentTool = get(currentToolAtom);
     const targetAtom = rowSelectionAtomMap[currentTool];
+    set(targetAtom, updater);
+  },
+);
+
+export const toolInProgressDataAtom = atom(
+  (get) => {
+    const progress = get(progressAtom);
+    if (!progress.tool) {
+      return null;
+    }
+    const targetAtom = dataAtomMap[progress.tool];
+    return get(targetAtom);
+  },
+  (get, set, v: any[]) => {
+    const progress = get(progressAtom);
+    if (!progress.tool) {
+      return;
+    }
+    const targetAtom = dataAtomMap[progress.tool];
+    set(targetAtom, v);
+  },
+);
+
+export const toolInProgressRowSelectionAtom = atom(
+  (get) => {
+    const progress = get(progressAtom);
+    if (!progress.tool) {
+      return null;
+    }
+    const targetAtom = rowSelectionAtomMap[progress.tool];
+    return get(targetAtom);
+  },
+  (get, set, updater: Updater) => {
+    const progress = get(progressAtom);
+    if (!progress.tool) {
+      return;
+    }
+    const targetAtom = rowSelectionAtomMap[progress.tool];
     set(targetAtom, updater);
   },
 );
