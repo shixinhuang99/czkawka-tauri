@@ -716,10 +716,6 @@ body {
   margin-bottom: 0.25rem;
 }
 
-.ml-2 {
-  margin-left: 0.5rem;
-}
-
 .ml-auto {
   margin-left: auto;
 }
@@ -756,11 +752,6 @@ body {
   display: none;
 }
 
-.size-10 {
-  width: 2.5rem;
-  height: 2.5rem;
-}
-
 .size-24 {
   width: 6rem;
   height: 6rem;
@@ -782,6 +773,10 @@ body {
 
 .h-10 {
   height: 2.5rem;
+}
+
+.h-11 {
+  height: 2.75rem;
 }
 
 .h-14 {
@@ -1073,8 +1068,16 @@ body {
   flex-direction: column-reverse;
 }
 
+.items-end {
+  align-items: flex-end;
+}
+
 .items-center {
   align-items: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
 }
 
 .justify-center {
@@ -1317,6 +1320,10 @@ body {
   padding: 0.25rem;
 }
 
+.p-3 {
+  padding: 0.75rem;
+}
+
 .p-4 {
   padding: 1rem;
 }
@@ -1392,6 +1399,14 @@ body {
   padding-bottom: 0.5rem;
 }
 
+.pb-\[3px\] {
+  padding-bottom: 3px;
+}
+
+.pl-1 {
+  padding-left: 0.25rem;
+}
+
 .pl-2 {
   padding-left: 0.5rem;
 }
@@ -1416,6 +1431,10 @@ body {
   padding-top: 0px;
 }
 
+.pt-5 {
+  padding-top: 1.25rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -1426,6 +1445,10 @@ body {
 
 .text-right {
   text-align: right;
+}
+
+.font-serif {
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
 .text-base {
@@ -1448,12 +1471,8 @@ body {
   line-height: 1rem;
 }
 
-.font-bold {
-  font-weight: 700;
-}
-
-.font-light {
-  font-weight: 300;
+.font-extralight {
+  font-weight: 200;
 }
 
 .font-medium {
@@ -1704,6 +1723,11 @@ body {
 
 .scrollbar-thumb-rounded-full {
   --scrollbar-thumb-radius: 9999px;
+}
+
+[data-tauri-drag-region] {
+  -webkit-app-region: drag;
+  /* 确保标题栏区域可拖动 */
 }
 
 .\*\:pl-4 > * {

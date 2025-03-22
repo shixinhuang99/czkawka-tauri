@@ -23,23 +23,32 @@ export function ToolTabs() {
   };
 
   return (
-    <ScrollArea className="h-full w-[200px] border-r px-3 pb-1 shrink-0">
-      {Object.values(Tools).map((name) => {
-        return (
-          <Button
-            key={name}
-            className="w-full h-10 justify-between mt-1 cursor-pointer"
-            tabIndex={-1}
-            variant={currentTool === name ? 'default' : 'ghost'}
-            onClick={() => handleClick(name)}
-          >
-            {name}
-            {progress.tool === name && (
-              <LoaderCircle className="animate-spin" />
-            )}
-          </Button>
-        );
-      })}
-    </ScrollArea>
+    <div className="h-full w-[200px] border-r pt-5 flex flex-col">
+      <div className="flex items-end gap-1 p-3">
+        <img className="size-8" src="/icon.ico" alt="czkawka icon" />
+        <span className="font-serif">{PKG_NAME}</span>
+        <span className="font-extralight text-xs pl-1 pb-[3px]">
+          {PKG_VERSION}
+        </span>
+      </div>
+      <ScrollArea className="px-3 pb-1 flex-1">
+        {Object.values(Tools).map((name) => {
+          return (
+            <Button
+              key={name}
+              className="w-full h-10 justify-between mt-1 cursor-pointer"
+              tabIndex={-1}
+              variant={currentTool === name ? 'default' : 'ghost'}
+              onClick={() => handleClick(name)}
+            >
+              {name}
+              {progress.tool === name && (
+                <LoaderCircle className="animate-spin" />
+              )}
+            </Button>
+          );
+        })}
+      </ScrollArea>
+    </div>
   );
 }

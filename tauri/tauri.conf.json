@@ -13,10 +13,12 @@
         "title": "CzkawkaTauri",
         "width": 1100,
         "minWidth": 1100,
-        "height": 800,
-        "minHeight": 800,
+        "height": 750,
+        "minHeight": 750,
         "resizable": true,
-        "center": true
+        "center": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true
       }
     ],
     "security": {

@@ -68,3 +68,7 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+[data-tauri-drag-region] {
+  -webkit-app-region: drag; /* 确保标题栏区域可拖动 */
+}

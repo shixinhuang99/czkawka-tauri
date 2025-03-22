@@ -24,7 +24,9 @@
         { "path": "$HOME/Library/Caches/pl.Qarmin.Czkawka" },
         { "path": "$HOME\\AppData\\Local\\Qarmin\\Czkawka\\cache" }
       ]
-    }
+    },
+    "core:window:allow-start-dragging",
+    "core:window:allow-internal-toggle-maximize"
   ],
   "platforms": ["macOS", "windows"]
 }
