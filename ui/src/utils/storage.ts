@@ -1,6 +1,7 @@
 import { Theme } from '~/consts';
 
 const THEME_KEY = 'theme';
+const LANG_KEY = 'language';
 
 export const storage = {
   getTheme(): string {
@@ -13,5 +14,13 @@ export const storage = {
 
   setTheme(theme: string) {
     localStorage.setItem(THEME_KEY, theme);
+  },
+
+  getLanguage(): string {
+    return localStorage.getItem(LANG_KEY) || 'en';
+  },
+
+  setLanguage(v: string) {
+    localStorage.setItem(LANG_KEY, v);
   },
 };

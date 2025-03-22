@@ -9,7 +9,7 @@ import {
 } from '~/atom/primitive';
 import { EditInput, Label, Select, TooltipButton } from '~/components';
 import { getDefaultSettings } from '~/consts';
-import { useBoolean } from '~/hooks';
+import { useBoolean, useTranslation } from '~/hooks';
 
 interface PresetSelectProps {
   onPreventDialogCloseChange: (open: boolean) => void;
@@ -25,6 +25,7 @@ export function PresetSelect(props: PresetSelectProps) {
   const setExcludedDirsRowSelection = useSetAtom(excludedDirsRowSelectionAtom);
   const newPresetInputVisible = useBoolean();
   const editPresetInputVisible = useBoolean();
+  const t = useTranslation();
 
   const handlePresetSelect = (name: string) => {
     setPresets(
@@ -64,7 +65,7 @@ export function PresetSelect(props: PresetSelectProps) {
 
   const handleNamingPresetValidate = (name: string) => {
     if (presets.some((preset) => preset.name === name)) {
-      return `\`${name}\` already exists`;
+      return t('name already exists', { name });
     }
   };
 
@@ -93,7 +94,7 @@ export function PresetSelect(props: PresetSelectProps) {
 
   return (
     <div className="flex items-center gap-1 pb-2 border-b">
-      <Label>Current preset:</Label>
+      <Label>{t('Current preset')}:</Label>
       {!(newPresetInputVisible.value || editPresetInputVisible.value) && (
         <Select
           name="presetSelect"
@@ -108,7 +109,7 @@ export function PresetSelect(props: PresetSelectProps) {
       {newPresetInputVisible.value && (
         <EditInput
           className="flex-1"
-          placeholder="New preset name"
+          placeholder={t('New preset name')}
           name="newPresetName"
           onOk={handleAddPresetOk}
           onValidate={handleNamingPresetValidate}
@@ -129,7 +130,7 @@ export function PresetSelect(props: PresetSelectProps) {
       )}
       <span>
         <TooltipButton
-          tooltip="Add preset"
+          tooltip={t('Add preset')}
           onClick={() => {
             newPresetInputVisible.on();
             onPreventDialogCloseChange(true);
@@ -139,7 +140,7 @@ export function PresetSelect(props: PresetSelectProps) {
           <FilePlus />
         </TooltipButton>
         <TooltipButton
-          tooltip="Edit name"
+          tooltip={t('Edit name')}
           onClick={() => {
             editPresetInputVisible.on();
             onPreventDialogCloseChange(true);
@@ -149,7 +150,7 @@ export function PresetSelect(props: PresetSelectProps) {
           <FilePenLine />
         </TooltipButton>
         <TooltipButton
-          tooltip="Remove preset"
+          tooltip={t('Remove preset')}
           onClick={handlePresetRemove}
           disabled={
             presets.length === 1 ||
@@ -159,7 +160,10 @@ export function PresetSelect(props: PresetSelectProps) {
         >
           <Trash2 />
         </TooltipButton>
-        <TooltipButton tooltip="Reset settings" onClick={handleSettingsReset}>
+        <TooltipButton
+          tooltip={t('Reset settings')}
+          onClick={handleSettingsReset}
+        >
           <TimerReset />
         </TooltipButton>
       </span>

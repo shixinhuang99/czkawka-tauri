@@ -4,6 +4,7 @@ import { AppBody } from '~/views/app-body';
 import { AppHeader } from '~/views/app-header';
 import { BottomBar } from '~/views/bottom-bar';
 import { ToolTabs } from '~/views/tool-tabs';
+import '~/i18n';
 
 export default function App() {
   return (

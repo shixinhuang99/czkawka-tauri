@@ -81,7 +81,7 @@ export function DeleteFiles(props: DeleteFilesProps) {
         okLoading={loading.value}
         description={
           <span>
-            Are you sure you want to delete the selected{' '}
+            Are you sure you want to delete the selected
             <span className="text-primary p-1">{paths.length}</span> items?
           </span>
         }
