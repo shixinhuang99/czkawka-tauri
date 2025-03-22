@@ -30,6 +30,7 @@ const HIDDEN_ROW_PREFIX = '__hidden__';
 
 export function splitStr(s: string): string[] {
   return s
+    .replace(/[\u2068\u2069]/g, '')
     .split(/\r?\n|,/)
     .map((s) => s.trim())
     .filter((s) => s.length > 0);

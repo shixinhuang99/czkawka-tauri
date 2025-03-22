@@ -19,4 +19,4 @@ Since Czkawka on my computer started crashing upon opening after just a few uses
 
 ### Note
 
-- Because the default directory is the user directory, some directory permissions may be requested during the first use. You can choose "Deny" or "Allow" as needed.
+- On macOS, some directories may request permission.
