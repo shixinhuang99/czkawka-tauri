@@ -106,6 +106,7 @@ fn default_excluded_directories() -> Vec<String> {
 		if let Some(home_dir) = home::home_dir() {
 			let home_dir = home_dir.to_string_lossy();
 			let items = [
+				"Downloads",
 				"Documents",
 				"Desktop",
 				"Pictures/Photos Library.photoslibrary",
