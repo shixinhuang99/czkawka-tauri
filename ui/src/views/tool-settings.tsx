@@ -23,16 +23,7 @@ import {
   SimilarMusicAudioCheckType,
   Tools,
 } from '~/consts';
-import { useBoolean } from '~/hooks';
-
-const descMap: Record<string, string> = {
-  [Tools.DuplicateFiles]: 'Duplicate files settings',
-  [Tools.BigFiles]: 'Big files settings',
-  [Tools.SimilarImages]: 'Similar images settings',
-  [Tools.SimilarVideos]: 'Similar videos settings',
-  [Tools.MusicDuplicates]: 'Music duplicates settings',
-  [Tools.BrokenFiles]: 'Broken files settings',
-};
+import { useBoolean, useT } from '~/hooks';
 
 const toolsWithoutSettings = new Set<string>([
   Tools.EmptyFolders,
@@ -55,10 +46,20 @@ export function ToolSettings() {
   const currentTool = useAtomValue(currentToolAtom);
   const [settings, setSettings] = useAtom(settingsAtom);
   const dialogOpen = useBoolean();
+  const t = useT();
 
   if (toolsWithoutSettings.has(currentTool)) {
     return null;
   }
+
+  const descMap: Record<string, string> = {
+    [Tools.DuplicateFiles]: t('Duplicate files settings'),
+    [Tools.BigFiles]: t('Big files settings'),
+    [Tools.SimilarImages]: t('Similar images settings'),
+    [Tools.SimilarVideos]: t('Similar videos settings'),
+    [Tools.MusicDuplicates]: t('Music duplicates settings'),
+    [Tools.BrokenFiles]: t('Broken files settings'),
+  };
 
   const desc = descMap[currentTool];
 
@@ -73,12 +74,12 @@ export function ToolSettings() {
       <DialogTrigger asChild>
         <OperationButton>
           <Settings2 />
-          Tool settings
+          {t('Tool settings')}
         </OperationButton>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Tool settings</DialogTitle>
+          <DialogTitle>{t('Tool settings')}</DialogTitle>
           <DialogDescription>{desc}</DialogDescription>
         </DialogHeader>
         <Form value={settings} onChange={handleSettingsChange}>
@@ -94,20 +95,22 @@ function Fallback() {
 }
 
 function DuplicateFilesSettings() {
+  const t = useT();
+
   return (
     <>
       <FormItem
         name="duplicatesSubCheckMethod"
-        label="Check method"
+        label={t('Check method')}
         comp="select"
       >
         <Select
           options={[
-            { label: 'Hash', value: DuplicatesCheckMethod.Hash },
-            { label: 'Name', value: DuplicatesCheckMethod.Name },
-            { label: 'Size', value: DuplicatesCheckMethod.Size },
+            { label: t('Hash'), value: DuplicatesCheckMethod.Hash },
+            { label: t('Name'), value: DuplicatesCheckMethod.Name },
+            { label: t('Size'), value: DuplicatesCheckMethod.Size },
             {
-              label: 'Size and name',
+              label: t('Size and name'),
               value: DuplicatesCheckMethod.SizeAndName,
             },
           ]}
@@ -115,7 +118,7 @@ function DuplicateFilesSettings() {
       </FormItem>
       <FormItem
         name="duplicatesSubAvailableHashType"
-        label="Hash type"
+        label={t('Hash type')}
         comp="select"
       >
         <Select
@@ -128,7 +131,7 @@ function DuplicateFilesSettings() {
       </FormItem>
       <FormItem
         name="duplicatesSubNameCaseSensitive"
-        label="Case sensitive(only name modes)"
+        label={t('Case sensitive')}
         comp="switch"
       >
         <Switch />
@@ -138,23 +141,25 @@ function DuplicateFilesSettings() {
 }
 
 function BigFilesSettings() {
+  const t = useT();
+
   return (
     <>
       <FormItem
         name="biggestFilesSubMethod"
-        label="Checked files"
+        label={t('Checked files')}
         comp="select"
       >
         <Select
           options={[
-            { label: 'Biggest', value: BigFilesSearchMode.BiggestFiles },
-            { label: 'Smallest', value: BigFilesSearchMode.SmallestFiles },
+            { label: t('Biggest'), value: BigFilesSearchMode.BiggestFiles },
+            { label: t('Smallest'), value: BigFilesSearchMode.SmallestFiles },
           ]}
         />
       </FormItem>
       <FormItem
         name="biggestFilesSubNumberOfFiles"
-        label="Number of lines"
+        label={t('Number of lines')}
         comp="input-number"
       >
         <InputNumber minValue={1} />
@@ -165,10 +170,15 @@ function BigFilesSettings() {
 
 function SimilarImagesSettings() {
   const settings = useAtomValue(settingsAtom);
+  const t = useT();
 
   return (
     <>
-      <FormItem name="similarImagesSubHashSize" label="Hash size" comp="select">
+      <FormItem
+        name="similarImagesSubHashSize"
+        label={t('Hash size')}
+        comp="select"
+      >
         <Select
           options={['8', '16', '32', '64'].map((value) => ({
             label: value,
@@ -178,7 +188,7 @@ function SimilarImagesSettings() {
       </FormItem>
       <FormItem
         name="similarImagesSubResizeAlgorithm"
-        label="Resize algorithm"
+        label={t('Resize algorithm')}
         comp="select"
       >
         <Select
@@ -188,7 +198,11 @@ function SimilarImagesSettings() {
           }))}
         />
       </FormItem>
-      <FormItem name="similarImagesSubHashAlg" label="Hash type" comp="select">
+      <FormItem
+        name="similarImagesSubHashAlg"
+        label={t('Hash type')}
+        comp="select"
+      >
         <Select
           options={Object.values(SimilarImagesHashAlgorithm).map((value) => ({
             label: value,
@@ -198,14 +212,14 @@ function SimilarImagesSettings() {
       </FormItem>
       <FormItem
         name="similarImagesSubIgnoreSameSize"
-        label="Ignore same size"
+        label={t('Ignore same size')}
         comp="select"
       >
         <Switch />
       </FormItem>
       <FormItem
         name="similarImagesSubSimilarity"
-        label="Max difference"
+        label={t('Max difference')}
         comp="slider"
         suffix={<span>({settings.similarImagesSubSimilarity}/40)</span>}
       >
@@ -217,12 +231,13 @@ function SimilarImagesSettings() {
 
 function SimilarVideosSettings() {
   const settings = useAtomValue(settingsAtom);
+  const t = useT();
 
   return (
     <>
       <FormItem
         name="similarVideosSubSimilarity"
-        label="Max difference"
+        label={t('Max difference')}
         comp="slider"
         suffix={<span>({settings.similarVideosSubSimilarity}/20)</span>}
       >
@@ -230,7 +245,7 @@ function SimilarVideosSettings() {
       </FormItem>
       <FormItem
         name="similarVideosSubIgnoreSameSize"
-        label="Ignore same size"
+        label={t('Ignore same size')}
         comp="switch"
       >
         <Switch />
@@ -241,17 +256,18 @@ function SimilarVideosSettings() {
 
 function MusicDuplicatesSettings() {
   const settings = useAtomValue(settingsAtom);
+  const t = useT();
 
   return (
     <>
       <FormItem
         name="similarMusicSubAudioCheckType"
-        label="Audio check type"
+        label={t('Audio check type')}
         comp="select"
       >
         <Select
           options={Object.values(SimilarMusicAudioCheckType).map((value) => ({
-            label: value,
+            label: t(value),
             value,
           }))}
         />
@@ -261,30 +277,30 @@ function MusicDuplicatesSettings() {
         <>
           <FormItem
             name="similarMusicSubApproximateComparison"
-            label="Approximate tag comparison"
+            label={t('Approximate tag comparison')}
             comp="switch"
           >
             <Switch />
           </FormItem>
-          <span className="text-center">Compared tags</span>
+          <span className="text-center">{t('Compared tags')}</span>
           <div className="grid grid-cols-3 gap-2 *:pl-4">
             <FormItem name="similarMusicSubTitle" comp="checkbox">
-              <CheckboxWithLabel label="Title" />
+              <CheckboxWithLabel label={t('Title')} />
             </FormItem>
             <FormItem name="similarMusicSubArtist" comp="checkbox">
-              <CheckboxWithLabel label="Artist" />
+              <CheckboxWithLabel label={t('Artist')} />
             </FormItem>
             <FormItem name="similarMusicSubBitrate" comp="checkbox">
-              <CheckboxWithLabel label="Bitrate" />
+              <CheckboxWithLabel label={t('Bitrate')} />
             </FormItem>
             <FormItem name="similarMusicSubGenre" comp="checkbox">
-              <CheckboxWithLabel label="Genre" />
+              <CheckboxWithLabel label={t('Genre')} />
             </FormItem>
             <FormItem name="similarMusicSubYear" comp="checkbox">
-              <CheckboxWithLabel label="Year" />
+              <CheckboxWithLabel label={t('Year')} />
             </FormItem>
             <FormItem name="similarMusicSubLength" comp="checkbox">
-              <CheckboxWithLabel label="Length" />
+              <CheckboxWithLabel label={t('Length')} />
             </FormItem>
           </div>
         </>
@@ -294,7 +310,7 @@ function MusicDuplicatesSettings() {
         <>
           <FormItem
             name="similarMusicSubMaximumDifferenceValue"
-            label="Max difference"
+            label={t('Max difference')}
             comp="slider"
             suffix={
               <span>({settings.similarMusicSubMaximumDifferenceValue}/10)</span>
@@ -304,7 +320,7 @@ function MusicDuplicatesSettings() {
           </FormItem>
           <FormItem
             name="similarMusicSubMinimalFragmentDurationValue"
-            label="Minimal fragment duration"
+            label={t('Minimal fragment duration')}
             comp="slider"
             suffix={
               <span>
@@ -316,7 +332,7 @@ function MusicDuplicatesSettings() {
           </FormItem>
           <FormItem
             name="similarMusicCompareFingerprintsOnlyWithSimilarTitles"
-            label="Compare only with similar titles"
+            label={t('Compare only with similar titles')}
             comp="switch"
           >
             <Switch />
@@ -328,21 +344,23 @@ function MusicDuplicatesSettings() {
 }
 
 function BrokenFilesSettings() {
+  const t = useT();
+
   return (
     <>
-      <span className="text-center">Type of files to check</span>
+      <span className="text-center">{t('Type of files to check')}</span>
       <div className="grid grid-cols-4 justify-items-center">
         <FormItem name="brokenFilesSubAudio" comp="checkbox">
-          <CheckboxWithLabel label="Audio" />
+          <CheckboxWithLabel label={t('Audio')} />
         </FormItem>
         <FormItem name="brokenFilesSubPdf" comp="checkbox">
-          <CheckboxWithLabel label="Pdf" />
+          <CheckboxWithLabel label={t('Pdf')} />
         </FormItem>
         <FormItem name="brokenFilesSubArchive" comp="checkbox">
-          <CheckboxWithLabel label="Archive" />
+          <CheckboxWithLabel label={t('Archive')} />
         </FormItem>
         <FormItem name="brokenFilesSubImage" comp="checkbox">
-          <CheckboxWithLabel label="Image" />
+          <CheckboxWithLabel label={t('Image')} />
         </FormItem>
       </div>
     </>

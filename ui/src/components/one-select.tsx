@@ -1,4 +1,6 @@
-import { eventPreventDefault } from '~/utils/event';
+import * as SelectPrimitive from '@radix-ui/react-select';
+import { forwardRef } from 'react';
+import { Button } from './shadcn/button';
 import {
   Select as RawSelect,
   SelectContent,
@@ -14,6 +16,7 @@ interface SelectProps {
   options: { label: string; value: string }[];
   onPreventDialogCloseChange?: (v: boolean) => void;
   placeholder?: string;
+  trigger?: React.ReactNode;
 }
 
 export function Select(props: SelectProps) {
@@ -24,6 +27,7 @@ export function Select(props: SelectProps) {
     options,
     onPreventDialogCloseChange,
     placeholder,
+    trigger,
   } = props;
 
   return (
@@ -33,10 +37,12 @@ export function Select(props: SelectProps) {
       onValueChange={onChange}
       onOpenChange={onPreventDialogCloseChange}
     >
-      <SelectTrigger className="flex-1 dark:bg-black">
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
-      <SelectContent onCloseAutoFocus={eventPreventDefault}>
+      {trigger || (
+        <SelectTrigger className="flex-1 dark:bg-black">
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+      )}
+      <SelectContent>
         {options.map((option) => {
           return (
             <SelectItem
@@ -52,3 +58,15 @@ export function Select(props: SelectProps) {
     </RawSelect>
   );
 }
+
+export const SelectIconTrigger = forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
+>(({ className, children, ...props }, ref) => (
+  <SelectPrimitive.Trigger ref={ref} asChild {...props}>
+    <Button variant="ghost" size="icon">
+      {children}
+    </Button>
+  </SelectPrimitive.Trigger>
+));
+SelectIconTrigger.displayName = 'SelectIconTrigger';

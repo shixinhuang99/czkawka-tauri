@@ -8,33 +8,35 @@ import {
   createActionsColumn,
   createColumns,
 } from '~/components/data-table';
+import { useT } from '~/hooks';
 import type { FolderEntry } from '~/types';
-
-const columns = createColumns<FolderEntry>([
-  {
-    accessorKey: 'folderName',
-    header: 'Folder name',
-    size: 180,
-    minSize: 100,
-  },
-  {
-    accessorKey: 'path',
-    header: 'Path',
-    size: 430,
-    minSize: 100,
-  },
-  {
-    accessorKey: 'modifiedDate',
-    header: 'Modified date',
-    size: 160,
-    minSize: 120,
-  },
-  createActionsColumn(),
-]);
 
 export function EmptyFolders() {
   const data = useAtomValue(emptyFoldersAtom);
   const [rowSelection, setRowSelection] = useAtom(emptyFoldersRowSelectionAtom);
+  const t = useT();
+
+  const columns = createColumns<FolderEntry>([
+    {
+      accessorKey: 'folderName',
+      header: t('Folder name'),
+      size: 180,
+      minSize: 100,
+    },
+    {
+      accessorKey: 'path',
+      header: t('Path'),
+      size: 430,
+      minSize: 100,
+    },
+    {
+      accessorKey: 'modifiedDate',
+      header: t('Modified date'),
+      size: 160,
+      minSize: 120,
+    },
+    createActionsColumn(),
+  ]);
 
   return (
     <DataTable

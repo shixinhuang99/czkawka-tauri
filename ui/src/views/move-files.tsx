@@ -2,12 +2,13 @@ import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtom, useSetAtom } from 'jotai';
 import { FolderSymlink, LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
+import { Trans } from 'react-i18next';
 import { logsAtom } from '~/atom/primitive';
 import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
 import { OperationButton, Switch } from '~/components';
 import { OneAlertDialog } from '~/components/one-alert-dialog';
 import { Form, FormItem } from '~/components/simple-form';
-import { useBoolean, useListenEffect } from '~/hooks';
+import { useBoolean, useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
 import { getRowSelectionKeys } from '~/utils/common';
 
@@ -47,6 +48,7 @@ export function MoveFiles(props: MoveFilesProps) {
   const [currentToolRowSelection, setCurrentToolRowSelection] = useAtom(
     currentToolRowSelectionAtom,
   );
+  const t = useT();
 
   useListenEffect('move-files-result', (result: MoveFilesResult) => {
     loading.off();
@@ -107,19 +109,24 @@ export function MoveFiles(props: MoveFilesProps) {
         ) : (
           <FolderSymlink />
         )}
-        Move
+        {t('Move')}
       </OperationButton>
       <OneAlertDialog
         open={open.value}
         onOpenChange={handleOpenChange}
-        title="Moving files"
+        title={t('Moving files')}
         okLoading={loading.value}
         description={
           <span>
-            Moving <span className="text-primary">{paths.length}</span> entries
-            to folder
-            <span className="text-primary p-1">{destination}</span>. Are you
-            want to continue?
+            <Trans
+              i18nKey="Move confirm"
+              values={{ length: paths.length, destination }}
+            >
+              Moving
+              <span className="text-primary" />
+              entries to folder
+              <span className="text-primary p-1" />. Are you want to continue?
+            </Trans>
           </span>
         }
         onOk={handleOk}
@@ -130,19 +137,23 @@ export function MoveFiles(props: MoveFilesProps) {
         >
           <FormItem
             name="copyMode"
-            label="Copy files instead of moving"
+            label={t('Copy files instead of moving')}
             comp="switch"
           >
             <Switch />
           </FormItem>
           <FormItem
             name="preserveStructure"
-            label="Preserve folder structure"
+            label={t('Preserve folder structure')}
             comp="switch"
           >
             <Switch />
           </FormItem>
-          <FormItem name="overrideMode" label="Override files" comp="switch">
+          <FormItem
+            name="overrideMode"
+            label={t('Override files')}
+            comp="switch"
+          >
             <Switch />
           </FormItem>
         </Form>

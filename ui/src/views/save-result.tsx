@@ -5,7 +5,7 @@ import { currentToolAtom, logsAtom } from '~/atom/primitive';
 import { currentToolDataAtom } from '~/atom/tools';
 import { OperationButton } from '~/components';
 import { OneAlertDialog } from '~/components/one-alert-dialog';
-import { useBoolean, useListenEffect } from '~/hooks';
+import { useBoolean, useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
 
 interface SaveResultProps {
@@ -20,6 +20,7 @@ export function SaveResult(props: SaveResultProps) {
   const currentTool = useAtomValue(currentToolAtom);
   const currentToolData = useAtomValue(currentToolDataAtom);
   const setLogs = useSetAtom(logsAtom);
+  const t = useT();
 
   useListenEffect('save-result-done', (v: string) => {
     loading.off();
@@ -54,19 +55,14 @@ export function SaveResult(props: SaveResultProps) {
         onClick={open.on}
       >
         <FileJson />
-        Save
+        {t('Save')}
       </OperationButton>
       <OneAlertDialog
         open={open.value}
         onOpenChange={handleOpenChange}
-        title="Saving results"
+        title={t('Saving results')}
         okLoading={loading.value}
-        description={
-          <span>
-            This will save results to 3 different files. Are you want to
-            continue?
-          </span>
-        }
+        description={<span>{t('Save confirm')}</span>}
         onOk={handleOk}
       />
     </>

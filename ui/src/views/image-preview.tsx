@@ -5,6 +5,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '~/components/shadcn/hover-card';
+import { useT } from '~/hooks';
 import { ipc } from '~/ipc';
 
 interface ImgPreviewProps {
@@ -29,6 +30,7 @@ function Image(props: { path: string }) {
 
   const [src, setSrc] = useState('');
   const [loading, setLoading] = useState(true);
+  const t = useT();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -62,7 +64,7 @@ function Image(props: { path: string }) {
   return (
     <div className="h-full w-full flex flex-col justify-center items-center">
       <ImageOff className="size-24" />
-      Failed to read image
+      {t('Failed to read image')}
     </div>
   );
 }

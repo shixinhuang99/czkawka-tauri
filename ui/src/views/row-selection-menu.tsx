@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '~/components/shadcn/dropdown-menu';
 import { Tools } from '~/consts';
+import { useT } from '~/hooks';
 import type { BaseEntry, RefEntry } from '~/types';
 import { getPathsFromEntries, getRowSelectionKeys } from '~/utils/common';
 
@@ -27,6 +28,7 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
   const currentTool = useAtomValue(currentToolAtom);
   const currentToolData = useAtomValue(currentToolDataAtom);
   const setCurrentToolRowSelection = useSetAtom(currentToolRowSelectionAtom);
+  const t = useT();
 
   const handleInvertSelection = () => {
     invertSelection(currentToolData, setCurrentToolRowSelection);
@@ -47,7 +49,7 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
       <DropdownMenuTrigger asChild>
         <OperationButton disabled={disabled}>
           <SquareMousePointer />
-          Select
+          {t('Select')}
         </OperationButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent side="top">
@@ -56,33 +58,33 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
             <DropdownMenuItem
               onClick={() => handleSelectXXX('resolution', 'asc')}
             >
-              Select the highest resolution
+              {t('Select the highest resolution')}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => handleSelectXXX('resolution', 'desc')}
             >
-              Select the lowest resolution
+              {t('Select the lowest resolution')}
             </DropdownMenuItem>
           </>
         )}
         {toolsWithSizeAndDateSelect.has(currentTool) && (
           <>
             <DropdownMenuItem onClick={() => handleSelectXXX('size', 'asc')}>
-              Select the biggest size
+              {t('Select the biggest size')}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleSelectXXX('size', 'desc')}>
-              Select the smallest size
+              {t('Select the smallest size')}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleSelectXXX('date', 'asc')}>
-              Select the newest
+              {t('Select the newest')}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleSelectXXX('date', 'desc')}>
-              Select the oldest
+              {t('Select the oldest')}
             </DropdownMenuItem>
           </>
         )}
         <DropdownMenuItem onClick={handleInvertSelection}>
-          Invert selection
+          {t('Invert selection')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

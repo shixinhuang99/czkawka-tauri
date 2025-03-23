@@ -26,7 +26,7 @@ import {
 } from '~/components/shadcn/dialog';
 import { Form, FormItem } from '~/components/simple-form';
 import { MAXIMUM_FILE_SIZE } from '~/consts';
-import { useBoolean, useTranslation } from '~/hooks';
+import { useBoolean, useT } from '~/hooks';
 import { eventPreventDefault } from '~/utils/event';
 import { PresetSelect } from './preset-select';
 
@@ -34,7 +34,7 @@ export function SettingsButton() {
   const dialogOpen = useBoolean();
   const isPreventDialogClose = useBoolean();
   const initCurrentPreset = useSetAtom(initCurrentPresetAtom);
-  const t = useTranslation();
+  const t = useT();
 
   useEffect(() => {
     initCurrentPreset();
@@ -73,7 +73,7 @@ export function SettingsButton() {
 function SettingsContent() {
   const [settings, setSettings] = useAtom(settingsAtom);
   const platformSettings = useAtomValue(platformSettingsAtom);
-  const t = useTranslation();
+  const t = useT();
 
   const handleSettingsChange = (v: Record<string, any>) => {
     setSettings((prev) => ({ ...prev, ...v }));

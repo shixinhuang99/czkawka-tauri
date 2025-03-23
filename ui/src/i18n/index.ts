@@ -4,26 +4,26 @@ import { storage } from '~/utils/storage';
 import { en } from './en';
 import { zh } from './zh';
 
-const resources = {
-  en: {
-    translation: en,
-  },
-  zh: {
-    translation: zh,
-  },
-};
+export function initI18n() {
+  const resources = {
+    en: {
+      translation: en,
+    },
+    zh: {
+      translation: zh,
+    },
+  };
 
-const lang = storage.getLanguage();
+  const lang = storage.getLanguage();
 
-i18n.use(initReactI18next).init({
-  resources,
-  lng: lang,
-  fallbackLng: 'en',
-  interpolation: {
-    escapeValue: false,
-  },
-});
+  i18n.use(initReactI18next).init({
+    resources,
+    lng: lang,
+    fallbackLng: 'en',
+    interpolation: {
+      escapeValue: false,
+    },
+  });
 
-document.documentElement.lang = lang;
-
-export default i18n;
+  document.documentElement.lang = lang;
+}

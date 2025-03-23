@@ -1,6 +1,7 @@
 import { LoaderCircle } from 'lucide-react';
 import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
+import { initI18n } from '~/i18n';
 import { mockIPCForDev } from '~/ipc';
 
 function Loading() {
@@ -21,6 +22,7 @@ function main() {
   }
 
   mockIPCForDev();
+  initI18n();
 
   createRoot(root).render(
     <StrictMode>

@@ -11,6 +11,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { revealItemInDir } from '@tauri-apps/plugin-opener';
 import { FolderOpen } from 'lucide-react';
 import { useRef } from 'react';
+import { useT } from '~/hooks';
 import type { BaseEntry } from '~/types';
 import { cn } from '~/utils/cn';
 import { Checkbox } from './shadcn/checkbox';
@@ -154,6 +155,7 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
     measureElement: (element) => element?.getBoundingClientRect().height,
     overscan: 5,
   });
+  const t = useT();
 
   const isGrid = layout === 'grid';
   const isResizeable = layout === 'resizeable';
@@ -214,7 +216,7 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
         ) : (
           <TableRow className="h-full">
             <TableCell className="h-full flex justify-center items-center">
-              {emptyTip || 'No data'}
+              {emptyTip || t('No data')}
             </TableCell>
           </TableRow>
         )}
@@ -277,13 +279,16 @@ export function createColumns<T>(columns: ColumnDef<T>[]): ColumnDef<T>[] {
 
 export function TableActions(props: { path: string }) {
   const { path } = props;
+  const t = useT();
 
   return (
     <TooltipButton
-      tooltip={`Reveal in ${PLATFORM === 'darwin' ? 'Finder' : 'File Explorer'}`}
+      tooltip={t('Reveal in dir', {
+        name: PLATFORM === 'darwin' ? t('Finder') : t('File Explorer'),
+      })}
       onClick={() =>
         revealItemInDir(path).catch((err) =>
-          toastError('Opreation failed', err),
+          toastError(t('Opreation failed'), err),
         )
       }
     >

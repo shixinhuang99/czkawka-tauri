@@ -1,4 +1,5 @@
 import { LoaderCircle } from 'lucide-react';
+import { useT } from '~/hooks';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -25,6 +26,8 @@ export function OneAlertDialog(
   const { children, title, description, open, onOpenChange, onOk, okLoading } =
     props;
 
+  const t = useT();
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
@@ -34,9 +37,11 @@ export function OneAlertDialog(
         </AlertDialogHeader>
         {children}
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={okLoading}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={okLoading}>
+            {t('Cancel')}
+          </AlertDialogCancel>
           <Button onClick={onOk} disabled={okLoading}>
-            {okLoading ? <LoaderCircle className="animate-spin" /> : 'Ok'}
+            {okLoading ? <LoaderCircle className="animate-spin" /> : t('Ok')}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

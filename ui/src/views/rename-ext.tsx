@@ -1,10 +1,11 @@
 import { useAtom, useSetAtom } from 'jotai';
 import { TextCursorInput } from 'lucide-react';
+import { Trans } from 'react-i18next';
 import { logsAtom } from '~/atom/primitive';
 import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
 import { OperationButton } from '~/components';
 import { OneAlertDialog } from '~/components/one-alert-dialog';
-import { useBoolean, useListenEffect } from '~/hooks';
+import { useBoolean, useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
 import { getRowSelectionKeys } from '~/utils/common';
 
@@ -27,6 +28,7 @@ export function RenameExt(props: RenameExtProps) {
   const [currentToolRowSelection, setCurrentToolRowSelection] = useAtom(
     currentToolRowSelectionAtom,
   );
+  const t = useT();
 
   useListenEffect('rename-ext-result', (result: RenameExtResult) => {
     loading.off();
@@ -68,18 +70,20 @@ export function RenameExt(props: RenameExtProps) {
     <>
       <OperationButton disabled={disabled || !paths.length} onClick={open.on}>
         <TextCursorInput />
-        Rename
+        {t('Rename')}
       </OperationButton>
       <OneAlertDialog
         open={open.value}
         onOpenChange={handleOpenChange}
-        title="Renaming files"
+        title={t('Renaming files')}
         okLoading={loading.value}
         description={
           <span>
-            This will rename extensions of selected
-            <span className="text-primary p-1">{paths.length}</span> files to
-            more proper. Are you want to continue?
+            <Trans i18nKey="Rename confirm" values={{ length: paths.length }}>
+              This will rename extensions of selected
+              <span className="text-primary p-1" /> files to more proper. Are
+              you want to continue?
+            </Trans>
           </span>
         }
         onOk={handleOk}

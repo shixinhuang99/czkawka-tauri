@@ -9,7 +9,7 @@ import {
 } from '~/atom/tools';
 import { OperationButton } from '~/components';
 import { Tools, getDefaultProgress } from '~/consts';
-import { useListenEffect } from '~/hooks';
+import { useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
 import type { AllScanResult, ProgressData, ScanCmd } from '~/types';
 import {
@@ -62,6 +62,7 @@ export function ScanButton() {
   const setToolInProgressRowSelection = useSetAtom(
     toolInProgressRowSelectionAtom,
   );
+  const t = useT();
 
   useEffect(() => {
     ipc.startListenScanProgress();
@@ -104,7 +105,7 @@ export function ScanButton() {
       {progress.tool ? (
         <OperationButton disabled={progress.stopping} onClick={handleStopScan}>
           <Ban />
-          Stop
+          {t('Stop')}
         </OperationButton>
       ) : (
         <OperationButton
@@ -112,7 +113,7 @@ export function ScanButton() {
           onClick={handleScan}
         >
           <Search />
-          Scan
+          {t('Scan')}
         </OperationButton>
       )}
     </>

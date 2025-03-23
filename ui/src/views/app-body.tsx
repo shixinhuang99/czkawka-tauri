@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai';
 import { currentToolAtom, progressAtom } from '~/atom/primitive';
 import { Progress } from '~/components';
 import { Tools } from '~/consts';
+import { useT } from '~/hooks';
 import { BadExtensions } from './bad-extensions';
 import { BigFiles } from './big-files';
 import { BrokenFiles } from './broken-files';
@@ -31,6 +32,7 @@ const tableMap: Record<string, () => React.JSX.Element> = {
 export function AppBody() {
   const progress = useAtomValue(progressAtom);
   const currentTool = useAtomValue(currentToolAtom);
+  const t = useT();
 
   const Table = tableMap[currentTool] || Fallback;
 
@@ -41,17 +43,17 @@ export function AppBody() {
         <div className="h-20 border-t px-3">
           {progress.stopping ? (
             <div className="h-full flex justify-center items-center">
-              Stopping scan, please wait...
+              {t('Stopping scan')}
             </div>
           ) : (
             <>
               <div className="text-center h-6">{progress.data.stepName}</div>
               <ProgressWrap
-                label="Current stage:"
+                label={t('Current stage')}
                 value={progress.data.currentProgress}
               />
               <ProgressWrap
-                label="All stages:"
+                label={t('All stages')}
                 value={progress.data.allProgress}
               />
             </>
@@ -71,7 +73,7 @@ function ProgressWrap(props: { label: string; value: number }) {
 
   return (
     <div className="flex items-center">
-      <div className="shrink-0 w-28">{label}</div>
+      <div className="shrink-0 w-28">{label}:</div>
       <Progress value={value} />
       <div className="w-12 shrink-0 text-right">{value}%</div>
     </div>

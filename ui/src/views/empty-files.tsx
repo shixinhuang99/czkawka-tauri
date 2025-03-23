@@ -5,33 +5,35 @@ import {
   createActionsColumn,
   createColumns,
 } from '~/components/data-table';
+import { useT } from '~/hooks';
 import type { FileEntry } from '~/types';
-
-const columns = createColumns<FileEntry>([
-  {
-    accessorKey: 'fileName',
-    header: 'File name',
-    size: 180,
-    minSize: 100,
-  },
-  {
-    accessorKey: 'path',
-    header: 'Path',
-    size: 430,
-    minSize: 100,
-  },
-  {
-    accessorKey: 'modifiedDate',
-    header: 'Modified date',
-    size: 160,
-    minSize: 120,
-  },
-  createActionsColumn(),
-]);
 
 export function EmptyFiles() {
   const data = useAtomValue(emptyFilesAtom);
   const [rowSelection, setRowSelection] = useAtom(emptyFilesRowSelectionAtom);
+  const t = useT();
+
+  const columns = createColumns<FileEntry>([
+    {
+      accessorKey: 'fileName',
+      header: t('File name'),
+      size: 180,
+      minSize: 100,
+    },
+    {
+      accessorKey: 'path',
+      header: t('Path'),
+      size: 430,
+      minSize: 100,
+    },
+    {
+      accessorKey: 'modifiedDate',
+      header: t('Modified date'),
+      size: 160,
+      minSize: 120,
+    },
+    createActionsColumn(),
+  ]);
 
   return (
     <DataTable

@@ -33,7 +33,7 @@ import {
   DialogTrigger,
 } from '~/components/shadcn/dialog';
 import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
-import { useBoolean } from '~/hooks/use-boolean';
+import { useBoolean, useT } from '~/hooks';
 import type { DirsType } from '~/types';
 import { cn } from '~/utils/cn';
 import { getRowSelectionKeys, splitStr } from '~/utils/common';
@@ -58,28 +58,10 @@ type PropsWithRowSelection<T> = T & {
   onRowSelectionChange: (v: RowSelection) => void;
 };
 
-const columns = createColumns<TableData>([
-  {
-    accessorKey: 'path',
-    header: 'Path',
-    meta: {
-      span: 10,
-    },
-  },
-  {
-    id: 'actions',
-    meta: {
-      span: 1,
-    },
-    cell: ({ row, table }) => {
-      return <DirsRemoveButton {...row.original} table={table} />;
-    },
-  },
-]);
-
 export function BottomBar() {
   const [displayType, setDisplayType] = useState<string>(DisplayType.Dirs);
   const minimizeBottomBar = useBoolean();
+  const t = useT();
 
   return (
     <div className="flex flex-col px-2 py-1 gap-1 border-t">
@@ -97,7 +79,7 @@ export function BottomBar() {
             </TabsList>
           </Tabs>
           <TooltipButton
-            tooltip={minimizeBottomBar.value ? 'Expand' : 'Collapse'}
+            tooltip={minimizeBottomBar.value ? t('Expand') : t('Collapse')}
             onClick={minimizeBottomBar.toggle}
             variant="outline"
           >
@@ -122,6 +104,7 @@ export function BottomBar() {
 }
 
 function IncludedDirsTable() {
+  const t = useT();
   const [settings, setSettings] = useAtom(settingsAtom);
   const [rowSelection, setRowSelection] = useAtom(includedDirsRowSelectionAtom);
   const data: TableData[] = useMemo(() => {
@@ -132,6 +115,25 @@ function IncludedDirsTable() {
       };
     });
   }, [settings]);
+
+  const columns = createColumns<TableData>([
+    {
+      accessorKey: 'path',
+      header: t('Path'),
+      meta: {
+        span: 10,
+      },
+    },
+    {
+      id: 'actions',
+      meta: {
+        span: 1,
+      },
+      cell: ({ row, table }) => {
+        return <DirsRemoveButton {...row.original} table={table} />;
+      },
+    },
+  ]);
 
   const handleRowSelectionChagne = (v: RowSelection) => {
     setRowSelection(v);
@@ -146,7 +148,7 @@ function IncludedDirsTable() {
   return (
     <div className="w-1/2 flex flex-col">
       <div className="flex justify-between items-center">
-        <h3 className="text-center">Include Directories</h3>
+        <h3 className="text-center">{t('Include Directories')}</h3>
         <DirsActions
           rowSelection={rowSelection}
           onRowSelectionChange={handleRowSelectionChagne}
@@ -157,7 +159,7 @@ function IncludedDirsTable() {
         className="flex-1"
         data={data}
         columns={columns}
-        emptyTip="Please add path"
+        emptyTip={t('Please add path')}
         layout="grid"
         rowSelection={rowSelection}
         onRowSelectionChange={handleRowSelectionChagne}
@@ -167,6 +169,7 @@ function IncludedDirsTable() {
 }
 
 function ExcludedDirsTable() {
+  const t = useT();
   const settings = useAtomValue(settingsAtom);
   const [rowSelection, setRowSelection] = useAtom(excludedDirsRowSelectionAtom);
   const data: TableData[] = useMemo(() => {
@@ -178,10 +181,29 @@ function ExcludedDirsTable() {
     });
   }, [settings]);
 
+  const columns = createColumns<TableData>([
+    {
+      accessorKey: 'path',
+      header: t('Path'),
+      meta: {
+        span: 10,
+      },
+    },
+    {
+      id: 'actions',
+      meta: {
+        span: 1,
+      },
+      cell: ({ row, table }) => {
+        return <DirsRemoveButton {...row.original} table={table} />;
+      },
+    },
+  ]);
+
   return (
     <div className="flex-1 flex flex-col">
       <div className="flex justify-between items-center">
-        <h3 className="text-center">Exclude Directories</h3>
+        <h3 className="text-center">{t('Exclude Directories')}</h3>
         <DirsActions
           rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
@@ -192,7 +214,7 @@ function ExcludedDirsTable() {
         className="flex-1"
         data={data}
         columns={columns}
-        emptyTip="Please add path"
+        emptyTip={t('Please add path')}
         layout="grid"
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
@@ -232,6 +254,7 @@ function DirsRemoveButton(props: PropsWithTable<TableData>) {
 }
 
 function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
+  const t = useT();
   const { field, rowSelection, onRowSelectionChange } = props;
   const setSettings = useSetAtom(settingsAtom);
   const manualAddDialogOpen = useBoolean();
@@ -284,7 +307,7 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
 
   return (
     <div>
-      <TooltipButton tooltip="Add" onClick={handleAddPath}>
+      <TooltipButton tooltip={t('Add')} onClick={handleAddPath}>
         {openFileDialogLoading.value ? (
           <LoaderCircle className="animate-spin" />
         ) : (
@@ -299,15 +322,15 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
         }}
       >
         <DialogTrigger asChild>
-          <TooltipButton tooltip="Manual add">
+          <TooltipButton tooltip={t('Manual add')}>
             <FolderPen />
           </TooltipButton>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Manual add</DialogTitle>
+            <DialogTitle>{t('Manual add')}</DialogTitle>
             <DialogDescription>
-              Manually add paths(one per line)
+              {t('Manually add paths desc')}
             </DialogDescription>
           </DialogHeader>
           <Textarea
@@ -318,13 +341,13 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
           />
           <DialogFooter>
             <Button variant="secondary" onClick={manualAddDialogOpen.off}>
-              Cancel
+              {t('Cancel')}
             </Button>
-            <Button onClick={handleManualAddOk}>Ok</Button>
+            <Button onClick={handleManualAddOk}>{t('Ok')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <TooltipButton tooltip="Remove selected" onClick={handleRemovePaths}>
+      <TooltipButton tooltip={t('Remove selected')} onClick={handleRemovePaths}>
         <Trash2 />
       </TooltipButton>
     </div>

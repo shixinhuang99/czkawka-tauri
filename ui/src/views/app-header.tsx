@@ -1,14 +1,11 @@
 import { openUrl } from '@tauri-apps/plugin-opener';
 import { Languages } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, TooltipButton } from '~/components';
+import { Select, TooltipButton } from '~/components';
 import { GitHub } from '~/components/icons';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '~/components/shadcn/dropdown-menu';
+import { SelectIconTrigger } from '~/components/one-select';
+import { useT } from '~/hooks';
 import { storage } from '~/utils/storage';
 import { SettingsButton } from './settings';
 import { ThemeToggle } from './theme-toggle';
@@ -30,9 +27,11 @@ export function AppHeader() {
 }
 
 function ViewGitHubButton() {
+  const t = useT();
+
   return (
     <TooltipButton
-      tooltip="View GitHub"
+      tooltip={t('View source code')}
       onClick={() => openUrl(REPOSITORY_URL)}
     >
       <GitHub />
@@ -42,28 +41,28 @@ function ViewGitHubButton() {
 
 function ChangeLanguageButton() {
   const { i18n } = useTranslation();
+  const [value, setValue] = useState(i18n.language);
 
   const handleLanguageChange = (v: string) => {
+    setValue(v);
     i18n.changeLanguage(v);
     storage.setLanguage(v);
     document.documentElement.lang = v;
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
+    <Select
+      trigger={
+        <SelectIconTrigger>
           <Languages />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem onClick={() => handleLanguageChange('en')}>
-          English
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleLanguageChange('zh')}>
-          简体中文
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </SelectIconTrigger>
+      }
+      value={value}
+      onChange={handleLanguageChange}
+      options={[
+        { label: 'English', value: 'en' },
+        { label: '简体中文', value: 'zh' },
+      ]}
+    />
   );
 }

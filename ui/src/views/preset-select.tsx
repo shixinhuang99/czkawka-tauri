@@ -9,7 +9,7 @@ import {
 } from '~/atom/primitive';
 import { EditInput, Label, Select, TooltipButton } from '~/components';
 import { getDefaultSettings } from '~/consts';
-import { useBoolean, useTranslation } from '~/hooks';
+import { useBoolean, useT } from '~/hooks';
 
 interface PresetSelectProps {
   onPreventDialogCloseChange: (open: boolean) => void;
@@ -25,7 +25,7 @@ export function PresetSelect(props: PresetSelectProps) {
   const setExcludedDirsRowSelection = useSetAtom(excludedDirsRowSelectionAtom);
   const newPresetInputVisible = useBoolean();
   const editPresetInputVisible = useBoolean();
-  const t = useTranslation();
+  const t = useT();
 
   const handlePresetSelect = (name: string) => {
     setPresets(
@@ -65,7 +65,8 @@ export function PresetSelect(props: PresetSelectProps) {
 
   const handleNamingPresetValidate = (name: string) => {
     if (presets.some((preset) => preset.name === name)) {
-      return t('name already exists', { name });
+      onPreventDialogCloseChange(false);
+      return t('Name already exists', { name });
     }
   };
 

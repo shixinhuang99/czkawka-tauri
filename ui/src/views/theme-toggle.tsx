@@ -9,12 +9,14 @@ import {
 } from '~/atom/theme';
 import { TooltipButton } from '~/components';
 import { DARK_MODE_MEDIA, Theme } from '~/consts';
+import { useT } from '~/hooks';
 
 export function ThemeToggle() {
   const theme = useAtomValue(themeAtom);
   const initTheme = useSetAtom(initThemeAtom);
   const toggleTheme = useSetAtom(toggleThemeAtom);
   const applyMatchMedia = useSetAtom(applyMatchMediaAtom);
+  const t = useT();
 
   useEffect(() => {
     initTheme();
@@ -28,7 +30,7 @@ export function ThemeToggle() {
   }, []);
 
   return (
-    <TooltipButton tooltip="Toggle theme" onClick={toggleTheme}>
+    <TooltipButton tooltip={t('Toggle theme')} onClick={toggleTheme}>
       {theme.display === Theme.Light && <Sun />}
       {theme.display === Theme.Dark && <Moon />}
       {theme.display === Theme.System && <TvMinimal />}
