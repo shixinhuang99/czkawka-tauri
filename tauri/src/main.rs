@@ -68,6 +68,14 @@ fn main() {
 		])
 		.plugin(tauri_plugin_opener::init())
 		.plugin(tauri_plugin_dialog::init())
+		.plugin(tauri_plugin_single_instance::init(|app, _, _| {
+			if let Some(ww) = app.get_webview_window("main") {
+				if ww.is_minimized().is_ok_and(|v| v) {
+					let _ = ww.unminimize();
+				}
+				let _ = ww.set_focus();
+			}
+		}))
 		.run(tauri::generate_context!())
 		.expect("Failed to launch app");
 }
