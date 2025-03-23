@@ -41,7 +41,7 @@ export function InputNumber(props: InputNumberProps) {
 
   return (
     <Input
-      className={cn('dark:bg-black', className)}
+      className={cn('dark:bg-gray-900', className)}
       type="number"
       value={draftValue}
       onChange={(e) => setDraftValue(e.target.value)}

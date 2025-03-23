@@ -588,7 +588,7 @@ video {
 }
 
 .dark {
-  --background: 224 71.4% 4.1%;
+  --background: 210 34.38% 12.55%;
   --foreground: 210 20% 98%;
   --card: 224 71.4% 4.1%;
   --card-foreground: 210 20% 98%;
@@ -1723,7 +1723,6 @@ body {
 
 [data-tauri-drag-region] {
   -webkit-app-region: drag;
-  /* 确保标题栏区域可拖动 */
 }
 
 .\*\:pl-4 > * {
@@ -2181,13 +2180,13 @@ body {
   border-color: hsl(var(--border));
 }
 
-.dark\:bg-black:is(.dark *) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
-}
-
 .dark\:bg-border:is(.dark *) {
   background-color: hsl(var(--border));
+}
+
+.dark\:bg-gray-900:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));
 }
 
 .dark\:bg-slate-100:is(.dark *) {

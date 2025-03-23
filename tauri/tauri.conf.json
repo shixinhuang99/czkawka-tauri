@@ -7,24 +7,6 @@
     "devUrl": "http://localhost:4000",
     "frontendDist": "../ui/dist"
   },
-  "app": {
-    "windows": [
-      {
-        "title": "CzkawkaTauri",
-        "width": 1100,
-        "minWidth": 1100,
-        "height": 750,
-        "minHeight": 750,
-        "resizable": true,
-        "center": true,
-        "titleBarStyle": "Overlay",
-        "hiddenTitle": true
-      }
-    ],
-    "security": {
-      "csp": null
-    }
-  },
   "bundle": {
     "active": true,
     "targets": ["dmg", "nsis"],

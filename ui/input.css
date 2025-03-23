@@ -32,7 +32,7 @@
   }
 
   .dark {
-    --background: 224 71.4% 4.1%;
+    --background: 210 34.38% 12.55%;
     --foreground: 210 20% 98%;
     --card: 224 71.4% 4.1%;
     --card-foreground: 210 20% 98%;
@@ -70,5 +70,5 @@
 }
 
 [data-tauri-drag-region] {
-  -webkit-app-region: drag; /* 确保标题栏区域可拖动 */
+  -webkit-app-region: drag;
 }

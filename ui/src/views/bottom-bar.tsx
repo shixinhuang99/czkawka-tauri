@@ -358,7 +358,7 @@ function Logs() {
   const logs = useAtomValue(logsAtom);
 
   return (
-    <ScrollArea className="h-[200px] rounded-md border bg-card text-card-foreground px-2 py-1">
+    <ScrollArea className="h-[200px] rounded-md border text-card-foreground px-2 py-1 dark:bg-gray-900">
       <div className="whitespace-break-spaces">{logs}</div>
     </ScrollArea>
   );

@@ -38,7 +38,7 @@ export function Select(props: SelectProps) {
       onOpenChange={onPreventDialogCloseChange}
     >
       {trigger || (
-        <SelectTrigger className="flex-1 dark:bg-black">
+        <SelectTrigger className="flex-1 dark:bg-gray-900">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
       )}
