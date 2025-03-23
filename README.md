@@ -19,4 +19,4 @@ Since Czkawka on my computer started crashing upon opening after just a few uses
 
 ### Note
 
-- On macOS, some directories may request permission.
+- On macOS, Some directories controlled by system permissions are excluded by default. If necessary, you can click the Add button to open Finder and select the directories to remove the corresponding exclusions. This should allow the system to remember the accessible directories.
