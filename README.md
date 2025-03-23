@@ -10,6 +10,10 @@ A Tauri frontend of Czkawka, based on `czkawka_core`, targeting only macOS and W
 
 Since Czkawka on my computer started crashing upon opening after just a few uses. The UI/UX is actually referenced from Krokiet, and the functionality is also the same as Krokiet.
 
+### Installation
+
+[Downlaod latest release](https://github.com/shixinhuang99/czkawka-tauri/releases)
+
 ### Differences with Krokiet:
 
 - Use full paths for paths.
