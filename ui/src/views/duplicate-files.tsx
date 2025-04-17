@@ -75,8 +75,8 @@ export function DuplicateFiles() {
     },
     {
       id: 'actions',
-      size: 50,
-      minSize: 50,
+      size: 55,
+      minSize: 55,
       cell: ({ cell }) => {
         if (cell.row.original.isRef) {
           return null;

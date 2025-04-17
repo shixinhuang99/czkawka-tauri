@@ -302,8 +302,8 @@ export function createActionsColumn<
 >(): ColumnDef<T> {
   return {
     id: 'actions',
-    size: 50,
-    minSize: 50,
+    size: 55,
+    minSize: 55,
     cell: ({ cell }) => {
       return <TableActions path={cell.row.original.path} />;
     },

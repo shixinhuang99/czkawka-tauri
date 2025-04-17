@@ -29,7 +29,7 @@ export function BrokenFiles() {
     {
       accessorKey: 'errorString',
       header: t('Type of error'),
-      size: 160,
+      size: 150,
       minSize: 110,
     },
     {
