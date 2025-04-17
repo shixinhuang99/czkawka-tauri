@@ -100,8 +100,8 @@ export function MusicDuplicates() {
     },
     {
       id: 'actions',
-      size: 50,
-      minSize: 50,
+      size: 55,
+      minSize: 55,
       cell: ({ cell }) => {
         if (cell.row.original.isRef) {
           return null;

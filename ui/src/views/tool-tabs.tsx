@@ -5,6 +5,7 @@ import { currentToolAtom, progressAtom } from '~/atom/primitive';
 import { Button, ScrollArea } from '~/components';
 import { Tools } from '~/consts';
 import type { ToolsValues } from '~/types';
+import { cn } from '~/utils/cn';
 
 const toolSet = new Set<string>(Object.values(Tools));
 
@@ -25,7 +26,12 @@ export function ToolTabs() {
   };
 
   return (
-    <div className="h-full w-[200px] border-r pt-5 flex flex-col">
+    <div
+      className={cn(
+        'h-full w-[200px] border-r flex flex-col',
+        PLATFORM === 'darwin' && 'pt-5',
+      )}
+    >
       <div className="flex items-end gap-1 p-3">
         <img className="size-8" src="/icon.ico" alt="czkawka icon" />
         <span className="font-serif">{PKG_NAME}</span>
