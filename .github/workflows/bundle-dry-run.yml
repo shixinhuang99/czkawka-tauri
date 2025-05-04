@@ -26,11 +26,11 @@ jobs:
         run: |
           mkdir ./tauri/ffmpeg
           curl -L -o ffmpeg.zip "https://evermeet.cx/ffmpeg/getrelease/zip"
-          unzip ffmpeg.zip -d ./tauri/ffmpeg/
+          unzip ffmpeg.zip -d ./tauri/ffmpeg
           chmod +x ./tauri/ffmpeg/ffmpeg
           ./tauri/ffmpeg/ffmpeg -version
           curl -L -o ffprobe.zip "https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip"
-          unzip ffprobe.zip -d ./tauri/ffmpeg/
+          unzip ffprobe.zip -d ./tauri/ffmpeg
           chmod +x ./tauri/ffmpeg/ffprobe
           ./tauri/ffmpeg/ffprobe -version
 

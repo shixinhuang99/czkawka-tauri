@@ -4,7 +4,6 @@ permissions:
   contents: write
 
 on:
-  workflow_dispatch:
   push:
     tags:
       - "[0-9]+.*"
@@ -36,12 +35,30 @@ jobs:
         with:
           targets: ${{ matrix.os == 'macos-latest' && 'x86_64-apple-darwin' || '' }}
 
+      - name: download ffmpeg and ffprobe
+        if: matrix.os == 'macos-latest'
+        run: |
+          mkdir ./tauri/ffmpeg
+          curl -L -o ffmpeg.zip "https://evermeet.cx/ffmpeg/getrelease/zip"
+          unzip ffmpeg.zip -d ./tauri/ffmpeg
+          chmod +x ./tauri/ffmpeg/ffmpeg
+          ./tauri/ffmpeg/ffmpeg -version
+          curl -L -o ffprobe.zip "https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip"
+          unzip ffprobe.zip -d ./tauri/ffmpeg
+          chmod +x ./tauri/ffmpeg/ffprobe
+          ./tauri/ffmpeg/ffprobe -version
+
       - name: macos bundles
         if: matrix.os == 'macos-latest'
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
         run: |
           npm i pnpm -g
           pnpm i
           node --run build:ui
+          node --run build:tauri:ffmpeg
+          mkdir ./target/ffmpeg-dmg
+          mv ./target/universal-apple-darwin/release/bundle/dmg/CzkawkaTauri_${GITHUB_REF_NAME}_universal.dmg ./target/ffmpeg-dmg/CzkawkaTauri_${GITHUB_REF_NAME}_universal_ffmpeg.dmg
           node --run build:tauri
 
       - uses: softprops/action-gh-release@v2
@@ -50,6 +67,7 @@ jobs:
           draft: true
           files: |
             ./target/universal-apple-darwin/release/bundle/dmg/*.dmg
+            ./target/ffmpeg-dmg/*.dmg
 
       - name: windows bundles
         if: matrix.os == 'windows-latest'
