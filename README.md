@@ -23,4 +23,5 @@ Since Czkawka on my computer started crashing upon opening after just a few uses
 
 ### Note
 
-- On macOS, Some directories controlled by system permissions are excluded by default. If necessary, please click the Add button to open Finder, select the desired directory, and remove it from the excluded directories. This should allow the system to remember the accessible directories.
+- On macOS, Some directories controlled by system permissions are excluded by default. If necessary, please click the Add button to open Finder, select the desired directory, and remove it from the excluded directories. This should allow the system to remember the accessible directories(known issue: macOS may forget about accessible directories after installing a new version, you need to reset the settings and repeat the above actions).
+- Versions with the ffmpeg suffix in the release are bundled with the ffmpeg binary.
