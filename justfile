@@ -42,6 +42,10 @@ push-tag tag:
 	git tag {{tag}}
 	git push origin {{tag}}
 
+delete-tag tag:
+	git tag -d {{tag}}
+	git push origin --delete {{tag}}
+
 pnpm +args:
 	pnpm {{args}} --filter ./ui
 
