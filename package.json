@@ -18,8 +18,8 @@
     "run:tauri": "tsx ./scripts/run-tauri.ts",
     "run:browser": "tsx ./scripts/run-browser.ts",
     "build:ui": "pnpm run --filter ./ui build",
-    "build:tauri": "pnpm tauri build --target universal-apple-darwin",
-    "build:tauri:ffmpeg": "pnpm tauri build --target universal-apple-darwin -c ./tauri/tauri.ffmpeg.conf.json -f ffmpeg",
+    "build:tauri": "pnpm tauri build -t universal-apple-darwin",
+    "build:tauri:ffmpeg": "pnpm tauri build -t universal-apple-darwin -c ./tauri/tauri.ffmpeg.conf.json -f ffmpeg",
     "build:tauri:win": "pnpm tauri build"
   },
   "devDependencies": {

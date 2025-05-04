@@ -21,14 +21,23 @@ jobs:
           node-version: 22
 
       - uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: "x86_64-apple-darwin"
+
+      - name: download ffmpeg and ffprobe
+        run: |
+          mkdir ./tauri/ffmpeg
+          curl -L -o ffmpeg.zip "https://evermeet.cx/ffmpeg/getrelease/zip"
+          unzip ffmpeg.zip -d ./tauri/ffmpeg/
+          chmod +x ./tauri/ffmpeg/ffmpeg
+          ./tauri/ffmpeg/ffmpeg -version
+          curl -L -o ffprobe.zip "https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip"
+          unzip ffprobe.zip -d ./tauri/ffmpeg/
+          chmod +x ./tauri/ffmpeg/ffprobe
+          ./tauri/ffmpeg/ffprobe -version
 
       - name: macos bundles
         run: |
           npm i pnpm -g
           pnpm i
           node --run build:ui
-          node --run build:tauri
-          node --run build:tauri:ffmpeg
-          mv ./target/universal-apple-darwin/release/bundle/dmg/CzkawkaTauri_1.0.1_universal.dmg ./target/universal-apple-darwin/release/bundle/dmg/CzkawkaTauri_1.0.1_universal_ffmpeg.dmg
+          pnpm tauri build -d
+          pnpm tauri build -d -c ./tauri/tauri.ffmpeg.conf.json -f ffmpeg
