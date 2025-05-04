@@ -4,3 +4,4 @@ dist
 /target
 /tauri/gen
 tsconfig.tsbuildinfo
+/tauri/ffmpeg

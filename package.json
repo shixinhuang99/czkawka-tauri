@@ -18,10 +18,9 @@
     "run:tauri": "tsx ./scripts/run-tauri.ts",
     "run:browser": "tsx ./scripts/run-browser.ts",
     "build:ui": "pnpm run --filter ./ui build",
-    "build:tauri": "pnpm tauri build --no-bundle --target universal-apple-darwin",
-    "bundle": "pnpm tauri bundle --target universal-apple-darwin",
-    "build:tauri:win": "pnpm tauri build --no-bundle",
-    "bundle:win": "pnpm tauri bundle"
+    "build:tauri": "pnpm tauri build --target universal-apple-darwin",
+    "build:tauri:ffmpeg": "pnpm tauri build --target universal-apple-darwin -c ./tauri/tauri.ffmpeg.conf.json -f ffmpeg",
+    "build:tauri:win": "pnpm tauri build"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

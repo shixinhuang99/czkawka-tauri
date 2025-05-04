@@ -22,7 +22,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: "aarch64-apple-darwin"
+          targets: "x86_64-apple-darwin"
 
       - name: macos bundles
         run: |
@@ -30,4 +30,5 @@ jobs:
           pnpm i
           node --run build:ui
           node --run build:tauri
-          node --run bundle
+          node --run build:tauri:ffmpeg
+          mv ./target/universal-apple-darwin/release/bundle/dmg/CzkawkaTauri_1.0.1_universal.dmg ./target/universal-apple-darwin/release/bundle/dmg/CzkawkaTauri_1.0.1_universal_ffmpeg.dmg
