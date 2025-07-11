@@ -5,3 +5,4 @@ dist
 /tauri/gen
 tsconfig.tsbuildinfo
 /tauri/ffmpeg
+/czkawka

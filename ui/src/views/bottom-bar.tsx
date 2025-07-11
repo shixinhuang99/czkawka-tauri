@@ -119,7 +119,14 @@ function IncludedDirsTable() {
   const columns = createColumns<TableData>([
     {
       accessorKey: 'path',
-      header: t('Path'),
+      header: () => (
+        <div className="flex flex-col gap-1">
+          <span>{t('Path')}</span>
+          <span className="text-xs text-muted-foreground font-normal">
+            ({t('Check to use as reference')})
+          </span>
+        </div>
+      ),
       meta: {
         span: 10,
       },
@@ -147,13 +154,21 @@ function IncludedDirsTable() {
 
   return (
     <div className="w-1/2 flex flex-col">
-      <div className="flex justify-between items-center">
-        <h3 className="text-center">{t('Include Directories')}</h3>
-        <DirsActions
-          rowSelection={rowSelection}
-          onRowSelectionChange={handleRowSelectionChagne}
-          field="includedDirectories"
-        />
+      <div className="flex flex-col gap-1">
+        <div className="flex justify-between items-center">
+          <h3 className="text-center">{t('Include Directories')}</h3>
+          <DirsActions
+            rowSelection={rowSelection}
+            onRowSelectionChange={handleRowSelectionChagne}
+            field="includedDirectories"
+          />
+        </div>
+        {Object.keys(rowSelection).length > 0 && (
+          <div className="text-xs text-muted-foreground bg-muted/30 p-2 rounded">
+            <div className="font-medium">{t('Reference Directories')}:</div>
+            <div>{t('Reference directories hint')}</div>
+          </div>
+        )}
       </div>
       <DataTable
         className="flex-1"
