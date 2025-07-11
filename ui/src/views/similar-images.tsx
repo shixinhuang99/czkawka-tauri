@@ -13,7 +13,7 @@ import {
 } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { ImagesEntry } from '~/types';
-import { ImagePreview } from './image-preview';
+import { ClickableImagePreview } from './clickable-image-preview';
 
 export function SimilarImages() {
   const data = useAtomValue(similarImagesAtom);
@@ -121,9 +121,9 @@ function FileName(props: { row: Row<ImagesEntry> }) {
 
   if (settings.similarImagesShowImagePreview) {
     return (
-      <ImagePreview path={path}>
+      <ClickableImagePreview path={path}>
         <div className="truncate">{fileName}</div>
-      </ImagePreview>
+      </ClickableImagePreview>
     );
   }
 

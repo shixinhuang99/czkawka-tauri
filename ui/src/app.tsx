@@ -4,10 +4,11 @@ import { AppBody } from '~/views/app-body';
 import { AppHeader } from '~/views/app-header';
 import { BottomBar } from '~/views/bottom-bar';
 import { ToolTabs } from '~/views/tool-tabs';
+import { SidebarImagePreview } from '~/views/sidebar-image-preview';
 
 export default function App() {
   return (
-    <div className="h-screen w-screen flex flex-col">
+    <div className="h-screen w-screen flex flex-col relative">
       <TooltipProvider delayDuration={100} skipDelayDuration={90}>
         <div className="flex-1 flex h-px">
           <ToolTabs />
@@ -19,6 +20,7 @@ export default function App() {
         <BottomBar />
       </TooltipProvider>
       <Toaster />
+      <SidebarImagePreview />
     </div>
   );
 }

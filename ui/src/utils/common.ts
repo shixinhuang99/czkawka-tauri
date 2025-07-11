@@ -75,14 +75,16 @@ function fmtDate(v: number): string {
 
 function isImage(fileName: string): boolean {
   const imageExtensions = [
+    'avif',
     'bmp',
     'gif',
     'icns',
     'ico',
     'jpeg',
     'jpg',
-    'svg',
+    'jxl',
     'png',
+    'svg',
     'webp',
   ];
   const ext = fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase();

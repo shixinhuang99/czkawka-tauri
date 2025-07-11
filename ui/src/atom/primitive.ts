@@ -99,3 +99,12 @@ export const brokenFilesRowSelectionAtom = atom<RowSelection>({});
 export const badExtensionsAtom = atom<BadFileEntry[]>([]);
 
 export const badExtensionsRowSelectionAtom = atom<RowSelection>({});
+
+// 侧边栏图片预览状态
+export const sidebarImagePreviewAtom = atom<{
+  isOpen: boolean;
+  imagePath: string | null;
+}>({
+  isOpen: false,
+  imagePath: null,
+});

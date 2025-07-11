@@ -73,6 +73,9 @@ export const en = {
   'Opreation failed': 'Opreation failed',
   'Failed to read image': 'Failed to read image',
   'No data': 'No data',
+  'Image Preview': 'Image Preview',
+  'Loading...': 'Loading...',
+  'Format': 'Format',
 
   Scan: 'Scan',
   Stop: 'Stop',

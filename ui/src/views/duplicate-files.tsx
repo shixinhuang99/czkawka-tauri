@@ -13,7 +13,7 @@ import {
 } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { DuplicateEntry } from '~/types';
-import { ImagePreview } from './image-preview';
+import { ClickableImagePreview } from './clickable-image-preview';
 
 export function DuplicateFiles() {
   const data = useAtomValue(duplicateFilesAtom);
@@ -109,9 +109,9 @@ function FileName(props: { row: Row<DuplicateEntry> }) {
 
   if (settings.duplicateImagePreview && isImage) {
     return (
-      <ImagePreview path={path}>
+      <ClickableImagePreview path={path}>
         <div className="truncate">{fileName}</div>
-      </ImagePreview>
+      </ClickableImagePreview>
     );
   }
 

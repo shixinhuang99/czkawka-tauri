@@ -73,6 +73,9 @@ export const zh: Record<TranslationKeys, string> = {
   'Opreation failed': '操作失败',
   'Failed to read image': '读取图片失败',
   'No data': '无数据',
+  'Image Preview': '图片预览',
+  'Loading...': '加载中...',
+  'Format': '格式',
 
   Scan: '扫描',
   Stop: '停止',
