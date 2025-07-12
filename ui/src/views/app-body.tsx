@@ -37,7 +37,7 @@ export function AppBody() {
   const Table = tableMap[currentTool] || Fallback;
 
   return (
-    <div className="flex-1 flex flex-col w-full h-px">
+    <div className="flex-1 flex flex-col w-full h-px relative">
       <Table />
       {progress.tool === currentTool && (
         <div className="h-20 border-t px-3">

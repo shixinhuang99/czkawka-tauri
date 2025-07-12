@@ -1,4 +1,4 @@
-import { X, ImageOff, LoaderCircle, Pin, PinOff, Maximize2, Minimize2 } from 'lucide-react';
+import { X, ImageOff, LoaderCircle, Pin, PinOff } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { sidebarImagePreviewAtom } from '~/atom/primitive';
@@ -6,7 +6,6 @@ import { Button } from '~/components/shadcn/button';
 import { useT } from '~/hooks';
 import { ipc } from '~/ipc';
 import { cn } from '~/utils/cn';
-import { Resizable } from 're-resizable';
 
 export function SidebarImagePreview() {
   const [sidebarState, setSidebarState] = useAtom(sidebarImagePreviewAtom);
@@ -25,7 +24,12 @@ export function SidebarImagePreview() {
     setSidebarState(prev => ({ 
       ...prev, 
       mode: newMode,
-      position: newMode === 'floating' ? { x: window.innerWidth - size.width - 20, y: 80 } : null
+      position: newMode === 'floating' 
+        ? { 
+            x: Math.max(0, Math.min(window.innerWidth / 2 - size.width / 2, window.innerWidth - size.width - 20)), 
+            y: 100 
+          } 
+        : null
     }));
   };
 
@@ -56,7 +60,7 @@ export function SidebarImagePreview() {
     setIsDragging(false);
   };
 
-  const handleResize = (e: any, direction: any, ref: HTMLElement) => {
+  const handleResize = (e: React.MouseEvent, direction: string, ref: HTMLElement) => {
     setSidebarState(prev => ({
       ...prev,
       size: {
@@ -82,92 +86,78 @@ export function SidebarImagePreview() {
     return null;
   }
 
-  const sidebarStyle = mode === 'fixed'
+  // 计算预览窗口的位置和大小
+  const previewStyle = mode === 'fixed'
     ? {
-        right: 0,
-        top: 0,
-        height: '100%',
+        right: 20,
+        top: 80,
         width: `${size.width}px`,
+        height: `${size.height}px`,
       }
     : {
         left: position?.x ?? 0,
         top: position?.y ?? 0,
-        width: size.width,
-        height: size.height,
+        width: `${size.width}px`,
+        height: `${size.height}px`,
       };
 
   return (
-    <Resizable
-      size={size}
-      onResizeStop={handleResize}
-      enable={{
-        top: mode === 'floating',
-        right: true,
-        bottom: mode === 'floating',
-        left: mode === 'floating',
-        topRight: mode === 'floating',
-        bottomRight: true,
-        bottomLeft: mode === 'floating',
-        topLeft: mode === 'floating',
-      }}
-      minWidth={240}
-      minHeight={mode === 'floating' ? 300 : '100%'}
-      maxWidth={mode === 'floating' ? window.innerWidth - 40 : 600}
-      maxHeight={mode === 'floating' ? window.innerHeight - 40 : '100%'}
-      className={cn(
-        'bg-background border border-border shadow-lg z-50',
-        mode === 'fixed' ? 'fixed' : 'absolute',
-        isDragging && 'cursor-grabbing'
-      )}
-      style={sidebarStyle}
-    >
-      <div className="flex flex-col h-full">
-        {/* 标题栏 */}
-        <div 
-          ref={dragRef}
-          className={cn(
-            "flex items-center justify-between p-2 border-b border-border",
-            mode === 'floating' && "cursor-grab"
-          )}
-          onMouseDown={handleMouseDown}
-        >
-          <h3 className="font-semibold text-sm truncate" title={imagePath}>
-            {t('Image preview')}
-          </h3>
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleMode}
-              className="h-6 w-6 p-0"
-              title={mode === 'fixed' ? t('Switch to floating mode') : t('Switch to fixed mode')}
-            >
-              {mode === 'fixed' ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={closeSidebar}
-              className="h-6 w-6 p-0"
-            >
-              <X className="h-4 w-4" />
-            </Button>
+    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 9999 }}>
+      <div 
+        className={cn(
+          'pointer-events-auto fixed bg-background border border-border shadow-lg rounded-md overflow-hidden',
+          isDragging && 'cursor-grabbing'
+        )}
+        style={previewStyle}
+      >
+        <div className="flex flex-col h-full">
+          {/* 标题栏 */}
+          <div 
+            ref={dragRef}
+            className={cn(
+              "flex items-center justify-between p-2 border-b border-border bg-muted/30",
+              mode === 'floating' && "cursor-grab"
+            )}
+            onMouseDown={handleMouseDown}
+          >
+            <h3 className="font-semibold text-sm truncate" title={imagePath}>
+              {t('Image preview')}
+            </h3>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleMode}
+                className="h-6 w-6 p-0"
+                title={mode === 'fixed' ? t('Switch to floating mode') : t('Switch to fixed mode')}
+              >
+                {mode === 'fixed' ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={closeSidebar}
+                className="h-6 w-6 p-0"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </div>
 
-        {/* 文件路径 */}
-        <div className="px-4 py-2 text-xs text-muted-foreground border-b border-border">
-          <div className="break-all">{imagePath}</div>
-        </div>
+          {/* 文件路径 */}
+          <div className="px-4 py-2 text-xs text-muted-foreground border-b border-border">
+            <div className="break-all">{imagePath}</div>
+          </div>
 
-        {/* 图片预览区域 */}
-        <div className="flex-1 p-4 overflow-auto">
-          <div className="h-full flex flex-col">
-            <ImageContent path={imagePath} />
+          {/* 图片预览区域 */}
+          <div className="flex-1 p-4 overflow-auto">
+            <div className="h-full flex flex-col">
+              <ImageContent path={imagePath} />
+            </div>
           </div>
         </div>
       </div>
-    </Resizable>
+    </div>
   );
 }
 
@@ -234,7 +224,7 @@ function ImageContent({ path }: { path: string }) {
       {/* 图片信息 */}
       <div className="space-y-2 text-xs">
         <div className="grid grid-cols-2 gap-2">
-          <div className="text-muted-foreground">格式:</div>
+          <div className="text-muted-foreground">{t('Format')}:</div>
           <div className="truncate">
             {path.split('.').pop()?.toUpperCase() || 'Unknown'}
           </div>
