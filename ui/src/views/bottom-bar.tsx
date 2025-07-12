@@ -9,6 +9,7 @@ import {
   LoaderCircle,
   ScrollText,
   Trash2,
+  Star,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import {
@@ -47,6 +48,7 @@ const DisplayType = {
 interface TableData {
   path: string;
   field: DirsType;
+  isReference?: boolean;
 }
 
 type PropsWithTable<T> = T & {
@@ -112,6 +114,7 @@ function IncludedDirsTable() {
       return {
         path,
         field: 'includedDirectories',
+        isReference: settings.includedDirectoriesReferenced.includes(path),
       };
     });
   }, [settings]);
@@ -119,16 +122,38 @@ function IncludedDirsTable() {
   const columns = createColumns<TableData>([
     {
       accessorKey: 'path',
+      header: t('Path'),
+      meta: {
+        span: 9,
+      },
+    },
+    {
+      id: 'reference',
       header: () => (
-        <div className="flex flex-col gap-1">
-          <span>{t('Path')}</span>
+        <div className="flex justify-center">
           <span className="text-xs text-muted-foreground font-normal">
-            ({t('Check to use as reference')})
+            {t('Reference')}
           </span>
         </div>
       ),
       meta: {
-        span: 10,
+        span: 1,
+      },
+      cell: ({ row }) => {
+        const isReference = row.original.isReference;
+        return (
+          <div className="flex justify-center">
+            <Button
+              variant={isReference ? "default" : "ghost"}
+              size="icon"
+              className="h-6 w-6"
+              onClick={() => handleReferenceToggle(row.original.path)}
+              title={t('Use as reference')}
+            >
+              <Star className={cn("h-4 w-4", isReference ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground")} />
+            </Button>
+          </div>
+        );
       },
     },
     {
@@ -142,12 +167,16 @@ function IncludedDirsTable() {
     },
   ]);
 
-  const handleRowSelectionChagne = (v: RowSelection) => {
-    setRowSelection(v);
+  const handleReferenceToggle = (path: string) => {
     setSettings((old) => {
+      const isCurrentlyReference = old.includedDirectoriesReferenced.includes(path);
+      const newReferences = isCurrentlyReference
+        ? old.includedDirectoriesReferenced.filter((p) => p !== path)
+        : [...old.includedDirectoriesReferenced, path];
+      
       return {
         ...old,
-        includedDirectoriesReferenced: getRowSelectionKeys(v),
+        includedDirectoriesReferenced: newReferences,
       };
     });
   };
@@ -159,11 +188,11 @@ function IncludedDirsTable() {
           <h3 className="text-center">{t('Include Directories')}</h3>
           <DirsActions
             rowSelection={rowSelection}
-            onRowSelectionChange={handleRowSelectionChagne}
+            onRowSelectionChange={setRowSelection}
             field="includedDirectories"
           />
         </div>
-        {Object.keys(rowSelection).length > 0 && (
+        {settings.includedDirectoriesReferenced.length > 0 && (
           <div className="text-xs text-muted-foreground bg-muted/30 p-2 rounded">
             <div className="font-medium">{t('Reference Directories')}:</div>
             <div>{t('Reference directories hint')}</div>
@@ -177,7 +206,7 @@ function IncludedDirsTable() {
         emptyTip={t('Please add path')}
         layout="grid"
         rowSelection={rowSelection}
-        onRowSelectionChange={handleRowSelectionChagne}
+        onRowSelectionChange={setRowSelection}
       />
     </div>
   );

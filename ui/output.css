@@ -1350,6 +1350,10 @@ body {
   fill: #ef4444;
 }
 
+.fill-yellow-500 {
+  fill: #eab308;
+}
+
 .object-contain {
   -o-object-fit: contain;
      object-fit: contain;
@@ -1590,6 +1594,11 @@ body {
 
 .text-secondary-foreground {
   color: hsl(var(--secondary-foreground));
+}
+
+.text-yellow-500 {
+  --tw-text-opacity: 1;
+  color: rgb(234 179 8 / var(--tw-text-opacity, 1));
 }
 
 .underline-offset-4 {

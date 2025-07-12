@@ -8,6 +8,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '~/components/shadcn/dropdown-menu';
 import { Tools } from '~/consts';
@@ -37,11 +41,12 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
   const handleSelectXXX = (
     type: 'size' | 'date' | 'resolution',
     dir: 'asc' | 'desc',
+    inverse: boolean = false
   ) => {
     if (!toolsWithSizeAndDateSelect.has(currentTool)) {
       return;
     }
-    setCurrentToolRowSelection(selectItem(currentToolData, type, dir));
+    setCurrentToolRowSelection(selectItem(currentToolData, type, dir, inverse));
   };
 
   return (
@@ -54,35 +59,77 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent side="top">
         {currentTool === Tools.SimilarImages && (
-          <>
-            <DropdownMenuItem
-              onClick={() => handleSelectXXX('resolution', 'asc')}
-            >
-              {t('Select the highest resolution')}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => handleSelectXXX('resolution', 'desc')}
-            >
-              {t('Select the lowest resolution')}
-            </DropdownMenuItem>
-          </>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>{t('Resolution based')}</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem
+                onClick={() => handleSelectXXX('resolution', 'asc')}
+              >
+                {t('Select the highest resolution')}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleSelectXXX('resolution', 'desc')}
+              >
+                {t('Select the lowest resolution')}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => handleSelectXXX('resolution', 'asc', true)}
+              >
+                {t('Select all except highest resolution')}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleSelectXXX('resolution', 'desc', true)}
+              >
+                {t('Select all except lowest resolution')}
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         )}
+        
         {toolsWithSizeAndDateSelect.has(currentTool) && (
           <>
-            <DropdownMenuItem onClick={() => handleSelectXXX('size', 'asc')}>
-              {t('Select the biggest size')}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSelectXXX('size', 'desc')}>
-              {t('Select the smallest size')}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSelectXXX('date', 'asc')}>
-              {t('Select the newest')}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSelectXXX('date', 'desc')}>
-              {t('Select the oldest')}
-            </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>{t('Size based')}</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem onClick={() => handleSelectXXX('size', 'asc')}>
+                  {t('Select the biggest size')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSelectXXX('size', 'desc')}>
+                  {t('Select the smallest size')}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleSelectXXX('size', 'asc', true)}>
+                  {t('Select all except biggest')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSelectXXX('size', 'desc', true)}>
+                  {t('Select all except smallest')}
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>{t('Date based')}</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem onClick={() => handleSelectXXX('date', 'asc')}>
+                  {t('Select the newest')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSelectXXX('date', 'desc')}>
+                  {t('Select the oldest')}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleSelectXXX('date', 'asc', true)}>
+                  {t('Select all except newest')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSelectXXX('date', 'desc', true)}>
+                  {t('Select all except oldest')}
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
           </>
         )}
+        
+        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleInvertSelection}>
           {t('Invert selection')}
         </DropdownMenuItem>
@@ -141,6 +188,7 @@ function selectItem<T extends BaseEntry & RefEntry & WithRaw>(
   data: T[],
   type: 'size' | 'date' | 'resolution',
   dir: 'asc' | 'desc',
+  inverse: boolean = false
 ): RowSelection {
   const paths: string[] = [];
   let compareFn: (<T extends WithRaw>(a: T, b: T) => T) | null = null;
@@ -160,14 +208,25 @@ function selectItem<T extends BaseEntry & RefEntry & WithRaw>(
   if (!compareFn) {
     return {};
   }
+  
   const groups = groupBy(data);
   for (const group of groups) {
     if (!group.length) {
       continue;
     }
-    const path = group.reduce(compareFn).path;
-    paths.push(path);
+    
+    if (inverse) {
+      // Select all except the one that matches the compare function
+      const selectedItem = group.reduce(compareFn);
+      const otherItems = group.filter(item => item.path !== selectedItem.path);
+      paths.push(...otherItems.map(item => item.path));
+    } else {
+      // Select only the one that matches the compare function
+      const path = group.reduce(compareFn).path;
+      paths.push(path);
+    }
   }
+  
   return pathsToRowSelection(paths);
 }
 
