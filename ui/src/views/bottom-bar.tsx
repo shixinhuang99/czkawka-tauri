@@ -409,6 +409,13 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
     onRowSelectionChange({});
   };
 
+  const checkPathForReferenceKeywords = (path: string, keywords: string): boolean => {
+    if (field !== 'includedDirectories') return false;
+    
+    const keywordList = splitStr(keywords);
+    return keywordList.some(keyword => keyword && path.includes(keyword));
+  };
+
   const handleAddPath = async () => {
     openFileDialogLoading.on();
     const dirs = await openFileDialog({ multiple: true, directory: true });
@@ -426,6 +433,25 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
         return settings;
       }
       
+      // Check for reference keywords if this is for includedDirectories
+      if (field === 'includedDirectories') {
+        const newReferenceDirs = [...settings.includedDirectoriesReferenced];
+        
+        for (const dir of uniqueDirs) {
+          if (checkPathForReferenceKeywords(dir, settings.referencePathKeywords)) {
+            if (!newReferenceDirs.includes(dir)) {
+              newReferenceDirs.push(dir);
+            }
+          }
+        }
+        
+        return {
+          ...settings,
+          [field]: [...uniqueDirs, ...currentDirs],
+          includedDirectoriesReferenced: newReferenceDirs,
+        };
+      }
+      
       return {
         ...settings,
         [field]: [...uniqueDirs, ...currentDirs],
@@ -436,6 +462,25 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
   const handleManualAddOk = () => {
     const paths = splitStr(manualAddPaths);
     setSettings((settings) => {
+      // Check for reference keywords if this is for includedDirectories
+      if (field === 'includedDirectories') {
+        const newReferenceDirs = [...settings.includedDirectoriesReferenced];
+        
+        for (const path of paths) {
+          if (checkPathForReferenceKeywords(path, settings.referencePathKeywords)) {
+            if (!newReferenceDirs.includes(path)) {
+              newReferenceDirs.push(path);
+            }
+          }
+        }
+        
+        return {
+          ...settings,
+          [field]: Array.from(new Set([...paths, ...settings[field]])),
+          includedDirectoriesReferenced: newReferenceDirs,
+        };
+      }
+      
       return {
         ...settings,
         [field]: Array.from(new Set([...paths, ...settings[field]])),
