@@ -8,10 +8,11 @@ interface ClickableImagePreviewProps {
 
 export function ClickableImagePreview(props: ClickableImagePreviewProps) {
   const { children, path } = props;
-  const [, setSidebarState] = useAtom(sidebarImagePreviewAtom);
+  const [sidebarState, setSidebarState] = useAtom(sidebarImagePreviewAtom);
 
   const handleClick = () => {
     setSidebarState({
+      ...sidebarState,
       isOpen: true,
       imagePath: path,
     });

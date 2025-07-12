@@ -187,4 +187,12 @@ export const zh: Record<TranslationKeys, string> = {
   'Quick Selection': '快速选择',
   'Reference Selection': '参考选择',
   'Unselect': '取消选择',
+  
+  // New strings for sidebar image preview
+  'Switch to floating mode': '切换到浮动模式',
+  'Switch to fixed mode': '切换到固定模式',
+  
+  // New strings for reference path keywords
+  'Reference path keywords': '参考路径关键词',
+  'Reference path keywords hint': '包含这些关键词的路径将自动标记为参考（用逗号分隔）',
 };

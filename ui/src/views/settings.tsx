@@ -148,6 +148,14 @@ function SettingsContent() {
           <Switch />
         </FormItem>
         <FormItem
+          name="referencePathKeywords"
+          label={t('Reference path keywords')}
+          description={t('Reference path keywords hint')}
+          comp="textarea"
+        >
+          <Textarea rows={1} placeholder="#compare" />
+        </FormItem>
+        <FormItem
           name="threadNumber"
           label={
             <span className="inline-flex items-center">

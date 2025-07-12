@@ -1,46 +1,158 @@
-import { X, ImageOff, LoaderCircle } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { X, ImageOff, LoaderCircle, Pin, PinOff, Maximize2, Minimize2 } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { sidebarImagePreviewAtom } from '~/atom/primitive';
 import { Button } from '~/components/shadcn/button';
 import { useT } from '~/hooks';
 import { ipc } from '~/ipc';
 import { cn } from '~/utils/cn';
+import { Resizable } from 're-resizable';
 
 export function SidebarImagePreview() {
   const [sidebarState, setSidebarState] = useAtom(sidebarImagePreviewAtom);
-  const { isOpen, imagePath } = sidebarState;
+  const { isOpen, imagePath, mode, position, size } = sidebarState;
   const t = useT();
+  const dragRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   const closeSidebar = () => {
-    setSidebarState({ isOpen: false, imagePath: null });
+    setSidebarState(prev => ({ ...prev, isOpen: false, imagePath: null }));
   };
+
+  const toggleMode = () => {
+    const newMode = mode === 'fixed' ? 'floating' : 'fixed';
+    setSidebarState(prev => ({ 
+      ...prev, 
+      mode: newMode,
+      position: newMode === 'floating' ? { x: window.innerWidth - size.width - 20, y: 80 } : null
+    }));
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (mode !== 'floating' || !dragRef.current) return;
+    
+    setIsDragging(true);
+    const rect = dragRef.current.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging || !position) return;
+    
+    const newX = Math.max(0, Math.min(e.clientX - dragOffset.x, window.innerWidth - size.width));
+    const newY = Math.max(0, Math.min(e.clientY - dragOffset.y, window.innerHeight - 40));
+    
+    setSidebarState(prev => ({
+      ...prev,
+      position: { x: newX, y: newY }
+    }));
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleResize = (e: any, direction: any, ref: HTMLElement) => {
+    setSidebarState(prev => ({
+      ...prev,
+      size: {
+        width: ref.offsetWidth,
+        height: ref.offsetHeight
+      }
+    }));
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, dragOffset]);
 
   if (!isOpen || !imagePath) {
     return null;
   }
 
+  const sidebarStyle = mode === 'fixed'
+    ? {
+        right: 0,
+        top: 0,
+        height: '100%',
+        width: `${size.width}px`,
+      }
+    : {
+        left: position?.x ?? 0,
+        top: position?.y ?? 0,
+        width: size.width,
+        height: size.height,
+      };
+
   return (
-    <div
+    <Resizable
+      size={size}
+      onResizeStop={handleResize}
+      enable={{
+        top: mode === 'floating',
+        right: true,
+        bottom: mode === 'floating',
+        left: mode === 'floating',
+        topRight: mode === 'floating',
+        bottomRight: true,
+        bottomLeft: mode === 'floating',
+        topLeft: mode === 'floating',
+      }}
+      minWidth={240}
+      minHeight={mode === 'floating' ? 300 : '100%'}
+      maxWidth={mode === 'floating' ? window.innerWidth - 40 : 600}
+      maxHeight={mode === 'floating' ? window.innerHeight - 40 : '100%'}
       className={cn(
-        'fixed right-0 top-0 h-full w-80 bg-background border-l border-border z-50 shadow-lg transition-transform duration-300 ease-in-out',
-        isOpen ? 'translate-x-0' : 'translate-x-full'
+        'bg-background border border-border shadow-lg z-50',
+        mode === 'fixed' ? 'fixed' : 'absolute',
+        isDragging && 'cursor-grabbing'
       )}
+      style={sidebarStyle}
     >
       <div className="flex flex-col h-full">
         {/* 标题栏 */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
+        <div 
+          ref={dragRef}
+          className={cn(
+            "flex items-center justify-between p-2 border-b border-border",
+            mode === 'floating' && "cursor-grab"
+          )}
+          onMouseDown={handleMouseDown}
+        >
           <h3 className="font-semibold text-sm truncate" title={imagePath}>
             {t('Image preview')}
           </h3>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={closeSidebar}
-            className="h-6 w-6 p-0"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleMode}
+              className="h-6 w-6 p-0"
+              title={mode === 'fixed' ? t('Switch to floating mode') : t('Switch to fixed mode')}
+            >
+              {mode === 'fixed' ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={closeSidebar}
+              className="h-6 w-6 p-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         {/* 文件路径 */}
@@ -49,13 +161,13 @@ export function SidebarImagePreview() {
         </div>
 
         {/* 图片预览区域 */}
-        <div className="flex-1 p-4">
+        <div className="flex-1 p-4 overflow-auto">
           <div className="h-full flex flex-col">
             <ImageContent path={imagePath} />
           </div>
         </div>
       </div>
-    </div>
+    </Resizable>
   );
 }
 

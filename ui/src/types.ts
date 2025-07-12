@@ -30,6 +30,7 @@ export interface Settings {
   saveAlsoAsJson: boolean;
   moveDeletedFilesToTrash: boolean;
   threadNumber: number;
+  referencePathKeywords: string; // Keywords for auto-marking reference paths
 
   duplicateImagePreview: boolean;
   duplicateHideHardLinks: boolean;

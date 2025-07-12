@@ -74,6 +74,7 @@ export function getDefaultSettings(): Settings {
     saveAlsoAsJson: false,
     moveDeletedFilesToTrash: true,
     threadNumber: 1,
+    referencePathKeywords: '#compare', // Default reference path keyword
 
     duplicateImagePreview: true,
     duplicateHideHardLinks: true,

@@ -104,7 +104,13 @@ export const badExtensionsRowSelectionAtom = atom<RowSelection>({});
 export const sidebarImagePreviewAtom = atom<{
   isOpen: boolean;
   imagePath: string | null;
+  mode: 'floating' | 'fixed';
+  position: { x: number; y: number } | null;
+  size: { width: number; height: number };
 }>({
   isOpen: false,
   imagePath: null,
+  mode: 'fixed',
+  position: null,
+  size: { width: 320, height: 480 }
 });

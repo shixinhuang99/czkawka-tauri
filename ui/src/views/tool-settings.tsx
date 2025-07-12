@@ -91,7 +91,7 @@ export function ToolSettings({
 
   if (inPanel) {
     return (
-      <div className="w-full h-full overflow-auto p-2">
+      <div className="w-full h-full overflow-auto p-2 hide-scrollbar">
         {renderSettings()}
       </div>
     );
@@ -119,6 +119,8 @@ export function ToolSettings({
 function Fallback() {
   return <div>Something wrong</div>;
 }
+
+
 
 function DuplicateFilesSettings({ showControls = true, showAlgorithms = true }: { showControls?: boolean; showAlgorithms?: boolean }) {
   const t = useT();

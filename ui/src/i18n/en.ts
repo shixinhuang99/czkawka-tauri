@@ -189,6 +189,14 @@ export const en = {
   'Quick Selection': 'Quick Selection',
   'Reference Selection': 'Reference Selection',
   'Unselect': 'Unselect',
+  
+  // New strings for sidebar image preview
+  'Switch to floating mode': 'Switch to floating mode',
+  'Switch to fixed mode': 'Switch to fixed mode',
+  
+  // New strings for reference path keywords
+  'Reference path keywords': 'Reference path keywords',
+  'Reference path keywords hint': 'Paths containing these keywords will be automatically marked as reference (comma separated)',
 };
 
 export type TranslationKeys = keyof typeof en;

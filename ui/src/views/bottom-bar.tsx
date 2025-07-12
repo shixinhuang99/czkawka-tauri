@@ -167,7 +167,7 @@ function ToolControlsPanel() {
           <span>{t('Tool controls')}</span>
         </h3>
       </div>
-      <div className="flex-1 overflow-auto p-2">
+      <div className="flex-1 overflow-auto p-2 hide-scrollbar">
         <ToolSettings inPanel={true} showControls={true} showAlgorithms={false} />
       </div>
     </div>
@@ -185,7 +185,7 @@ function ToolAlgorithmPanel() {
           <span>{t('Algorithm settings')}</span>
         </h3>
       </div>
-      <div className="flex-1 overflow-auto p-2">
+      <div className="flex-1 overflow-auto p-2 hide-scrollbar">
         <ToolSettings inPanel={true} showControls={false} showAlgorithms={true} />
       </div>
     </div>
@@ -284,7 +284,7 @@ function IncludedDirsTable() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {settings.includedDirectoriesReferenced.length > 0 && (
           <div className="text-xs text-muted-foreground bg-muted/30 p-2 border-b">
-            <div className="font-medium">{t('Reference Directories')}:</div>
+            {/* <div className="font-medium">{t('Reference Directories')}:</div> */}
             {/* <div>{t('Reference directories hint')}</div> */}
           </div>
         )}
@@ -497,7 +497,7 @@ function Logs() {
   const logs = useAtomValue(logsAtom);
 
   return (
-    <ScrollArea className="h-full rounded-md border text-card-foreground px-2 py-1 dark:bg-gray-900">
+    <ScrollArea className="h-full rounded-md border text-card-foreground px-2 py-1 dark:bg-gray-900 hide-scrollbar">
       <div className="whitespace-break-spaces">{logs}</div>
     </ScrollArea>
   );
