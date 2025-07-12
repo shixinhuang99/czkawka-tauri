@@ -37,3 +37,15 @@ tauri-build = { version = "2", features = [] }
 
 [features]
 ffmpeg = []
+
+[profile.dev]
+opt-level = 1      # 基本优化
+debug = 0          # 禁用调试信息以加快编译
+split-debuginfo = "unpacked"  # 更快的调试信息处理
+incremental = true  # 增量编译
+
+[profile.dev.package."*"]
+opt-level = 3       # 对所有依赖进行完全优化
+
+[build]
+rustflags = ["-C", "target-cpu=native"]  # 针对当前CPU优化

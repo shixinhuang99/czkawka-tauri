@@ -10,6 +10,10 @@ import {
   ScrollText,
   Trash2,
   Star,
+  Settings2,
+  FolderMinus,
+  SquareMousePointer,
+  Sliders,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import {
@@ -39,6 +43,10 @@ import type { DirsType } from '~/types';
 import { cn } from '~/utils/cn';
 import { getRowSelectionKeys, splitStr } from '~/utils/common';
 import { Operations } from './operations';
+import { ToolSettings } from './tool-settings';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '~/components/shadcn/resizable';
+import { RowSelectionMenu } from './row-selection-menu';
+import { currentToolAtom } from '~/atom/primitive';
 
 const DisplayType = {
   Dirs: 'dirs',
@@ -64,11 +72,17 @@ export function BottomBar() {
   const [displayType, setDisplayType] = useState<string>(DisplayType.Dirs);
   const minimizeBottomBar = useBoolean();
   const t = useT();
-
+  const excludedDirsDialogOpen = useBoolean();
+  const [settings, setSettings] = useAtom(settingsAtom);
+  const [rowSelection, setRowSelection] = useAtom(excludedDirsRowSelectionAtom);
+  
   return (
     <div className="flex flex-col px-2 py-1 gap-1 border-t">
       <div className="flex justify-between items-center">
-        <Operations />
+        <div className="flex items-center gap-2">
+          <Operations />
+          <RowSelectionMenu disabled={false} />
+        </div>
         <div className="flex items-center gap-1">
           <Tabs value={displayType} onValueChange={setDisplayType}>
             <TabsList>
@@ -80,6 +94,24 @@ export function BottomBar() {
               </TabsTrigger>
             </TabsList>
           </Tabs>
+          <Dialog open={excludedDirsDialogOpen.value} onOpenChange={excludedDirsDialogOpen.set}>
+            <DialogTrigger asChild>
+              <TooltipButton tooltip={t('Exclude Directories')} variant="outline">
+                <FolderMinus />
+              </TooltipButton>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle>{t('Exclude Directories')}</DialogTitle>
+                <DialogDescription>
+                  {t('Manage directories to exclude from scanning')}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="h-[400px]">
+                <ExcludedDirsTable />
+              </div>
+            </DialogContent>
+          </Dialog>
           <TooltipButton
             tooltip={minimizeBottomBar.value ? t('Expand') : t('Collapse')}
             onClick={minimizeBottomBar.toggle}
@@ -94,13 +126,68 @@ export function BottomBar() {
           </TooltipButton>
         </div>
       </div>
-      {displayType === DisplayType.Dirs && !minimizeBottomBar.value && (
-        <div className="flex gap-1 h-[200px]">
-          <IncludedDirsTable />
-          <ExcludedDirsTable />
-        </div>
+      {!minimizeBottomBar.value && (
+        <ResizablePanelGroup
+          direction="vertical"
+          className="min-h-[200px]"
+        >
+          <ResizablePanel defaultSize={100} minSize={20}>
+            {displayType === DisplayType.Dirs ? (
+              <ResizablePanelGroup direction="horizontal">
+                <ResizablePanel defaultSize={25} minSize={15}>
+                  <ToolControlsPanel />
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel defaultSize={25} minSize={15}>
+                  <ToolAlgorithmPanel />
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel defaultSize={50} minSize={20}>
+                  <IncludedDirsTable />
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            ) : (
+              <Logs />
+            )}
+          </ResizablePanel>
+        </ResizablePanelGroup>
       )}
-      {displayType === DisplayType.Logs && !minimizeBottomBar.value && <Logs />}
+    </div>
+  );
+}
+
+function ToolControlsPanel() {
+  const t = useT();
+  
+  return (
+    <div className="h-full flex flex-col border rounded-md overflow-hidden">
+      <div className="bg-muted/30 p-2 border-b">
+        <h3 className="text-sm font-medium flex items-center gap-1">
+          <Sliders className="h-4 w-4" />
+          <span>{t('Tool controls')}</span>
+        </h3>
+      </div>
+      <div className="flex-1 overflow-auto p-2">
+        <ToolSettings inPanel={true} showControls={true} showAlgorithms={false} />
+      </div>
+    </div>
+  );
+}
+
+function ToolAlgorithmPanel() {
+  const t = useT();
+  
+  return (
+    <div className="h-full flex flex-col border rounded-md overflow-hidden">
+      <div className="bg-muted/30 p-2 border-b">
+        <h3 className="text-sm font-medium flex items-center gap-1">
+          <Settings2 className="h-4 w-4" />
+          <span>{t('Algorithm settings')}</span>
+        </h3>
+      </div>
+      <div className="flex-1 overflow-auto p-2">
+        <ToolSettings inPanel={true} showControls={false} showAlgorithms={true} />
+      </div>
     </div>
   );
 }
@@ -182,39 +269,42 @@ function IncludedDirsTable() {
   };
 
   return (
-    <div className="w-1/2 flex flex-col">
-      <div className="flex flex-col gap-1">
-        <div className="flex justify-between items-center">
-          <h3 className="text-center">{t('Include Directories')}</h3>
-          <DirsActions
-            rowSelection={rowSelection}
-            onRowSelectionChange={setRowSelection}
-            field="includedDirectories"
-          />
-        </div>
+    <div className="h-full flex flex-col border rounded-md overflow-hidden">
+      <div className="flex justify-between items-center bg-muted/30 p-2 border-b">
+        <h3 className="text-sm font-medium flex items-center gap-1">
+          <Folder className="h-4 w-4" />
+          <span>{t('Include Directories')}</span>
+        </h3>
+        <DirsActions
+          rowSelection={rowSelection}
+          onRowSelectionChange={setRowSelection}
+          field="includedDirectories"
+        />
+      </div>
+      <div className="flex-1 flex flex-col overflow-hidden">
         {settings.includedDirectoriesReferenced.length > 0 && (
-          <div className="text-xs text-muted-foreground bg-muted/30 p-2 rounded">
+          <div className="text-xs text-muted-foreground bg-muted/30 p-2 border-b">
             <div className="font-medium">{t('Reference Directories')}:</div>
-            <div>{t('Reference directories hint')}</div>
+            {/* <div>{t('Reference directories hint')}</div> */}
           </div>
         )}
+        <DataTable
+          className="flex-1"
+          data={data}
+          columns={columns}
+          emptyTip={t('Please add path')}
+          layout="grid"
+          rowSelection={rowSelection}
+          onRowSelectionChange={setRowSelection}
+        />
       </div>
-      <DataTable
-        className="flex-1"
-        data={data}
-        columns={columns}
-        emptyTip={t('Please add path')}
-        layout="grid"
-        rowSelection={rowSelection}
-        onRowSelectionChange={setRowSelection}
-      />
     </div>
   );
 }
 
 function ExcludedDirsTable() {
   const t = useT();
-  const settings = useAtomValue(settingsAtom);
+  const [settings, setSettings] = useAtom(settingsAtom);
   const [rowSelection, setRowSelection] = useAtom(excludedDirsRowSelectionAtom);
   const data: TableData[] = useMemo(() => {
     return settings.excludedDirectories.map((path) => {
@@ -321,19 +411,24 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
 
   const handleAddPath = async () => {
     openFileDialogLoading.on();
-    const dir = await openFileDialog({ multiple: false, directory: true });
+    const dirs = await openFileDialog({ multiple: true, directory: true });
     openFileDialogLoading.off();
-    if (!dir) {
+    if (!dirs || dirs.length === 0) {
       return;
     }
+    
     setSettings((settings) => {
-      const dirs = settings[field];
-      if (dirs.includes(dir)) {
+      const currentDirs = settings[field];
+      const newDirs = Array.isArray(dirs) ? dirs : [dirs];
+      const uniqueDirs = newDirs.filter(dir => !currentDirs.includes(dir));
+      
+      if (uniqueDirs.length === 0) {
         return settings;
       }
+      
       return {
         ...settings,
-        [field]: [dir, ...dirs],
+        [field]: [...uniqueDirs, ...currentDirs],
       };
     });
   };
@@ -350,12 +445,12 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
   };
 
   return (
-    <div>
-      <TooltipButton tooltip={t('Add')} onClick={handleAddPath}>
+    <div className="flex gap-1">
+      <TooltipButton tooltip={t('Add')} onClick={handleAddPath} size="sm">
         {openFileDialogLoading.value ? (
-          <LoaderCircle className="animate-spin" />
+          <LoaderCircle className="animate-spin h-4 w-4" />
         ) : (
-          <FolderPlus />
+          <FolderPlus className="h-4 w-4" />
         )}
       </TooltipButton>
       <Dialog
@@ -366,8 +461,8 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
         }}
       >
         <DialogTrigger asChild>
-          <TooltipButton tooltip={t('Manual add')}>
-            <FolderPen />
+          <TooltipButton tooltip={t('Manual add')} size="sm">
+            <FolderPen className="h-4 w-4" />
           </TooltipButton>
         </DialogTrigger>
         <DialogContent>
@@ -391,8 +486,8 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <TooltipButton tooltip={t('Remove selected')} onClick={handleRemovePaths}>
-        <Trash2 />
+      <TooltipButton tooltip={t('Remove selected')} onClick={handleRemovePaths} size="sm">
+        <Trash2 className="h-4 w-4" />
       </TooltipButton>
     </div>
   );
@@ -402,7 +497,7 @@ function Logs() {
   const logs = useAtomValue(logsAtom);
 
   return (
-    <ScrollArea className="h-[200px] rounded-md border text-card-foreground px-2 py-1 dark:bg-gray-900">
+    <ScrollArea className="h-full rounded-md border text-card-foreground px-2 py-1 dark:bg-gray-900">
       <div className="whitespace-break-spaces">{logs}</div>
     </ScrollArea>
   );

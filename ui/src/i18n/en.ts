@@ -84,6 +84,8 @@ export const en = {
   'All stages': 'All stages',
 
   'Tool settings': 'Tool settings',
+  'Tool controls': 'Tool controls',
+  'Algorithm settings': 'Algorithm settings',
   'Duplicate files settings': 'Duplicate files settings',
   'Big files settings': 'Big files settings',
   'Similar images settings': 'Similar images settings',
@@ -175,6 +177,18 @@ export const en = {
   'Manual add': 'Manual add',
   'Manually add paths desc': 'Manually add paths(one per line)',
   'Remove selected': 'Remove selected',
+  'Select custom': 'Select custom',
+  'Unselect custom': 'Unselect custom',
+  'Enter a pattern to select files by path': 'Enter a pattern to select files by path',
+  'Enter a pattern to unselect files by path': 'Enter a pattern to unselect files by path',
+  'Use regex': 'Use regex',
+  'Regular expression pattern': 'Regular expression pattern',
+  'Text to match in path': 'Text to match in path',
+  'Manage directories to exclude from scanning': 'Manage directories to exclude from scanning',
+  'Selection': 'Selection',
+  'Quick Selection': 'Quick Selection',
+  'Reference Selection': 'Reference Selection',
+  'Unselect': 'Unselect',
 };
 
 export type TranslationKeys = keyof typeof en;

@@ -1,2 +1,24 @@
 [cargo-new]
 vcs = "none"
+
+[build]
+# 设置环境变量，启用并行编译
+rustflags = ["-C", "target-cpu=native"]
+# 设置并行编译作业数量，根据CPU核心数自动调整
+jobs = 12  # 调整为你CPU核心数的1.5-2倍
+
+# 使用sccache作为编译缓存
+[target.'cfg(not(target_env = "msvc"))']
+rustc-wrapper = "sccache"
+
+[target.'cfg(target_env = "msvc")']
+rustc-wrapper = "sccache"
+
+# 启用增量编译
+[profile.dev]
+incremental = true
+
+# 启用链接时优化
+[profile.release]
+lto = "thin"  # 比"true"更快的链接时间优化
+codegen-units = 1  # 单一代码生成单元以获得最佳优化
