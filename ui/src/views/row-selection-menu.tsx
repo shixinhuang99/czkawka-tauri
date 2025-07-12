@@ -51,6 +51,11 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
     invertSelection(currentToolData, setCurrentToolRowSelection);
   };
 
+  const handleSelectAll = () => {
+    const paths = getPathsFromEntries(currentToolData);
+    setCurrentToolRowSelection(pathsToRowSelection(paths));
+  };
+
   const handleSelectXXX = (
     type: 'size' | 'date' | 'resolution',
     dir: 'asc' | 'desc',
@@ -112,6 +117,13 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
           </OperationButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top">
+          <DropdownMenuItem onClick={handleSelectAll}>
+            {t('Select all')}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleInvertSelection}>
+            {t('Invert selection')}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => customSelectDialogOpen.on()}>
             {t('Select custom')}
           </DropdownMenuItem>
@@ -190,11 +202,6 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
               </DropdownMenuSub>
             </>
           )}
-          
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleInvertSelection}>
-            {t('Invert selection')}
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 

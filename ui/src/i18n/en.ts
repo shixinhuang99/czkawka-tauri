@@ -123,6 +123,7 @@ export const en = {
   Cancel: 'Cancel',
 
   Select: 'Select',
+  'Select all': 'Select all',
   'Select the highest resolution': 'Select the highest resolution',
   'Select the lowest resolution': 'Select the lowest resolution',
   'Select the biggest size': 'Select the biggest size',

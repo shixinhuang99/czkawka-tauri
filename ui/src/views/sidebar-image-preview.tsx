@@ -14,6 +14,10 @@ export function SidebarImagePreview() {
   const dragRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isResizing, setIsResizing] = useState(false);
+  const [resizeDirection, setResizeDirection] = useState<string | null>(null);
+  const [resizeStartPos, setResizeStartPos] = useState({ x: 0, y: 0 });
+  const [resizeStartSize, setResizeStartSize] = useState({ width: 0, height: 0 });
 
   const closeSidebar = () => {
     setSidebarState(prev => ({ ...prev, isOpen: false, imagePath: null }));
@@ -45,33 +49,80 @@ export function SidebarImagePreview() {
   };
 
   const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging || !position) return;
-    
-    const newX = Math.max(0, Math.min(e.clientX - dragOffset.x, window.innerWidth - size.width));
-    const newY = Math.max(0, Math.min(e.clientY - dragOffset.y, window.innerHeight - 40));
-    
-    setSidebarState(prev => ({
-      ...prev,
-      position: { x: newX, y: newY }
-    }));
+    if (isDragging && !isResizing && position) {
+      const newX = Math.max(0, Math.min(e.clientX - dragOffset.x, window.innerWidth - size.width));
+      const newY = Math.max(0, Math.min(e.clientY - dragOffset.y, window.innerHeight - 40));
+      
+      setSidebarState(prev => ({
+        ...prev,
+        position: { x: newX, y: newY }
+      }));
+    } else if (isResizing && resizeDirection && position) {
+      const deltaX = e.clientX - resizeStartPos.x;
+      const deltaY = e.clientY - resizeStartPos.y;
+      
+      let newWidth = resizeStartSize.width;
+      let newHeight = resizeStartSize.height;
+      let newX = position.x;
+      let newY = position.y;
+      
+      // Handle different resize directions
+      if (resizeDirection.includes('e')) {
+        newWidth = Math.max(200, resizeStartSize.width + deltaX);
+      }
+      if (resizeDirection.includes('w')) {
+        const widthChange = Math.min(resizeStartSize.width - 200, deltaX);
+        newWidth = Math.max(200, resizeStartSize.width - deltaX);
+        newX = resizeStartPos.x + widthChange;
+      }
+      if (resizeDirection.includes('s')) {
+        newHeight = Math.max(150, resizeStartSize.height + deltaY);
+      }
+      if (resizeDirection.includes('n')) {
+        const heightChange = Math.min(resizeStartSize.height - 150, deltaY);
+        newHeight = Math.max(150, resizeStartSize.height - deltaY);
+        newY = resizeStartPos.y + heightChange;
+      }
+      
+      // Ensure the preview stays within viewport bounds
+      newX = Math.max(0, Math.min(newX, window.innerWidth - newWidth));
+      newY = Math.max(0, Math.min(newY, window.innerHeight - newHeight));
+      
+      setSidebarState(prev => ({
+        ...prev,
+        position: { x: newX, y: newY },
+        size: { width: newWidth, height: newHeight }
+      }));
+    }
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
+    setIsResizing(false);
+    setResizeDirection(null);
   };
 
-  const handleResize = (e: React.MouseEvent, direction: string, ref: HTMLElement) => {
-    setSidebarState(prev => ({
-      ...prev,
-      size: {
-        width: ref.offsetWidth,
-        height: ref.offsetHeight
-      }
-    }));
+  const startResize = (e: React.MouseEvent, direction: string) => {
+    if (mode !== 'floating') return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setIsResizing(true);
+    setResizeDirection(direction);
+    setResizeStartPos({ x: e.clientX, y: e.clientY });
+    setResizeStartSize({ width: size.width, height: size.height });
+    
+    if (position) {
+      setResizeStartPos({
+        x: e.clientX,
+        y: e.clientY
+      });
+    }
   };
 
   useEffect(() => {
-    if (isDragging) {
+    if (isDragging || isResizing) {
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
     }
@@ -80,7 +131,7 @@ export function SidebarImagePreview() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, dragOffset]);
+  }, [isDragging, isResizing, dragOffset, resizeDirection, resizeStartPos, resizeStartSize]);
 
   if (!isOpen || !imagePath) {
     return null;
@@ -106,10 +157,49 @@ export function SidebarImagePreview() {
       <div 
         className={cn(
           'pointer-events-auto fixed bg-background border border-border shadow-lg rounded-md overflow-hidden',
-          isDragging && 'cursor-grabbing'
+          isDragging && 'cursor-grabbing',
+          isResizing && 'select-none'
         )}
         style={previewStyle}
       >
+        {/* Resize handles - only show in floating mode */}
+        {mode === 'floating' && (
+          <>
+            <div 
+              className="absolute top-0 left-0 w-4 h-4 cursor-nw-resize z-10" 
+              onMouseDown={(e) => startResize(e, 'nw')}
+            />
+            <div 
+              className="absolute top-0 right-0 w-4 h-4 cursor-ne-resize z-10" 
+              onMouseDown={(e) => startResize(e, 'ne')}
+            />
+            <div 
+              className="absolute bottom-0 left-0 w-4 h-4 cursor-sw-resize z-10" 
+              onMouseDown={(e) => startResize(e, 'sw')}
+            />
+            <div 
+              className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize z-10" 
+              onMouseDown={(e) => startResize(e, 'se')}
+            />
+            <div 
+              className="absolute top-0 left-4 right-4 h-2 cursor-n-resize z-10" 
+              onMouseDown={(e) => startResize(e, 'n')}
+            />
+            <div 
+              className="absolute bottom-0 left-4 right-4 h-2 cursor-s-resize z-10" 
+              onMouseDown={(e) => startResize(e, 's')}
+            />
+            <div 
+              className="absolute left-0 top-4 bottom-4 w-2 cursor-w-resize z-10" 
+              onMouseDown={(e) => startResize(e, 'w')}
+            />
+            <div 
+              className="absolute right-0 top-4 bottom-4 w-2 cursor-e-resize z-10" 
+              onMouseDown={(e) => startResize(e, 'e')}
+            />
+          </>
+        )}
+
         <div className="flex flex-col h-full">
           {/* 标题栏 */}
           <div 
@@ -192,7 +282,7 @@ function ImageContent({ path }: { path: string }) {
       <div className="h-full flex justify-center items-center">
         <div className="flex flex-col items-center gap-2">
           <LoaderCircle className="animate-spin size-8" />
-          <div className="text-sm text-muted-foreground">加载中...</div>
+          <div className="text-sm text-muted-foreground">{t('Loading...')}</div>
         </div>
       </div>
     );

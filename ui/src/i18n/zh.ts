@@ -123,6 +123,7 @@ export const zh: Record<TranslationKeys, string> = {
   Cancel: '取消',
 
   Select: '选择',
+  'Select all': '全选',
   'Select the highest resolution': '选择分辨率最高的',
   'Select the lowest resolution': '选择分辨率最低的',
   'Select the biggest size': '选择最大的',
