@@ -558,7 +558,7 @@ checksum = "cc97b8f16f944bba54f0433f07e30be199b6dc2bd25937444bbad560bcea29bd"
 dependencies = [
  "alloc-no-stdlib",
  "alloc-stdlib",
- "brotli-decompressor",
+ "brotli-decompressor 4.0.1",
 ]
 
 [[package]]
@@ -566,6 +566,16 @@ name = "brotli-decompressor"
 version = "4.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9a45bd2e4095a8b518033b128020dd4a55aab1c0a381ba4404a472630f4bc362"
+dependencies = [
+ "alloc-no-stdlib",
+ "alloc-stdlib",
+]
+
+[[package]]
+name = "brotli-decompressor"
+version = "5.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "874bb8112abecc98cbd6d81ea4fa7e94fb9449648c93cc89aa40c81c24d7de03"
 dependencies = [
  "alloc-no-stdlib",
  "alloc-stdlib",
@@ -1021,8 +1031,10 @@ dependencies = [
  "dircpy",
  "home",
  "humansize",
+ "image 0.25.6",
  "image_hasher",
  "infer",
+ "jxl-oxide 0.12.2",
  "rayon",
  "serde",
  "serde_json",
@@ -1057,12 +1069,12 @@ dependencies = [
  "humansize",
  "i18n-embed",
  "i18n-embed-fl",
- "image 0.25.5",
+ "image 0.25.6",
  "image_hasher",
  "imagepipe",
  "infer",
  "itertools 0.14.0",
- "jxl-oxide",
+ "jxl-oxide 0.11.3",
  "lofty",
  "log",
  "mime_guess",
@@ -1365,15 +1377,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fea41bba32d969b513997752735605054bc0dfa92b4c56bf1189f2e174be7a10"
 
 [[package]]
-name = "document-features"
-version = "0.2.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95249b50c6c185bee49034bcb378a49dc2b5dff0be90ff6616d31d64febab05d"
-dependencies = [
- "litrs",
-]
-
-[[package]]
 name = "downcast-rs"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1601,20 +1604,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "fast_image_resize"
-version = "5.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b55264ccc579fc127eebf6c6c1841d0c160d79a44c8f6f97047b7bc4a9c0d1a5"
-dependencies = [
- "bytemuck",
- "cfg-if",
- "document-features",
- "image 0.25.5",
- "num-traits",
- "thiserror 1.0.69",
-]
-
-[[package]]
 name = "fastrand"
 version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1655,7 +1644,7 @@ version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "83aed84f904c85558919c813c200be820764a7c383ae01d6c337eb3ea364e278"
 dependencies = [
- "image 0.25.5",
+ "image 0.25.6",
  "serde",
  "serde_json",
  "thiserror 2.0.11",
@@ -1669,7 +1658,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "639b359a1e37776ab0c6d87e163003aa783da4e4efdab80d5efeb37f5d32efd8"
 dependencies = [
  "ffmpeg_cmdline_utils",
- "image 0.25.5",
+ "image 0.25.6",
  "serde",
  "thiserror 2.0.11",
  "url",
@@ -2735,9 +2724,9 @@ dependencies = [
 
 [[package]]
 name = "image"
-version = "0.25.5"
+version = "0.25.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cd6f44aed642f18953a158afeb30206f4d50da59fbc66ecb53c66488de73563b"
+checksum = "db35664ce6b9810857a38a906215e75a9c879f0696556a39f59c62829710251a"
 dependencies = [
  "bytemuck",
  "byteorder-lite",
@@ -2773,8 +2762,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7c191dc6138f559a0177b8413eaf2a37784d8e63c697e247aa3740930f1c9364"
 dependencies = [
  "base64 0.22.1",
- "fast_image_resize 5.1.2",
- "image 0.25.5",
+ "image 0.25.6",
  "rustdct",
  "serde",
  "transpose",
@@ -2809,7 +2797,7 @@ dependencies = [
  "ab_glyph",
  "approx",
  "getrandom 0.2.15",
- "image 0.25.5",
+ "image 0.25.6",
  "itertools 0.12.1",
  "nalgebra",
  "num",
@@ -3092,12 +3080,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "jxl-bitstream"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eda699770a7f4ea38f8eb21d91b545eb6448be28e540acc7ce84498bcead4903"
+dependencies = [
+ "tracing",
+]
+
+[[package]]
 name = "jxl-coding"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2e8cf24db1cec3d7e703df9f5ef3f3b49650607432792ca988b66dd17bb640b2"
 dependencies = [
- "jxl-bitstream",
+ "jxl-bitstream 0.6.0",
+ "tracing",
+]
+
+[[package]]
+name = "jxl-coding"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6748ba8af69b87c68f8dcdf992de959c207962689bc28ddb7906abf4a0b786c9"
+dependencies = [
+ "jxl-bitstream 1.0.0",
  "tracing",
 ]
 
@@ -3107,11 +3114,26 @@ version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09119032d7a4c6c761d5c32190d5327c443d991a2f244b09eb3818c18bb698f8"
 dependencies = [
- "jxl-bitstream",
- "jxl-coding",
- "jxl-grid",
- "jxl-oxide-common",
- "jxl-threadpool",
+ "jxl-bitstream 0.6.0",
+ "jxl-coding 0.6.0",
+ "jxl-grid 0.5.3",
+ "jxl-oxide-common 0.2.0",
+ "jxl-threadpool 0.1.2",
+ "tracing",
+]
+
+[[package]]
+name = "jxl-color"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f316b1358c1711755b3ee8e8cb5c4a1dad12e796233088a7a513440782de80b2"
+dependencies = [
+ "jxl-bitstream 1.0.0",
+ "jxl-coding 1.0.0",
+ "jxl-grid 0.6.0",
+ "jxl-image 0.13.0",
+ "jxl-oxide-common 1.0.0",
+ "jxl-threadpool 1.0.0",
  "tracing",
 ]
 
@@ -3121,14 +3143,31 @@ version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3d47cd3bc265b570134ef8c1a52b08cf5db7992a65d020b332f6670e35f225a6"
 dependencies = [
- "jxl-bitstream",
- "jxl-coding",
- "jxl-grid",
- "jxl-image",
- "jxl-modular",
- "jxl-oxide-common",
- "jxl-threadpool",
- "jxl-vardct",
+ "jxl-bitstream 0.6.0",
+ "jxl-coding 0.6.0",
+ "jxl-grid 0.5.3",
+ "jxl-image 0.12.0",
+ "jxl-modular 0.10.0",
+ "jxl-oxide-common 0.2.0",
+ "jxl-threadpool 0.1.2",
+ "jxl-vardct 0.10.0",
+ "tracing",
+]
+
+[[package]]
+name = "jxl-frame"
+version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f30587a9687223a602a408555db47803c907ea47700e1f28eb14cdb3bf1527a9"
+dependencies = [
+ "jxl-bitstream 1.0.0",
+ "jxl-coding 1.0.0",
+ "jxl-grid 0.6.0",
+ "jxl-image 0.13.0",
+ "jxl-modular 0.11.0",
+ "jxl-oxide-common 1.0.0",
+ "jxl-threadpool 1.0.0",
+ "jxl-vardct 0.11.0",
  "tracing",
 ]
 
@@ -3142,15 +3181,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "jxl-grid"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "335e4371396c5729ba80a42798746d198897d3b854ba4f3684efac5f4025d84f"
+dependencies = [
+ "tracing",
+]
+
+[[package]]
 name = "jxl-image"
 version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5199f6bce2f64494b91c510dfdeb8035bb405f6347837b6293e9eeb9d93f246b"
 dependencies = [
- "jxl-bitstream",
- "jxl-color",
- "jxl-grid",
- "jxl-oxide-common",
+ "jxl-bitstream 0.6.0",
+ "jxl-color 0.10.1",
+ "jxl-grid 0.5.3",
+ "jxl-oxide-common 0.2.0",
+ "tracing",
+]
+
+[[package]]
+name = "jxl-image"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c5f752d62577c702a94dbbce4045caf08cb58639e8a4d56464b40ecf33ffe565"
+dependencies = [
+ "jxl-bitstream 1.0.0",
+ "jxl-grid 0.6.0",
+ "jxl-oxide-common 1.0.0",
  "tracing",
 ]
 
@@ -3160,15 +3220,33 @@ version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56cbdbec115aa2f0b22ca3719dec2902b4c75da904cda7a2cdfc21df21b44f24"
 dependencies = [
- "brotli-decompressor",
- "jxl-bitstream",
- "jxl-frame",
- "jxl-grid",
- "jxl-image",
- "jxl-modular",
- "jxl-oxide-common",
- "jxl-threadpool",
- "jxl-vardct",
+ "brotli-decompressor 4.0.1",
+ "jxl-bitstream 0.6.0",
+ "jxl-frame 0.12.0",
+ "jxl-grid 0.5.3",
+ "jxl-image 0.12.0",
+ "jxl-modular 0.10.0",
+ "jxl-oxide-common 0.2.0",
+ "jxl-threadpool 0.1.2",
+ "jxl-vardct 0.10.0",
+ "tracing",
+]
+
+[[package]]
+name = "jxl-jbr"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d91ba39b083a82788a17717edbcc4b08160b51fdffc9fec640deba9e8268da1a"
+dependencies = [
+ "brotli-decompressor 5.0.0",
+ "jxl-bitstream 1.0.0",
+ "jxl-frame 0.13.1",
+ "jxl-grid 0.6.0",
+ "jxl-image 0.13.0",
+ "jxl-modular 0.11.0",
+ "jxl-oxide-common 1.0.0",
+ "jxl-threadpool 1.0.0",
+ "jxl-vardct 0.11.0",
  "tracing",
 ]
 
@@ -3178,11 +3256,25 @@ version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9d4852fe37dee35f67b2e3912c3eecb7d053379aac0801b5cc489d58ea253af1"
 dependencies = [
- "jxl-bitstream",
- "jxl-coding",
- "jxl-grid",
- "jxl-oxide-common",
- "jxl-threadpool",
+ "jxl-bitstream 0.6.0",
+ "jxl-coding 0.6.0",
+ "jxl-grid 0.5.3",
+ "jxl-oxide-common 0.2.0",
+ "jxl-threadpool 0.1.2",
+ "tracing",
+]
+
+[[package]]
+name = "jxl-modular"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3f526ad8af8daea0d1cccce945f18c241f95b391d34443be018de2efbf28b44e"
+dependencies = [
+ "jxl-bitstream 1.0.0",
+ "jxl-coding 1.0.0",
+ "jxl-grid 0.6.0",
+ "jxl-oxide-common 1.0.0",
+ "jxl-threadpool 1.0.0",
  "tracing",
 ]
 
@@ -3192,18 +3284,39 @@ version = "0.11.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d89502ca4416ff03c95a3c8d14725a6a76a60f6b8add4bd32132a935d34bca34"
 dependencies = [
- "brotli-decompressor",
+ "brotli-decompressor 4.0.1",
  "bytemuck",
- "image 0.25.5",
- "jxl-bitstream",
- "jxl-color",
- "jxl-frame",
- "jxl-grid",
- "jxl-image",
- "jxl-jbr",
- "jxl-oxide-common",
- "jxl-render",
- "jxl-threadpool",
+ "image 0.25.6",
+ "jxl-bitstream 0.6.0",
+ "jxl-color 0.10.1",
+ "jxl-frame 0.12.0",
+ "jxl-grid 0.5.3",
+ "jxl-image 0.12.0",
+ "jxl-jbr 0.1.1",
+ "jxl-oxide-common 0.2.0",
+ "jxl-render 0.11.2",
+ "jxl-threadpool 0.1.2",
+ "tracing",
+]
+
+[[package]]
+name = "jxl-oxide"
+version = "0.12.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6e45ccb25d698cdcad3a5573a7181835842711fd951c98fe38986e3cb721e775"
+dependencies = [
+ "brotli-decompressor 5.0.0",
+ "bytemuck",
+ "image 0.25.6",
+ "jxl-bitstream 1.0.0",
+ "jxl-color 0.11.0",
+ "jxl-frame 0.13.1",
+ "jxl-grid 0.6.0",
+ "jxl-image 0.13.0",
+ "jxl-jbr 0.2.0",
+ "jxl-oxide-common 1.0.0",
+ "jxl-render 0.12.1",
+ "jxl-threadpool 1.0.0",
  "tracing",
 ]
 
@@ -3213,7 +3326,16 @@ version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ccfd9c5f3807b9dbd0797788a577171bd78f5169a36f4bc3c7bbceaf3991507"
 dependencies = [
- "jxl-bitstream",
+ "jxl-bitstream 0.6.0",
+]
+
+[[package]]
+name = "jxl-oxide-common"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b62394c5021b3a9e7e0dbb2d639d555d019090c9946c39f6d3b09d390db4157b"
+dependencies = [
+ "jxl-bitstream 1.0.0",
 ]
 
 [[package]]
@@ -3223,16 +3345,36 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0e657d102d2d6cf95042bcaa7d79361d8d055f83c12d594786968f370a9b3819"
 dependencies = [
  "bytemuck",
- "jxl-bitstream",
- "jxl-coding",
- "jxl-color",
- "jxl-frame",
- "jxl-grid",
- "jxl-image",
- "jxl-modular",
- "jxl-oxide-common",
- "jxl-threadpool",
- "jxl-vardct",
+ "jxl-bitstream 0.6.0",
+ "jxl-coding 0.6.0",
+ "jxl-color 0.10.1",
+ "jxl-frame 0.12.0",
+ "jxl-grid 0.5.3",
+ "jxl-image 0.12.0",
+ "jxl-modular 0.10.0",
+ "jxl-oxide-common 0.2.0",
+ "jxl-threadpool 0.1.2",
+ "jxl-vardct 0.10.0",
+ "tracing",
+]
+
+[[package]]
+name = "jxl-render"
+version = "0.12.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b3f3fece78b2104450bd6d1bdbc48e3b6ef7442ef276be2a08e35b229eeff1a4"
+dependencies = [
+ "bytemuck",
+ "jxl-bitstream 1.0.0",
+ "jxl-coding 1.0.0",
+ "jxl-color 0.11.0",
+ "jxl-frame 0.13.1",
+ "jxl-grid 0.6.0",
+ "jxl-image 0.13.0",
+ "jxl-modular 0.11.0",
+ "jxl-oxide-common 1.0.0",
+ "jxl-threadpool 1.0.0",
+ "jxl-vardct 0.11.0",
  "tracing",
 ]
 
@@ -3248,17 +3390,43 @@ dependencies = [
 ]
 
 [[package]]
+name = "jxl-threadpool"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "25f15eb830aa77a7f21148d72e153562a26bfe570139bd4922eab1908dd499d3"
+dependencies = [
+ "rayon",
+ "rayon-core",
+ "tracing",
+]
+
+[[package]]
 name = "jxl-vardct"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f7a928cc48a6296257686b5ec81005b08cef0187922e12fafa9ab8066af2daab"
 dependencies = [
- "jxl-bitstream",
- "jxl-coding",
- "jxl-grid",
- "jxl-modular",
- "jxl-oxide-common",
- "jxl-threadpool",
+ "jxl-bitstream 0.6.0",
+ "jxl-coding 0.6.0",
+ "jxl-grid 0.5.3",
+ "jxl-modular 0.10.0",
+ "jxl-oxide-common 0.2.0",
+ "jxl-threadpool 0.1.2",
+ "tracing",
+]
+
+[[package]]
+name = "jxl-vardct"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3d48ad406543de5d6cd50aaaa8b87534f82991d684d848b3190228e8fa690fff"
+dependencies = [
+ "jxl-bitstream 1.0.0",
+ "jxl-coding 1.0.0",
+ "jxl-grid 0.6.0",
+ "jxl-modular 0.11.0",
+ "jxl-oxide-common 1.0.0",
+ "jxl-threadpool 1.0.0",
  "tracing",
 ]
 
@@ -3411,12 +3579,6 @@ name = "litemap"
 version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ee93343901ab17bd981295f2cf0026d4ad018c7c31ba84549a4ddbb47a45104"
-
-[[package]]
-name = "litrs"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4ce301924b7887e9d637144fdade93f9dfff9b60981d4ac161db09720d39aa5"
 
 [[package]]
 name = "locale_config"
@@ -7094,8 +7256,8 @@ version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a1225aaa16e724cc48b867d7d495bb6307e71c93299dee5ae897dffef2754513"
 dependencies = [
- "fast_image_resize 3.0.4",
- "image 0.25.5",
+ "fast_image_resize",
+ "image 0.25.6",
  "imageproc",
  "itertools 0.13.0",
  "rand 0.8.5",
@@ -7111,7 +7273,7 @@ dependencies = [
  "bitvec",
  "enum-utils",
  "ffmpeg_gst_wrapper",
- "image 0.25.5",
+ "image 0.25.6",
  "itertools 0.13.0",
  "ndarray",
  "rand 0.8.5",

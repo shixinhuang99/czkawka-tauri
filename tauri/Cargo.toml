@@ -15,12 +15,14 @@ path = "src/main.rs"
 [dependencies]
 base64 = "0.22.1"
 crossbeam-channel = "0.5.14"
-czkawka_core = "9.0.0"
+czkawka_core = { version = "9.0.0", default-features = false }
 dircpy = { version = "0.3.19", default-features = false }
 home = "0.5.11"
 humansize = "2.1.3"
+image = { version = "0.25.6", features = ["png", "jpeg", "webp"] }
 image_hasher = "3.0.0"
 infer = "0.19.0"
+jxl-oxide = { version = "0.12.2", features = ["image"] }
 rayon = "1.10.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
