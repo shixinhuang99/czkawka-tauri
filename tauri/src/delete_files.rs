@@ -40,7 +40,7 @@ fn delete_files_impl(options: Options) -> DeleteFilesResult {
 			let path = Path::new(path_str);
 
 			if !path.exists() {
-				result.errors.push(format!("`{}` not found", path_str));
+				result.errors.push(format!("`{path_str}` not found"));
 				return result;
 			}
 
@@ -59,7 +59,7 @@ fn delete_files_impl(options: Options) -> DeleteFilesResult {
 				Ok(_) => result.success_paths.push(path_str.clone()),
 				Err(err) => result
 					.errors
-					.push(format!("`{}` Failed, reason: {}", path_str, err)),
+					.push(format!("`{path_str}` Failed, reason: {err}")),
 			}
 
 			result

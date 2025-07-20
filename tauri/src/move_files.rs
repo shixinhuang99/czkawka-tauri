@@ -48,8 +48,7 @@ fn move_files_impl(options: Options) -> MoveFilesResult {
 				Some(file_name) => file_name.to_string_lossy().to_string(),
 				None => {
 					result.errors.push(format!(
-						"Failed to get file name of `{}`",
-						source_str
+						"Failed to get file name of `{source_str}`"
 					));
 					return result;
 				}
@@ -71,7 +70,7 @@ fn move_files_impl(options: Options) -> MoveFilesResult {
 			if let Err(err) = fs::create_dir_all(&dest_path) {
 				result
 					.errors
-					.push(format!("`{}` Failed, reason: {}", source_str, err));
+					.push(format!("`{source_str}` Failed, reason: {err}"));
 				return result;
 			}
 
@@ -95,7 +94,7 @@ fn move_files_impl(options: Options) -> MoveFilesResult {
 				Ok(_) => result.success_paths.push(source_str.clone()),
 				Err(err) => result
 					.errors
-					.push(format!("`{}` Failed, reason: {}", source_str, err)),
+					.push(format!("`{source_str}` Failed, reason: {err}")),
 			};
 
 			result

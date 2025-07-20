@@ -2,6 +2,7 @@
 
 alias pr := prepare-release
 alias pt := push-tag
+alias dt := delete-tag
 
 default:
 	just --list --unsorted

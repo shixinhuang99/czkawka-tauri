@@ -64,14 +64,10 @@ pub fn save_result(app: AppHandle, options: Options) {
 
 	let message = if result.is_some_and(|v| v.is_ok()) {
 		format!(
-			"Successfully saved `{}` results to `{}`",
-			current_tool, destination
+			"Successfully saved `{current_tool}` results to `{destination}`"
 		)
 	} else {
-		format!(
-			"Failed to Save `{}` results to `{}`",
-			current_tool, destination
-		)
+		format!("Failed to Save `{current_tool}` results to `{destination}`")
 	};
 
 	app.emit("save-result-done", message).unwrap();
