@@ -9,8 +9,14 @@ env:
 
 jobs:
   bundle:
-    runs-on: macos-latest
-    name: bundle dry run
+    runs-on: ${{ matrix.os }}
+    name: bundle dry run (${{ matrix.os }})
+
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+          - os: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -22,7 +28,8 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
-      - name: download ffmpeg and ffprobe
+      - name: download ffmpeg and ffprobe (macOS)
+        if: matrix.os == 'macos-latest'
         run: |
           mkdir ./tauri/ffmpeg
           curl -L -o ffmpeg.zip "https://evermeet.cx/ffmpeg/getrelease/zip"
@@ -34,10 +41,21 @@ jobs:
           chmod +x ./tauri/ffmpeg/ffprobe
           ./tauri/ffmpeg/ffprobe -version
 
-      - name: macos bundles
+      - name: download ffmpeg and ffprobe (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install 7zip -y
+          mkdir ./tauri/ffmpeg
+          curl -L -o ffmpeg.7z "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z"
+          7z x ffmpeg.7z -o./tauri/ffmpeg
+          Move-Item ./tauri/ffmpeg/ffmpeg-*-full_build/bin/ffmpeg.exe ./tauri/ffmpeg/ffmpeg.exe
+          Move-Item ./tauri/ffmpeg/ffmpeg-*-full_build/bin/ffprobe.exe ./tauri/ffmpeg/ffprobe.exe
+          ./tauri/ffmpeg/ffmpeg.exe -version
+          ./tauri/ffmpeg/ffprobe.exe -version
+
+      - name: build
         run: |
           npm i pnpm -g
           pnpm i
           node --run build:ui
           pnpm tauri build -d
-          pnpm tauri build -d -c ./tauri/tauri.ffmpeg.conf.json -f ffmpeg

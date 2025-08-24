@@ -41,7 +41,6 @@ fn main() {
 
 	tauri::Builder::default()
 		.setup(move |app| {
-			#[cfg(feature = "ffmpeg")]
 			if let Ok(resource_dir) = app.path().resource_dir() {
 				utils::set_ffmpeg_path(resource_dir);
 			}

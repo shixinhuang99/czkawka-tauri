@@ -1,4 +1,7 @@
 # required cli tools: taplo-cli,cargo-edit
+# Installation by cargo
+# cargo install taplo-cli
+# cargo install cargo-edit -f --no-default-features --features "set-version"
 
 alias pr := prepare-release
 alias pt := push-tag
@@ -26,7 +29,7 @@ fmt:
 check:
 	cargo fmt --check
 	taplo fmt --check
-	cargo clippy --all-features -- -D warnings
+	cargo clippy --no-deps --all-features -- -D warnings
 	just typecheck
 
 typecheck:
@@ -56,4 +59,4 @@ bundle-test-app:
 
 bundle-test-ffmpeg-app:
 	node --run build:ui
-	pnpm tauri build -d --bundles app -c ./tauri/tauri.ffmpeg.conf.json -f ffmpeg 
+	pnpm tauri build -d --bundles app -c ./tauri/tauri.ffmpeg.conf.json -f ffmpeg

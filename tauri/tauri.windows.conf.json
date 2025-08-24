@@ -1,5 +1,4 @@
 {
-  "$schema": "https://schema.tauri.app/config/2",
   "app": {
     "windows": [
       {
@@ -15,5 +14,8 @@
     "security": {
       "csp": null
     }
+  },
+  "bundle": {
+    "resources": ["ffmpeg"]
   }
 }
