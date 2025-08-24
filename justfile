@@ -56,7 +56,3 @@ pnpm +args:
 bundle-test-app:
 	node --run build:ui
 	pnpm tauri build -d --bundles app
-
-bundle-test-ffmpeg-app:
-	node --run build:ui
-	pnpm tauri build -d --bundles app -c ./tauri/tauri.ffmpeg.conf.json -f ffmpeg
