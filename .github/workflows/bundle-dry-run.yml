@@ -44,13 +44,11 @@ jobs:
       - name: download ffmpeg and ffprobe (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          choco install 7zip -y
           mkdir ./tauri/ffmpeg
-          curl -L -o ffmpeg.7z "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z"
-          7z x ffmpeg.7z -o "./tauri/ffmpeg"
-          $ffmpegDir = Get-ChildItem ./tauri/ffmpeg -Directory -Name | Select-Object -First 1
-          Move-Item "./tauri/ffmpeg/$ffmpegDir/bin/ffmpeg.exe" ./tauri/ffmpeg/ffmpeg.exe
-          Move-Item "./tauri/ffmpeg/$ffmpegDir/bin/ffprobe.exe" ./tauri/ffmpeg/ffprobe.exe
+          curl -L -o ffmpeg.zip "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"
+          tar -xf ffmpeg.zip -C ./tauri/ffmpeg --strip-components=1
+          Move-Item ./tauri/ffmpeg/bin/ffmpeg.exe ./tauri/ffmpeg/ffmpeg.exe
+          Move-Item ./tauri/ffmpeg/bin/ffprobe.exe ./tauri/ffmpeg/ffprobe.exe
           ./tauri/ffmpeg/ffmpeg.exe -version
           ./tauri/ffmpeg/ffprobe.exe -version
 
