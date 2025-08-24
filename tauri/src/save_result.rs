@@ -67,7 +67,10 @@ pub fn save_result(app: AppHandle, options: Options) {
 			"Successfully saved `{current_tool}` results to `{destination}`"
 		)
 	} else {
-		format!("Failed to Save `{current_tool}` results to `{destination}`")
+		format!(
+			"Failed to Save `{}` results to `{}`",
+			current_tool, destination
+		)
 	};
 
 	app.emit("save-result-done", message).unwrap();

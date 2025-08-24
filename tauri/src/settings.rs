@@ -116,7 +116,7 @@ fn default_excluded_directories() -> Vec<String> {
 				"Library/Reminders",
 			];
 			for item in items {
-				dirs.push(format!("{home_dir}/{item}"));
+				dirs.push(format!("{}/{}", home_dir, item));
 			}
 		}
 	}

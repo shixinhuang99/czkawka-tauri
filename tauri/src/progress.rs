@@ -87,37 +87,41 @@ fn progress_default(item: &ProgressData) -> ProgressToSend {
 	);
 	let step_name = match item.sstage {
 		CurrentStage::SameMusicReadingTags => {
-			format!("Checked tags of {items_stats}")
+			format!("Checked tags of {}", items_stats)
 		}
 		CurrentStage::SameMusicCalculatingFingerprints => {
-			format!("Checked content of {items_stats} ({size_stats})")
+			format!("Checked content of {} ({})", items_stats, size_stats)
 		}
 		CurrentStage::SameMusicComparingTags => {
-			format!("Compared tags of {items_stats}")
+			format!("Compared tags of {}", items_stats)
 		}
 		CurrentStage::SameMusicComparingFingerprints => {
-			format!("Compared content of {items_stats}")
+			format!("Compared content of {}", items_stats)
 		}
 		CurrentStage::SimilarImagesCalculatingHashes => {
-			format!("Hashed of {items_stats} image ({size_stats})")
+			format!("Hashed of {} image ({})", items_stats, size_stats)
 		}
 		CurrentStage::SimilarImagesComparingHashes => {
-			format!("Compared {items_stats} image hash")
+			format!("Compared {} image hash", items_stats)
 		}
 		CurrentStage::SimilarVideosCalculatingHashes => {
-			format!("Hashed of {items_stats} video")
+			format!("Hashed of {} video", items_stats)
 		}
 		CurrentStage::BrokenFilesChecking => {
-			format!("Checked {items_stats} file ({size_stats})")
+			format!("Checked {} file ({})", items_stats, size_stats)
 		}
 		CurrentStage::BadExtensionsChecking => {
-			format!("Checked {items_stats} file")
+			format!("Checked {} file", items_stats)
 		}
 		CurrentStage::DuplicatePreHashing => format!(
-			"Analyzed partial hash of {items_stats} files ({size_stats})"
+			"Analyzed partial hash of {} files ({})",
+			items_stats, size_stats
 		),
 		CurrentStage::DuplicateFullHashing => {
-			format!("Analyzed full hash of {items_stats} files ({size_stats})")
+			format!(
+				"Analyzed full hash of {} files ({})",
+				items_stats, size_stats
+			)
 		}
 		_ => unreachable!(),
 	};

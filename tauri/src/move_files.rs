@@ -70,7 +70,7 @@ fn move_files_impl(options: Options) -> MoveFilesResult {
 			if let Err(err) = fs::create_dir_all(&dest_path) {
 				result
 					.errors
-					.push(format!("`{source_str}` Failed, reason: {err}"));
+					.push(format!("`{}` Failed, reason: {}", source_str, err));
 				return result;
 			}
 
@@ -94,7 +94,7 @@ fn move_files_impl(options: Options) -> MoveFilesResult {
 				Ok(_) => result.success_paths.push(source_str.clone()),
 				Err(err) => result
 					.errors
-					.push(format!("`{source_str}` Failed, reason: {err}")),
+					.push(format!("`{}` Failed, reason: {}", source_str, err)),
 			};
 
 			result
