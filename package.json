@@ -17,8 +17,7 @@
     "typecheck:other": "tsc -p ./tsconfig.json --noEmit",
     "run": "tsx ./scripts/run-tauri.ts",
     "build:ui": "pnpm run --filter ./ui build",
-    "build:tauri": "pnpm tauri build -t universal-apple-darwin",
-    "build:tauri:ffmpeg": "pnpm tauri build -t universal-apple-darwin -c ./tauri/tauri.ffmpeg.conf.json -f ffmpeg",
+    "build:tauri:mac": "pnpm tauri build -t universal-apple-darwin",
     "build:tauri:win": "pnpm tauri build"
   },
   "devDependencies": {

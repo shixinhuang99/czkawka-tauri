@@ -15,13 +15,19 @@ env:
 jobs:
   release:
     runs-on: ${{ matrix.os }}
-    name: release (${{ matrix.os }})
+    name: release (${{ matrix.os }} ${{ matrix.ffmpeg == 'true' && 'ffmpeg' || '' }})
 
     strategy:
       matrix:
         include:
           - os: macos-latest
+            ffmpeg: true
+          - os: macos-latest
+            ffmpeg: false
           - os: windows-latest
+            ffmpeg: true
+          - os: windows-latest
+            ffmpeg: false
 
     steps:
       - uses: actions/checkout@v4
@@ -35,8 +41,8 @@ jobs:
         with:
           targets: ${{ matrix.os == 'macos-latest' && 'x86_64-apple-darwin' || '' }}
 
-      - name: download ffmpeg and ffprobe
-        if: matrix.os == 'macos-latest'
+      - name: download ffmpeg and ffprobe (macOS)
+        if: matrix.os == 'macos-latest' && matrix.ffmpeg == 'true'
         run: |
           mkdir ./tauri/ffmpeg
           curl -L -o ffmpeg.zip "https://evermeet.cx/ffmpeg/getrelease/zip"
@@ -48,18 +54,54 @@ jobs:
           chmod +x ./tauri/ffmpeg/ffprobe
           ./tauri/ffmpeg/ffprobe -version
 
-      - name: macos bundles
-        if: matrix.os == 'macos-latest'
+      - name: download ffmpeg and ffprobe (Windows)
+        if: matrix.os == 'windows-latest' && matrix.ffmpeg == 'true'
+        run: |
+          mkdir ./tauri/ffmpeg
+          curl -L -o ffmpeg.zip "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"
+          tar -xf ffmpeg.zip -C ./tauri/ffmpeg --strip-components=1
+          Move-Item ./tauri/ffmpeg/bin/ffmpeg.exe ./tauri/ffmpeg/ffmpeg.exe
+          Move-Item ./tauri/ffmpeg/bin/ffprobe.exe ./tauri/ffmpeg/ffprobe.exe
+          ./tauri/ffmpeg/ffmpeg.exe -version
+          ./tauri/ffmpeg/ffprobe.exe -version
+
+      - name: macos bundle
+        if: matrix.os == 'macos-latest' && matrix.ffmpeg == 'false'
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
         run: |
           npm i pnpm -g
           pnpm i
           node --run build:ui
-          node --run build:tauri:ffmpeg
-          mkdir ./target/ffmpeg-dmg
-          mv ./target/universal-apple-darwin/release/bundle/dmg/CzkawkaTauri_${GITHUB_REF_NAME}_universal.dmg ./target/ffmpeg-dmg/CzkawkaTauri_${GITHUB_REF_NAME}_universal_ffmpeg.dmg
-          node --run build:tauri
+          node --run build:tauri:mac
+
+      - name: macos bundle with ffmpeg
+        if: matrix.os == 'macos-latest' && matrix.ffmpeg == 'true'
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: |
+          npm i pnpm -g
+          pnpm i
+          node --run build:ui
+          node --run build:tauri:mac
+          mv ./target/universal-apple-darwin/release/bundle/dmg/CzkawkaTauri_${GITHUB_REF_NAME}_universal.dmg ./target/universal-apple-darwin/release/bundle/dmg/CzkawkaTauri_${GITHUB_REF_NAME}_universal_ffmpeg.dmg
+
+      - name: windows bundle
+        if: matrix.os == 'windows-latest' && matrix.ffmpeg == 'false'
+        run: |
+          npm i pnpm -g
+          pnpm i
+          node --run build:ui
+          node --run build:tauri:win
+
+      - name: windows bundle with ffmpeg
+        if: matrix.os == 'windows-latest' && matrix.ffmpeg == 'true'
+        run: |
+          npm i pnpm -g
+          pnpm i
+          node --run build:ui
+          node --run build:tauri:win
+          Move-Item ./target/release/bundle/nsis/CzkawkaTauri_${GITHUB_REF_NAME}_x64_setup.exe ./target/release/bundle/nsis/CzkawkaTauri_${GITHUB_REF_NAME}_x64_setup_ffmpeg.exe
 
       - uses: softprops/action-gh-release@v2
         if: matrix.os == 'macos-latest'
@@ -67,15 +109,6 @@ jobs:
           draft: true
           files: |
             ./target/universal-apple-darwin/release/bundle/dmg/*.dmg
-            ./target/ffmpeg-dmg/*.dmg
-
-      - name: windows bundles
-        if: matrix.os == 'windows-latest'
-        run: |
-          npm i pnpm -g
-          pnpm i
-          node --run build:ui
-          node --run build:tauri:win
 
       - uses: softprops/action-gh-release@v2
         if: matrix.os == 'windows-latest'
