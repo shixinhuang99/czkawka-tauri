@@ -20,14 +20,14 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-latest
-            ffmpeg: true
-          - os: macos-latest
-            ffmpeg: false
+          # - os: macos-latest
+          #   ffmpeg: true
+          # - os: macos-latest
+          #   ffmpeg: false
           - os: windows-latest
             ffmpeg: true
-          - os: windows-latest
-            ffmpeg: false
+          # - os: windows-latest
+          #   ffmpeg: false
 
     steps:
       - uses: actions/checkout@v4
@@ -41,40 +41,40 @@ jobs:
         with:
           targets: ${{ matrix.os == 'macos-latest' && 'x86_64-apple-darwin' || '' }}
 
-      - name: Bundle (macOS)
-        if: matrix.os == 'macos-latest' && !matrix.ffmpeg
-        run: |
-          npm i pnpm -g
-          pnpm i
-          node --run build:ui
-          node --run build:tauri:mac
+      # - name: Bundle (macOS)
+      #   if: matrix.os == 'macos-latest' && !matrix.ffmpeg
+      #   run: |
+      #     npm i pnpm -g
+      #     pnpm i
+      #     node --run build:ui
+      #     node --run build:tauri:mac
 
-      - name: Bundle with ffmpeg (macOS)
-        if: matrix.os == 'macos-latest' && matrix.ffmpeg
-        env:
-          GITHUB_REF_NAME: ${{ github.ref_name }}
-        run: |
-          curl -L -o ffmpeg.zip "https://evermeet.cx/ffmpeg/getrelease/zip"
-          unzip ffmpeg.zip -d ./tauri/ffmpeg
-          chmod +x ./tauri/ffmpeg/ffmpeg
-          ./tauri/ffmpeg/ffmpeg -version
-          curl -L -o ffprobe.zip "https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip"
-          unzip ffprobe.zip -d ./tauri/ffmpeg
-          chmod +x ./tauri/ffmpeg/ffprobe
-          ./tauri/ffmpeg/ffprobe -version
-          npm i pnpm -g
-          pnpm i
-          node --run build:ui
-          node --run build:tauri:mac
-          mv ./target/universal-apple-darwin/release/bundle/dmg/CzkawkaTauri_${GITHUB_REF_NAME}_universal.dmg ./target/universal-apple-darwin/release/bundle/dmg/CzkawkaTauri_${GITHUB_REF_NAME}_universal_ffmpeg.dmg
+      # - name: Bundle with ffmpeg (macOS)
+      #   if: matrix.os == 'macos-latest' && matrix.ffmpeg
+      #   env:
+      #     GITHUB_REF_NAME: ${{ github.ref_name }}
+      #   run: |
+      #     curl -L -o ffmpeg.zip "https://evermeet.cx/ffmpeg/getrelease/zip"
+      #     unzip ffmpeg.zip -d ./tauri/ffmpeg
+      #     chmod +x ./tauri/ffmpeg/ffmpeg
+      #     ./tauri/ffmpeg/ffmpeg -version
+      #     curl -L -o ffprobe.zip "https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip"
+      #     unzip ffprobe.zip -d ./tauri/ffmpeg
+      #     chmod +x ./tauri/ffmpeg/ffprobe
+      #     ./tauri/ffmpeg/ffprobe -version
+      #     npm i pnpm -g
+      #     pnpm i
+      #     node --run build:ui
+      #     node --run build:tauri:mac
+      #     mv ./target/universal-apple-darwin/release/bundle/dmg/CzkawkaTauri_${GITHUB_REF_NAME}_universal.dmg ./target/universal-apple-darwin/release/bundle/dmg/CzkawkaTauri_${GITHUB_REF_NAME}_universal_ffmpeg.dmg
 
-      - name: Bundle (Windows)
-        if: matrix.os == 'windows-latest' && !matrix.ffmpeg
-        run: |
-          npm i pnpm -g
-          pnpm i
-          node --run build:ui
-          node --run build:tauri:win
+      # - name: Bundle (Windows)
+      #   if: matrix.os == 'windows-latest' && !matrix.ffmpeg
+      #   run: |
+      #     npm i pnpm -g
+      #     pnpm i
+      #     node --run build:ui
+      #     node --run build:tauri:win
 
       - name: Bundle with ffmpeg (Windows)
         if: matrix.os == 'windows-latest' && matrix.ffmpeg
@@ -91,18 +91,20 @@ jobs:
           pnpm i
           node --run build:ui
           node --run build:tauri:win
-          Move-Item ./target/release/bundle/nsis/CzkawkaTauri_$env:GITHUB_REF_NAME_x64_setup.exe ./target/release/bundle/nsis/CzkawkaTauri_$env:GITHUB_REF_NAME_x64_setup_ffmpeg.exe
+          echo "${GITHUB_REF_NAME}"
+          echo "$env:GITHUB_REF_NAME"
+          Move-Item ./target/release/bundle/nsis/CzkawkaTauri_${GITHUB_REF_NAME}_x64-setup.exe ./target/release/bundle/nsis/CzkawkaTauri_${GITHUB_REF_NAME}_x64-setup-ffmpeg.exe
 
-      - uses: softprops/action-gh-release@v2
-        if: matrix.os == 'macos-latest'
-        with:
-          draft: true
-          files: |
-            ./target/universal-apple-darwin/release/bundle/dmg/*.dmg
+      # - uses: softprops/action-gh-release@v2
+      #   if: matrix.os == 'macos-latest'
+      #   with:
+      #     draft: true
+      #     files: |
+      #       ./target/universal-apple-darwin/release/bundle/dmg/*.dmg
 
-      - uses: softprops/action-gh-release@v2
-        if: matrix.os == 'windows-latest'
-        with:
-          draft: true
-          files: |
-            ./target/release/bundle/nsis/*.exe
+      # - uses: softprops/action-gh-release@v2
+      #   if: matrix.os == 'windows-latest'
+      #   with:
+      #     draft: true
+      #     files: |
+      #       ./target/release/bundle/nsis/*.exe
