@@ -12,11 +12,19 @@ A Tauri frontend of [Czkawka](https://github.com/qarmin/czkawka) on macOS and Wi
 
 - Homebrew
 
-```bash
+```sh
+# Install
 brew tap shixinhuang99/brew
 brew install --cask czkawka-tauri
 # or
 brew install --cask czkawka-tauri-ffmpeg
+
+# Update
+brew update
+brew install --cask czkawka-tauri
+
+# Uninstall
+brew uninstall --cask czkawka-tauri
 ```
 
 ### Differences with Krokiet:
@@ -26,7 +34,7 @@ brew install --cask czkawka-tauri-ffmpeg
 - The default scan directory is the user directory.
 - When deleting files, they are moved to the recycle bin by default.
 
-### Note
+### Troubleshooting
 
 - On macOS, Some directories controlled by system permissions are excluded by default. If necessary, please click the Add button to open Finder, select the desired directory, and remove it from the excluded directories. This should allow the system to remember the accessible directories(known issue: macOS may forget about accessible directories after installing a new version, you need to reset the settings and repeat the above actions).
 - Versions with the ffmpeg suffix in the release are bundled with the ffmpeg binary.
