@@ -91,7 +91,7 @@ jobs:
           pnpm i
           node --run build:ui
           node --run build:tauri:win
-          Move-Item ./target/debug/bundle/nsis/CzkawkaTauri_$($env:VERSION)_x64-setup.exe ./target/debug/bundle/nsis/CzkawkaTauri_$($env:VERSION)_x64-setup-ffmpeg.exe
+          Move-Item ./target/release/bundle/nsis/CzkawkaTauri_$($env:VERSION)_x64-setup.exe ./target/release/bundle/nsis/CzkawkaTauri_$($env:VERSION)_x64-setup-ffmpeg.exe
 
       - uses: softprops/action-gh-release@v2
         if: matrix.os == 'macos-latest'
