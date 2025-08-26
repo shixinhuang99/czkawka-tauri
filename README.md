@@ -6,13 +6,18 @@ A Tauri frontend of [Czkawka](https://github.com/qarmin/czkawka) on macOS and Wi
 
 ![app dark mode](./screenshots/2.png)
 
-A Tauri frontend of Czkawka, based on `czkawka_core`, targeting only macOS and Windows platforms.
-
-Since Czkawka on my Mac started crashing upon opening after just a few uses. The UI/UX is actually referenced from Krokiet, and the functionality is also the same as Krokiet.
-
 ### Installation
 
-[Download latest release](https://github.com/shixinhuang99/czkawka-tauri/releases)
+- [Download latest release](https://github.com/shixinhuang99/czkawka-tauri/releases)
+
+- Homebrew
+
+```bash
+brew tap shixinhuang99/brew
+brew install --cask czkawka-tauri
+# or
+brew install --cask czkawka-tauri-ffmpeg
+```
 
 ### Differences with Krokiet:
 
