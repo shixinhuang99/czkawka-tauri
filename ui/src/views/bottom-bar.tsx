@@ -19,9 +19,9 @@ import {
 import { settingsAtom } from '~/atom/settings';
 import { Button, ScrollArea, Textarea, TooltipButton } from '~/components';
 import {
+  createColumns,
   DataTable,
   type RowSelection,
-  createColumns,
 } from '~/components/data-table';
 import {
   Dialog,

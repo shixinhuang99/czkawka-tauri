@@ -2,9 +2,14 @@ import { useAtom, useAtomValue } from 'jotai';
 import { Settings2 } from 'lucide-react';
 import { currentToolAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
-import { OperationButton } from '~/components';
-import { InputNumber } from '~/components';
-import { CheckboxWithLabel, Select, Slider, Switch } from '~/components';
+import {
+  CheckboxWithLabel,
+  InputNumber,
+  OperationButton,
+  Select,
+  Slider,
+  Switch,
+} from '~/components';
 import {
   Dialog,
   DialogContent,

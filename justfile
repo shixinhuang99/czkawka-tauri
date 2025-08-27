@@ -30,6 +30,7 @@ check:
 	cargo fmt --check
 	taplo fmt --check
 	cargo clippy --no-deps --all-features -- -D warnings
+	node --run check
 	just typecheck
 
 typecheck:

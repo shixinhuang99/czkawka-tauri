@@ -1,5 +1,5 @@
 import { LoaderCircle } from 'lucide-react';
-import { StrictMode, Suspense, lazy } from 'react';
+import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { initI18n } from '~/i18n';
 import { mockIPCForDev } from '~/ipc';

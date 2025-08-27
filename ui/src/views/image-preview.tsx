@@ -1,11 +1,11 @@
 import { ImageOff, LoaderCircle } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from '~/components/shadcn/hover-card';
-import { useT } from '~/hooks';
+import { useOnceEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
 
 interface ImgPreviewProps {
@@ -32,8 +32,7 @@ function Image(props: { path: string }) {
   const [loading, setLoading] = useState(true);
   const t = useT();
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
+  useOnceEffect(() => {
     const readImage = async () => {
       try {
         const { mimeType, base64 } = await ipc.readImage(path);
@@ -45,7 +44,7 @@ function Image(props: { path: string }) {
       }
     };
     readImage();
-  }, []);
+  });
 
   if (src) {
     return (

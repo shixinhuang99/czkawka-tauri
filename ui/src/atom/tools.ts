@@ -1,4 +1,4 @@
-import { type PrimitiveAtom, atom } from 'jotai';
+import { atom, type PrimitiveAtom } from 'jotai';
 import type { RowSelection } from '~/components/data-table';
 import { Tools } from '~/consts';
 import type { ToolsValues } from '~/types';

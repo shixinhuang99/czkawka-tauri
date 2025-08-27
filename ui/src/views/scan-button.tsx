@@ -8,7 +8,7 @@ import {
   toolInProgressRowSelectionAtom,
 } from '~/atom/tools';
 import { OperationButton } from '~/components';
-import { Tools, getDefaultProgress } from '~/consts';
+import { getDefaultProgress, Tools } from '~/consts';
 import { useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
 import type { AllScanResult, ProgressData, ScanCmd } from '~/types';

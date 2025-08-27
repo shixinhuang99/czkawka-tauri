@@ -2,10 +2,10 @@ import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import type { RowSelection } from '~/components/data-table';
 import {
-  Tools,
   getDefaultPlatformSettings,
   getDefaultPreset,
   getDefaultProgress,
+  Tools,
 } from '~/consts';
 import type {
   BadFileEntry,

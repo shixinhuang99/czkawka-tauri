@@ -21,7 +21,7 @@
     "build:tauri:win": "pnpm tauri build"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.2.2",
     "@tauri-apps/cli": "^2.1.0",
     "@types/node": "^22.10.2",
     "tree-kill": "^1.2.2",

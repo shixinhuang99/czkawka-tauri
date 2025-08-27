@@ -1,14 +1,15 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
   "files": {
     "ignoreUnknown": true,
-    "ignore": [
-      "node_modules",
-      "target",
-      "tauri/src",
-      "tauri/gen",
-      "dist",
-      "*.css"
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/target",
+      "!**/tauri/src",
+      "!**/tauri/gen",
+      "!**/dist",
+      "!**/*.css"
     ]
   },
   "formatter": {
@@ -29,18 +30,30 @@
             ]
           }
         },
-        "noUnusedImports": {
-          "level": "error"
-        },
-        "noUnusedVariables": {
-          "level": "error"
-        }
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error"
       },
       "suspicious": {
-        "noExplicitAny": {
-          "level": "off"
-        }
+        "noExplicitAny": "off"
+      },
+      "style": {
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error"
       }
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "recommended": true
     }
   },
   "javascript": {

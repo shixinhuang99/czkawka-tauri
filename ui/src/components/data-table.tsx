@@ -1,10 +1,10 @@
 import {
   type ColumnDef,
+  flexRender,
+  getCoreRowModel,
   type Row,
   type RowSelectionState,
   type Table as TTable,
-  flexRender,
-  getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -119,7 +119,9 @@ export function DataTable<T extends BaseEntry>(props: DataTableProps<T>) {
                           header.getContext(),
                         )}
                     {isResizeable && (
-                      <div
+                      <button
+                        type="button"
+                        tabIndex={0}
                         className="w-1 h-full border-border border-r hover:bg-primary cursor-col-resize absolute right-0"
                         onDoubleClick={() => header.column.resetSize()}
                         onMouseDown={header.getResizeHandler()}

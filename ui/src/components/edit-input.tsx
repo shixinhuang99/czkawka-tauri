@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useOnceEffect } from '~/hooks';
 import { cn } from '~/utils/cn';
 import { Input } from './shadcn/input';
 import {
@@ -38,15 +39,14 @@ export function EditInput(props: EditInputProps) {
   const [err, setErr] = useState('');
   const autoBlurBugInMacFlag = useRef(false);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
+  useOnceEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
       if (selectAllWhenMounted) {
         inputRef.current.select();
       }
     }
-  }, []);
+  });
 
   const handleOk = async () => {
     if (err) {

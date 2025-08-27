@@ -3,7 +3,7 @@ import {
   invalidSymlinksAtom,
   invalidSymlinksRowSelectionAtom,
 } from '~/atom/primitive';
-import { DataTable, createColumns } from '~/components/data-table';
+import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { SymlinksFileEntry } from '~/types';
 

@@ -4,9 +4,9 @@ import {
   emptyFoldersRowSelectionAtom,
 } from '~/atom/primitive';
 import {
-  DataTable,
   createActionsColumn,
   createColumns,
+  DataTable,
 } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { FolderEntry } from '~/types';

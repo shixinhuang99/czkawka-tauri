@@ -65,7 +65,7 @@ function fmtFileSize(v: number): string {
 
 function pathBaseName(path: string): string {
   const normalizedPath = path.replace(/\\/g, '/');
-  const match = normalizedPath.match(/([^\/]+)\/?$/);
+  const match = normalizedPath.match(/([^/]+)\/?$/);
   return match ? match[1] : '';
 }
 
