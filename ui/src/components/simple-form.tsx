@@ -113,7 +113,7 @@ export function FormItem(
 
   return (
     <div className="flex items-center gap-2 min-h-9">
-      <Label className="flex-shrink-0" htmlFor={name}>
+      <Label className="shrink-0" htmlFor={name}>
         {label}:
       </Label>
       <Slot id={name} {...slotProps}>
