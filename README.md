@@ -33,10 +33,10 @@ brew uninstall --cask czkawka-tauri-ffmpeg
 
 ### Differences from Krokiet
 
-- Uses full file paths
-- Uses decimal notation for file sizes
-- Default scan directory is the user directory
-- Files are moved to the recycle bin by default when deleted
+- Uses full file paths.
+- Uses decimal notation for file sizes.
+- Default scan directory is the user directory.
+- Files are moved to the recycle bin by default when deleted.
 
 ### Troubleshooting
 

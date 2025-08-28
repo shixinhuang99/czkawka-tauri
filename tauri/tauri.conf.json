@@ -18,7 +18,7 @@
       "../assets/icon.png"
     ],
     "category": "DeveloperTool",
-    "shortDescription": "A Tauri frontend of Czkawka on macOS and Windows",
+    "shortDescription": "A Tauri-based frontend for Czkawka on macOS and Windows",
     "useLocalToolsDir": true,
     "windows": {
       "allowDowngrades": true,

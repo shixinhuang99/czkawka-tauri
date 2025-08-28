@@ -9,7 +9,7 @@
     "url": "git+https://github.com/shixinhuang99/czkawka-tauri.git"
   },
   "homepage": "https://github.com/shixinhuang99/czkawka-tauri",
-  "description": "A Tauri frontend of Czkawka on macOS and Windows",
+  "description": "A Tauri-based frontend for Czkawka on macOS and Windows",
   "scripts": {
     "fmt": "biome check --linter-enabled=false --write",
     "check": "biome check",
