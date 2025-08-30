@@ -3,7 +3,7 @@ import path from 'node:path';
 import readline from 'node:readline';
 import kill from 'tree-kill';
 
-type CmdName = 'tailwindcss' | 'ui' | 'tauri';
+type CmdName = 'ui' | 'tauri';
 
 interface Cmd {
   name: CmdName;
@@ -17,12 +17,6 @@ interface Cmd {
 const cwd = process.cwd();
 
 const allCmd: Cmd[] = [
-  {
-    name: 'tailwindcss',
-    runner: 'node',
-    args: ['--run', 'tailwindcss'],
-    cwd: path.join(cwd, 'ui'),
-  },
   {
     name: 'ui',
     runner: 'node',

@@ -7,14 +7,7 @@ export default defineConfig(async () => {
   const { default: pkg } = await import('./package.json');
 
   return {
-    plugins: [
-      tailwindcss(),
-      react({
-        babel: {
-          plugins: [['babel-plugin-react-compiler', { target: '18' }]],
-        },
-      }),
-    ],
+    plugins: [react(), tailwindcss()],
     clearScreen: false,
     server: {
       port: 4000,

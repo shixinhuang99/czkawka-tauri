@@ -6,3 +6,4 @@ dist
 tsconfig.tsbuildinfo
 /tauri/ffmpeg/**
 !/tauri/ffmpeg/.gitkeep
+/tmp

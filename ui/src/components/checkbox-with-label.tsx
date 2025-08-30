@@ -1,26 +1,16 @@
-import type { CheckedState } from '@radix-ui/react-checkbox';
+import type { Checkbox as CheckboxPrimitive } from 'radix-ui';
 import { Checkbox } from './shadcn/checkbox';
 import { Label } from './shadcn/label';
 
-interface CheckboxWithLabelPorps {
-  id?: string;
-  name?: string;
-  checked?: boolean;
-  onCheckedChange?: (v: CheckedState) => void;
+interface CheckboxWithLabelPorps
+  extends React.ComponentProps<typeof CheckboxPrimitive.Root> {
   label: string;
 }
 
-export function CheckboxWithLabel(props: CheckboxWithLabelPorps) {
-  const { id, name, checked, onCheckedChange, label } = props;
-
+export function CheckboxWithLabel({ label, ...props }: CheckboxWithLabelPorps) {
   return (
     <div className="inline-flex items-center gap-2">
-      <Checkbox
-        id={id}
-        name={name}
-        checked={checked}
-        onCheckedChange={onCheckedChange}
-      />
+      <Checkbox {...props} />
       <Label>{label}</Label>
     </div>
   );

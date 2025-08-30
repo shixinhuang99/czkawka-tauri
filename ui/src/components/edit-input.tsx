@@ -9,11 +9,7 @@ import {
   TooltipTrigger,
 } from './shadcn/tooltip';
 
-interface EditInputProps
-  extends Pick<
-    React.ComponentProps<'input'>,
-    'className' | 'placeholder' | 'name' | 'maxLength'
-  > {
+interface EditInputProps extends React.ComponentProps<'input'> {
   initValue?: string;
   onOk: (v: string) => void;
   onValidate: (v: string) => string | undefined;
@@ -22,18 +18,16 @@ interface EditInputProps
   preventAutoBlur?: boolean;
 }
 
-export function EditInput(props: EditInputProps) {
-  const {
-    className,
-    initValue,
-    onOk,
-    onValidate,
-    onCancel,
-    selectAllWhenMounted,
-    preventAutoBlur,
-    ...restProps
-  } = props;
-
+export function EditInput({
+  className,
+  initValue,
+  onOk,
+  onValidate,
+  onCancel,
+  selectAllWhenMounted,
+  preventAutoBlur,
+  ...props
+}: EditInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState(initValue || '');
   const [err, setErr] = useState('');
@@ -102,7 +96,7 @@ export function EditInput(props: EditInputProps) {
           onChange={handleChange}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          {...restProps}
+          {...props}
         />
       </TooltipTrigger>
       <TooltipContent className="bg-red-500">

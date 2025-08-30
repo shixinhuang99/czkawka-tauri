@@ -8,16 +8,13 @@
       "!**/target",
       "!**/tauri/src",
       "!**/tauri/gen",
-      "!**/dist",
-      "!**/*.css"
+      "!**/dist"
     ]
   },
   "formatter": {
-    "enabled": true,
     "indentStyle": "space"
   },
   "linter": {
-    "enabled": true,
     "rules": {
       "recommended": true,
       "correctness": {
@@ -31,10 +28,12 @@
           }
         },
         "noUnusedImports": "error",
-        "noUnusedVariables": "error"
+        "noUnusedVariables": "error",
+        "noUnknownProperty": "off"
       },
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noUnknownAtRules": "off"
       },
       "style": {
         "noParameterAssign": "error",
@@ -51,28 +50,13 @@
     }
   },
   "assist": {
-    "enabled": true,
     "actions": {
       "recommended": true
     }
   },
   "javascript": {
     "formatter": {
-      "enabled": true,
       "quoteStyle": "single"
-    }
-  },
-  "json": {
-    "formatter": {
-      "enabled": true
-    }
-  },
-  "css": {
-    "formatter": {
-      "enabled": false
-    },
-    "linter": {
-      "enabled": false
     }
   }
 }

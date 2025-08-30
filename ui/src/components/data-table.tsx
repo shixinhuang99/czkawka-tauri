@@ -39,8 +39,6 @@ interface DataTableProps<T> {
 export type RowSelection = RowSelectionState;
 
 export function DataTable<T extends BaseEntry>(props: DataTableProps<T>) {
-  'use no memo';
-
   const {
     data,
     columns,
@@ -228,8 +226,6 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
 }
 
 export function TableRowSelectionHeader<T>(props: { table: TTable<T> }) {
-  'use no memo';
-
   const { table } = props;
 
   return (
@@ -245,8 +241,6 @@ export function TableRowSelectionHeader<T>(props: { table: TTable<T> }) {
 }
 
 export function TableRowSelectionCell<T>(props: { row: Row<T> }) {
-  'use no memo';
-
   const { row } = props;
 
   return (
