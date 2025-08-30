@@ -2,12 +2,7 @@ import { useRef, useState } from 'react';
 import { useOnceEffect } from '~/hooks';
 import { cn } from '~/utils/cn';
 import { Input } from './shadcn/input';
-import {
-  Tooltip,
-  TooltipArrow,
-  TooltipContent,
-  TooltipTrigger,
-} from './shadcn/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from './shadcn/tooltip';
 
 interface EditInputProps extends React.ComponentProps<'input'> {
   initValue?: string;
@@ -99,10 +94,7 @@ export function EditInput({
           {...props}
         />
       </TooltipTrigger>
-      <TooltipContent className="bg-red-500">
-        <TooltipArrow className="fill-red-500" />
-        {err}
-      </TooltipContent>
+      <TooltipContent className="bg-red-500">{err}</TooltipContent>
     </Tooltip>
   );
 }

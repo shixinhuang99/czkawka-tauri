@@ -41,6 +41,11 @@ fn main() {
 
 	tauri::Builder::default()
 		.setup(move |app| {
+			#[cfg(debug_assertions)]
+			if let Some(window) = app.get_webview_window("main") {
+				window.open_devtools();
+			};
+
 			if let Ok(resource_dir) = app.path().resource_dir() {
 				utils::set_ffmpeg_path(resource_dir);
 			}

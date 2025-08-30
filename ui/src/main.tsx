@@ -1,6 +1,8 @@
 import { LoaderCircle } from 'lucide-react';
 import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
+import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
+import { useT } from '~/hooks';
 import { initI18n } from '~/i18n';
 import { mockIPCForDev } from '~/ipc';
 
@@ -8,6 +10,21 @@ function Loading() {
   return (
     <div className="h-screen w-screen flex items-center justify-center">
       <LoaderCircle className="animate-spin size-8" />
+    </div>
+  );
+}
+
+function DisplayError({ error }: FallbackProps) {
+  const t = useT();
+
+  return (
+    <div className="h-screen w-screen flex items-center justify-center">
+      <div>
+        <p className="text-lg font-bold text-red-500">
+          {t('somethingWentWrong')}
+        </p>
+        <p>{error.message}</p>
+      </div>
     </div>
   );
 }
@@ -26,9 +43,11 @@ function main() {
 
   createRoot(root).render(
     <StrictMode>
-      <Suspense fallback={<Loading />}>
-        <App />
-      </Suspense>
+      <ErrorBoundary FallbackComponent={DisplayError}>
+        <Suspense fallback={<Loading />}>
+          <App />
+        </Suspense>
+      </ErrorBoundary>
     </StrictMode>,
   );
 }

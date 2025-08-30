@@ -9,16 +9,14 @@ interface InputNumberProps
   maxValue?: number;
 }
 
-export function InputNumber(props: InputNumberProps) {
-  const {
-    minValue,
-    maxValue = 2 ** 31 - 1,
-    className,
-    value,
-    onChange = () => {},
-    ...restProps
-  } = props;
-
+export function InputNumber({
+  minValue,
+  maxValue = 2 ** 31 - 1,
+  className,
+  value,
+  onChange = () => {},
+  ...props
+}: InputNumberProps) {
   const [draftValue, setDraftValue] = useState(value?.toString() ?? '');
 
   useEffect(() => {
@@ -46,7 +44,7 @@ export function InputNumber(props: InputNumberProps) {
       value={draftValue}
       onChange={(e) => setDraftValue(e.target.value)}
       onBlur={handleBlur}
-      {...restProps}
+      {...props}
     />
   );
 }

@@ -49,7 +49,7 @@ export function SettingsButton() {
         }
         dialogOpen.set(open);
       }}
-      checkOpenedSelect={false}
+      // checkOpenedSelect={false}
     >
       <DialogTrigger asChild>
         <TooltipButton tooltip={t('Settings')}>
