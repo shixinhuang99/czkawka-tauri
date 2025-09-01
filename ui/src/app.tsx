@@ -8,7 +8,7 @@ import { ToolTabs } from '~/views/tool-tabs';
 export default function App() {
   return (
     <div className="h-screen w-screen flex flex-col">
-      <TooltipProvider delayDuration={100} skipDelayDuration={90}>
+      <TooltipProvider delayDuration={400}>
         <div className="flex-1 flex h-px">
           <ToolTabs />
           <div className="flex flex-col flex-1 w-px">
