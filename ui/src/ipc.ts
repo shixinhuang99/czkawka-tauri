@@ -1,5 +1,4 @@
-import { invoke, isTauri } from '@tauri-apps/api/core';
-import { mockIPC } from '@tauri-apps/api/mocks';
+import { invoke } from '@tauri-apps/api/core';
 import type { ImageInfo, PlatformSettings, ScanCmd, Settings } from '~/types';
 
 interface MoveFilesOptions {
@@ -69,30 +68,3 @@ export const ipc = {
     return invoke('rename_ext', { options });
   },
 };
-
-export function mockIPCForDev() {
-  if (!isTauri()) {
-    mockIPC((cmd) => {
-      if (cmd === 'get_platform_settings') {
-        const data: PlatformSettings = {
-          includedDirectories: ['foo'],
-          excludedDirectories: [
-            'bar',
-            'baz',
-            'fjiefj',
-            'jfiefjiej',
-            'sjfie',
-            'fjeifj',
-          ],
-          excludedItems: 'foo,bar,baz',
-          availableThreadNumber: 8,
-          cacheDirPath: '',
-        };
-        return Promise.resolve(data);
-      }
-      if (cmd === 'setup_number_of_threads') {
-        return Promise.resolve(8);
-      }
-    });
-  }
-}

@@ -4,7 +4,6 @@ import { createRoot } from 'react-dom/client';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { useT } from '~/hooks';
 import { initI18n } from '~/i18n';
-import { mockIPCForDev } from '~/ipc';
 
 function Loading() {
   return (
@@ -14,7 +13,7 @@ function Loading() {
   );
 }
 
-function DisplayError({ error }: FallbackProps) {
+function ErrorFallback({ error }: FallbackProps) {
   const t = useT();
 
   return (
@@ -38,12 +37,11 @@ function main() {
     throw new Error('no root element');
   }
 
-  mockIPCForDev();
   initI18n();
 
   createRoot(root).render(
     <StrictMode>
-      <ErrorBoundary FallbackComponent={DisplayError}>
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
         <Suspense fallback={<Loading />}>
           <App />
         </Suspense>

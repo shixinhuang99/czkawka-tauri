@@ -1,0 +1,3 @@
+- This project is a desktop client application based on Tauri. For the framework and dependencies used by the front-end of the project, please refer to the package.json in the root directory and the package.json in the ui directory.
+- This app only runs on macOS and Windows. The minimum macOS version required is: macOS 12.6.3, and the minimum Windows version required is: Windows 10.
+- This project uses the stable version of Rust with Edition 2024, and the Node.js version used is: 22.x
