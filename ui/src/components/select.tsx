@@ -1,3 +1,4 @@
+import type { SelectProps as SelectPrimitiveProps } from '@radix-ui/react-select';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { forwardRef } from 'react';
 import { Button } from './shadcn/button';
@@ -9,35 +10,21 @@ import {
   SelectValue,
 } from './shadcn/select';
 
-interface SelectProps {
-  name?: string;
-  value?: string;
-  onChange?: (v: string) => void;
+interface SelectProps extends SelectPrimitiveProps {
   options: { label: string; value: string }[];
-  onPreventDialogCloseChange?: (v: boolean) => void;
   placeholder?: string;
   trigger?: React.ReactNode;
 }
 
-export function Select(props: SelectProps) {
-  const {
-    name,
-    value,
-    onChange,
-    options,
-    onPreventDialogCloseChange,
-    placeholder,
-    trigger,
-  } = props;
-
+export function Select({
+  options,
+  placeholder,
+  trigger,
+  ...props
+}: SelectProps) {
   return (
-    <RawSelect
-      name={name}
-      value={value}
-      onValueChange={onChange}
-      onOpenChange={onPreventDialogCloseChange}
-    >
-      {trigger || (
+    <RawSelect {...props}>
+      {trigger ?? (
         <SelectTrigger className="flex-1 dark:bg-gray-900">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>

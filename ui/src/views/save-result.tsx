@@ -4,7 +4,7 @@ import { FileJson } from 'lucide-react';
 import { currentToolAtom, logsAtom } from '~/atom/primitive';
 import { currentToolDataAtom } from '~/atom/tools';
 import { OperationButton } from '~/components';
-import { OneAlertDialog } from '~/components/one-alert-dialog';
+import { AlertDialog } from '~/components/alert-dialog';
 import { useBoolean, useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
 
@@ -57,7 +57,7 @@ export function SaveResult(props: SaveResultProps) {
         <FileJson />
         {t('Save')}
       </OperationButton>
-      <OneAlertDialog
+      <AlertDialog
         open={open.value}
         onOpenChange={handleOpenChange}
         title={t('Saving results')}

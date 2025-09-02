@@ -5,7 +5,7 @@ import { currentToolAtom, logsAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
 import { OperationButton } from '~/components';
-import { OneAlertDialog } from '~/components/one-alert-dialog';
+import { AlertDialog } from '~/components/alert-dialog';
 import { Tools } from '~/consts';
 import { useBoolean, useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
@@ -76,7 +76,7 @@ export function DeleteFiles(props: DeleteFilesProps) {
         <Trash2 />
         {t('Delete')}
       </OperationButton>
-      <OneAlertDialog
+      <AlertDialog
         open={open.value}
         onOpenChange={handleOpenChange}
         title={t('Delete items')}

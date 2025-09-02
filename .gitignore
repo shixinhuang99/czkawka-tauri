@@ -7,3 +7,4 @@ tsconfig.tsbuildinfo
 /tauri/ffmpeg/**
 !/tauri/ffmpeg/.gitkeep
 /tmp
+/ui/output.css

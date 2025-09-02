@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Select, TooltipButton } from '~/components';
 import { GitHub } from '~/components/icons';
-import { SelectIconTrigger } from '~/components/one-select';
+import { SelectIconTrigger } from '~/components/select';
 import { useT } from '~/hooks';
 import { storage } from '~/utils/storage';
 import { SettingsButton } from './settings';

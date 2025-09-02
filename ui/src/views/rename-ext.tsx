@@ -4,7 +4,7 @@ import { Trans } from 'react-i18next';
 import { logsAtom } from '~/atom/primitive';
 import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
 import { OperationButton } from '~/components';
-import { OneAlertDialog } from '~/components/one-alert-dialog';
+import { AlertDialog } from '~/components/alert-dialog';
 import { useBoolean, useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
 import { getRowSelectionKeys } from '~/utils/common';
@@ -72,7 +72,7 @@ export function RenameExt(props: RenameExtProps) {
         <TextCursorInput />
         {t('Rename')}
       </OperationButton>
-      <OneAlertDialog
+      <AlertDialog
         open={open.value}
         onOpenChange={handleOpenChange}
         title={t('Renaming files')}

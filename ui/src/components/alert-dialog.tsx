@@ -1,17 +1,17 @@
-import { LoaderCircle } from 'lucide-react';
+import { LoaderCircleIcon } from 'lucide-react';
 import { useT } from '~/hooks';
 import {
-  AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialog as AlertDialogPrimitive,
   AlertDialogTitle,
 } from './shadcn/alert-dialog';
 import { Button } from './shadcn/button';
 
-interface OneAlertDialogProps {
+interface AlertDialogProps {
   title: string;
   description: React.ReactNode;
   open: boolean;
@@ -20,16 +20,19 @@ interface OneAlertDialogProps {
   okLoading: boolean;
 }
 
-export function OneAlertDialog(
-  props: React.PropsWithChildren<OneAlertDialogProps>,
-) {
-  const { children, title, description, open, onOpenChange, onOk, okLoading } =
-    props;
-
+export function AlertDialog({
+  children,
+  title,
+  description,
+  open,
+  onOpenChange,
+  onOk,
+  okLoading,
+}: React.PropsWithChildren<AlertDialogProps>) {
   const t = useT();
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialogPrimitive open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
@@ -41,10 +44,14 @@ export function OneAlertDialog(
             {t('Cancel')}
           </AlertDialogCancel>
           <Button onClick={onOk} disabled={okLoading}>
-            {okLoading ? <LoaderCircle className="animate-spin" /> : t('Ok')}
+            {okLoading ? (
+              <LoaderCircleIcon className="animate-spin" />
+            ) : (
+              t('Ok')
+            )}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
-    </AlertDialog>
+    </AlertDialogPrimitive>
   );
 }

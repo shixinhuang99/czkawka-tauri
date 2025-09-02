@@ -6,7 +6,7 @@ import { Trans } from 'react-i18next';
 import { logsAtom } from '~/atom/primitive';
 import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
 import { OperationButton, Switch } from '~/components';
-import { OneAlertDialog } from '~/components/one-alert-dialog';
+import { AlertDialog } from '~/components/alert-dialog';
 import { Form, FormItem } from '~/components/simple-form';
 import { useBoolean, useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
@@ -111,7 +111,7 @@ export function MoveFiles(props: MoveFilesProps) {
         )}
         {t('Move')}
       </OperationButton>
-      <OneAlertDialog
+      <AlertDialog
         open={open.value}
         onOpenChange={handleOpenChange}
         title={t('Moving files')}
@@ -157,7 +157,7 @@ export function MoveFiles(props: MoveFilesProps) {
             <Switch />
           </FormItem>
         </Form>
-      </OneAlertDialog>
+      </AlertDialog>
     </>
   );
 }
