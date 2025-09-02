@@ -100,8 +100,8 @@ export function PresetSelect(props: PresetSelectProps) {
         <Select
           name="presetSelect"
           value={currentPreset.name}
-          onChange={handlePresetSelect}
-          onPreventDialogCloseChange={onPreventDialogCloseChange}
+          onValueChange={handlePresetSelect}
+          onOpenChange={onPreventDialogCloseChange}
           options={presets.map((preset) => {
             return { label: preset.name, value: preset.name };
           })}

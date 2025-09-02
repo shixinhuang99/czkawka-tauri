@@ -3,8 +3,8 @@ import { Settings2 } from 'lucide-react';
 import { currentToolAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import {
-  CheckboxWithLabel,
   InputNumber,
+  LabelCheckbox,
   OperationButton,
   Select,
   Slider,
@@ -290,22 +290,22 @@ function MusicDuplicatesSettings() {
           <span className="text-center">{t('Compared tags')}</span>
           <div className="grid grid-cols-3 gap-2 *:pl-4">
             <FormItem name="similarMusicSubTitle" comp="checkbox">
-              <CheckboxWithLabel label={t('Title')} />
+              <LabelCheckbox label={t('Title')} />
             </FormItem>
             <FormItem name="similarMusicSubArtist" comp="checkbox">
-              <CheckboxWithLabel label={t('Artist')} />
+              <LabelCheckbox label={t('Artist')} />
             </FormItem>
             <FormItem name="similarMusicSubBitrate" comp="checkbox">
-              <CheckboxWithLabel label={t('Bitrate')} />
+              <LabelCheckbox label={t('Bitrate')} />
             </FormItem>
             <FormItem name="similarMusicSubGenre" comp="checkbox">
-              <CheckboxWithLabel label={t('Genre')} />
+              <LabelCheckbox label={t('Genre')} />
             </FormItem>
             <FormItem name="similarMusicSubYear" comp="checkbox">
-              <CheckboxWithLabel label={t('Year')} />
+              <LabelCheckbox label={t('Year')} />
             </FormItem>
             <FormItem name="similarMusicSubLength" comp="checkbox">
-              <CheckboxWithLabel label={t('Length')} />
+              <LabelCheckbox label={t('Length')} />
             </FormItem>
           </div>
         </>
@@ -356,16 +356,16 @@ function BrokenFilesSettings() {
       <span className="text-center">{t('Type of files to check')}</span>
       <div className="grid grid-cols-4 justify-items-center">
         <FormItem name="brokenFilesSubAudio" comp="checkbox">
-          <CheckboxWithLabel label={t('Audio')} />
+          <LabelCheckbox label={t('Audio')} />
         </FormItem>
         <FormItem name="brokenFilesSubPdf" comp="checkbox">
-          <CheckboxWithLabel label={t('Pdf')} />
+          <LabelCheckbox label={t('Pdf')} />
         </FormItem>
         <FormItem name="brokenFilesSubArchive" comp="checkbox">
-          <CheckboxWithLabel label={t('Archive')} />
+          <LabelCheckbox label={t('Archive')} />
         </FormItem>
         <FormItem name="brokenFilesSubImage" comp="checkbox">
-          <CheckboxWithLabel label={t('Image')} />
+          <LabelCheckbox label={t('Image')} />
         </FormItem>
       </div>
     </>

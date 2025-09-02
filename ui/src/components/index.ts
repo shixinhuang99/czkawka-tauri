@@ -1,8 +1,8 @@
 export { EditInput } from './edit-input';
 export { InputNumber } from './input-number';
-export { LabelCheckbox as CheckboxWithLabel } from './label-checkbox';
-export { Select } from './select';
+export { LabelCheckbox } from './label-checkbox';
 export { OperationButton } from './operation-button';
+export { Select } from './select';
 export { Button } from './shadcn/button';
 export { Checkbox } from './shadcn/checkbox';
 export { Input } from './shadcn/input';

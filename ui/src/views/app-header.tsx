@@ -58,7 +58,7 @@ function ChangeLanguageButton() {
         </SelectIconTrigger>
       }
       value={value}
-      onChange={handleLanguageChange}
+      onValueChange={handleLanguageChange}
       options={[
         { label: 'English', value: 'en' },
         { label: '简体中文', value: 'zh' },
