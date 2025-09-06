@@ -3,6 +3,8 @@
 # cargo install taplo-cli
 # cargo install cargo-edit -f --no-default-features --features "set-version"
 
+set windows-shell := ["cmd.exe", "/c"]
+
 alias pr := prepare-release
 alias pt := push-tag
 alias dt := delete-tag
