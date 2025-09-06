@@ -58,7 +58,16 @@ export function run(names: CmdName[]) {
   };
 
   for (const cmd of cmds) {
-    const cp = spawn(cmd.runner, cmd.args, { cwd: cmd.cwd });
+    const cp = spawn(cmd.runner, cmd.args, {
+      cwd: cmd.cwd,
+      env: {
+        ...process.env,
+        FORCE_COLOR: '1',
+        NO_COLOR: undefined,
+        NODE_DISABLE_COLORS: undefined,
+        CARGO_TERM_COLOR: 'always',
+      },
+    });
 
     cp.stdout.on('data', (data) => {
       console.log(data.toString());

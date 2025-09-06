@@ -7,6 +7,7 @@ mod delete_files;
 mod duplicate_files;
 mod empty_files;
 mod empty_folders;
+mod ffmpeg;
 mod image;
 mod invalid_symlinks;
 mod move_files;
@@ -30,10 +31,12 @@ use czkawka_core::common::{
 use tauri::{AppHandle, Emitter, Manager, State};
 
 use crate::{
+	ffmpeg::set_ffmpeg_path,
 	image::ImageInfo,
 	progress::process_progress_data,
 	settings::{PlatformSettings, Settings},
 	state::AppState,
+	utils::setup_log,
 };
 
 fn main() {
@@ -46,9 +49,9 @@ fn main() {
 				window.open_devtools();
 			};
 
-			if let Ok(resource_dir) = app.path().resource_dir() {
-				utils::set_ffmpeg_path(resource_dir);
-			}
+			setup_log(&app.env());
+			set_ffmpeg_path(app.path().resource_dir().ok());
+
 			app.manage(Mutex::new(AppState::default()));
 			Ok(())
 		})
