@@ -55,16 +55,12 @@ fn move_files_impl(options: Options) -> MoveFilesResult {
 			};
 			let mut dest_path = PathBuf::from(&destination);
 
-			if preserve_structure {
-				if let Some(parent) = source_path.parent() {
-					let relative_path = parent
-						.components()
-						.filter(|c| {
-							matches!(c, std::path::Component::Normal(_))
-						})
-						.collect::<PathBuf>();
-					dest_path.push(relative_path);
-				}
+			if preserve_structure && let Some(parent) = source_path.parent() {
+				let relative_path = parent
+					.components()
+					.filter(|c| matches!(c, std::path::Component::Normal(_)))
+					.collect::<PathBuf>();
+				dest_path.push(relative_path);
 			}
 
 			if let Err(err) = fs::create_dir_all(&dest_path) {

@@ -102,22 +102,22 @@ fn default_included_directories() -> Vec<String> {
 fn default_excluded_directories() -> Vec<String> {
 	let mut dirs = vec![];
 
-	if cfg!(target_os = "macos") {
-		if let Some(home_dir) = home::home_dir() {
-			let home_dir = home_dir.to_string_lossy();
-			let items = [
-				"Downloads",
-				"Documents",
-				"Desktop",
-				"Pictures/Photos Library.photoslibrary",
-				"Library/Photos/Libraries/Syndication.photoslibrary",
-				"Library/Application Support/AddressBook",
-				"Library/Calendars",
-				"Library/Reminders",
-			];
-			for item in items {
-				dirs.push(format!("{}/{}", home_dir, item));
-			}
+	if cfg!(target_os = "macos")
+		&& let Some(home_dir) = home::home_dir()
+	{
+		let home_dir = home_dir.to_string_lossy();
+		let items = [
+			"Downloads",
+			"Documents",
+			"Desktop",
+			"Pictures/Photos Library.photoslibrary",
+			"Library/Photos/Libraries/Syndication.photoslibrary",
+			"Library/Application Support/AddressBook",
+			"Library/Calendars",
+			"Library/Reminders",
+		];
+		for item in items {
+			dirs.push(format!("{}/{}", home_dir, item));
 		}
 	}
 
