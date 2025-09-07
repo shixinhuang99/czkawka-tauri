@@ -57,5 +57,10 @@
     "formatter": {
       "quoteStyle": "single"
     }
+  },
+  "json": {
+    "linter": {
+      "enabled": false
+    }
   }
 }

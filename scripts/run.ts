@@ -36,7 +36,7 @@ const allCmd: Cmd[] = [
   },
 ];
 
-export function run(names: CmdName[]) {
+function run(names: CmdName[]) {
   const cmds = allCmd.filter((cmd) => names.includes(cmd.name));
 
   const checkAndExit = () => {
@@ -106,3 +106,5 @@ export function run(names: CmdName[]) {
     killAll();
   });
 }
+
+run(['tailwindcss', 'ui', 'tauri']);
