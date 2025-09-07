@@ -11,11 +11,6 @@
   "homepage": "https://github.com/shixinhuang99/czkawka-tauri",
   "description": "A Tauri-based frontend for Czkawka on macOS and Windows",
   "scripts": {
-    "fmt": "biome check --linter-enabled=false --write",
-    "check": "biome check",
-    "typecheck:ui": "tsc -p ./ui/tsconfig.json --noEmit",
-    "typecheck:other": "tsc -p ./tsconfig.json --noEmit",
-    "run": "tsx ./scripts/run.ts",
     "build:ui": "pnpm run --filter ./ui build",
     "build:tauri:mac": "pnpm tauri build -t universal-apple-darwin",
     "build:tauri:win": "pnpm tauri build"

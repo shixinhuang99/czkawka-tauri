@@ -22,8 +22,11 @@ toolchain:
 	pnpm -v
 	pnpm tauri -V
 
+run:
+	pnpm tsx ./scripts/run.ts
+
 fmt:
-	node --run fmt
+	pnpm biome check --linter-enabled=false --write
 	cargo fmt
 	taplo fmt
 
@@ -31,12 +34,12 @@ check:
 	cargo fmt --check
 	taplo fmt --check
 	cargo clippy --no-deps --all-features -- -D warnings
-	node --run check
+	pnpm biome check
 	just typecheck
 
 typecheck:
-	node --run typecheck:ui
-	node --run typecheck:other
+	pnpm tsc -p ./ui/tsconfig.json --noEmit
+	pnpm tsc -p ./tsconfig.json --noEmit
 
 prepare-release type:
 	pnpm tsx ./scripts/prepare-release.ts {{type}}

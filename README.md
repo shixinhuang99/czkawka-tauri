@@ -61,24 +61,12 @@ brew uninstall --cask czkawka-tauri-ffmpeg
 - Node.js 22
 - pnpm
 
-**Linux Dependencies** (e.g., Ubuntu 24.04):
-See [Tauri Documentation](https://tauri.app/start/prerequisites/#linux) for details.
-
-```sh
-sudo apt install libglib2.0-dev \
-  libgtk-3-dev \
-  libsoup-3.0-dev \
-  libjavascriptcoregtk-4.1-dev \
-  libwebkit2gtk-4.1-dev \
-  libxdo-dev
-```
-
 **Run the project**:
 
 ```sh
-pnpm install
+pnpm i
 cargo build
-node --run run
+just run
 ```
 
 **Format and lint**:
