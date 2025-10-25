@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { currentToolAtom, progressAtom } from '~/atom/primitive';
 import { Button, ScrollArea } from '~/components';
 import { Tools } from '~/consts';
+import { blueBgBorderVariants } from '~/styles/variants';
 import type { ToolsValues } from '~/types';
 import { cn } from '~/utils/cn';
 
@@ -44,9 +45,13 @@ export function ToolTabs() {
           return (
             <Button
               key={name}
-              className="w-full h-10 justify-between mt-1 cursor-pointer"
+              className={cn(
+                'w-full h-10 justify-between mt-1 cursor-pointer',
+                currentTool === name &&
+                  blueBgBorderVariants({ variant: 'withHover' }),
+              )}
               tabIndex={-1}
-              variant={currentTool === name ? 'default' : 'ghost'}
+              variant="ghost"
               onClick={() => handleClick(name)}
             >
               {t(name)}

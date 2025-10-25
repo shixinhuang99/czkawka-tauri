@@ -1,3 +1,4 @@
+export { Textarea } from './custom/textarea';
 export { EditInput } from './edit-input';
 export { InputNumber } from './input-number';
 export { LabelCheckbox } from './label-checkbox';
@@ -11,6 +12,5 @@ export { Progress } from './shadcn/progress';
 export { ScrollArea } from './shadcn/scroll-area';
 export { Slider } from './shadcn/slider';
 export { Switch } from './shadcn/switch';
-export { Textarea } from './shadcn/textarea';
 export { toastError } from './toast';
 export { TooltipButton } from './tooltip-button';

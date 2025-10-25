@@ -12,6 +12,7 @@ import { revealItemInDir } from '@tauri-apps/plugin-opener';
 import { FolderOpen } from 'lucide-react';
 import { useRef } from 'react';
 import { useT } from '~/hooks';
+import { scrollBar } from '~/styles';
 import type { BaseEntry } from '~/types';
 import { cn } from '~/utils/cn';
 import { Checkbox } from './shadcn/checkbox';
@@ -80,7 +81,8 @@ export function DataTable<T extends BaseEntry>(props: DataTableProps<T>) {
   return (
     <div
       className={cn(
-        'rounded-sm border overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent scrollbar-thumb-rounded-full',
+        'rounded-sm border overflow-x-auto overflow-y-hidden',
+        scrollBar(),
         className,
       )}
     >
@@ -165,7 +167,7 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
   return (
     <div
       ref={containerRef}
-      className="overflow-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent scrollbar-thumb-rounded-full"
+      className={cn('overflow-auto', scrollBar())}
       style={{ height: 'calc(100% - 41px)' }}
     >
       <TableBody

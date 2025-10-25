@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { Button, type ButtonProps } from '~/components/shadcn/button';
+import { blueBgBorderVariants } from '~/styles/variants';
 import { cn } from '~/utils/cn';
 
 export const OperationButton = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -11,7 +12,8 @@ export const OperationButton = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         variant="secondary"
         className={cn(
-          'hover:bg-primary hover:text-primary-foreground',
+          'border-transparent',
+          blueBgBorderVariants({ variant: 'hoverOnly' }),
           className,
         )}
         {...restProps}
