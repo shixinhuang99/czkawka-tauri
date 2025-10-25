@@ -52,14 +52,14 @@ export function SettingsButton() {
       checkOpenedSelect={false}
     >
       <DialogTrigger asChild>
-        <TooltipButton tooltip={t('Settings')}>
+        <TooltipButton tooltip={t('settings')}>
           <Settings />
         </TooltipButton>
       </DialogTrigger>
       <DialogContent className="max-w-[700px] outline-none">
         <DialogHeader>
-          <DialogTitle>{t('Settings')}</DialogTitle>
-          <DialogDescription>{t('Application settings')}</DialogDescription>
+          <DialogTitle>{t('settings')}</DialogTitle>
+          <DialogDescription>{t('applicationSettings')}</DialogDescription>
         </DialogHeader>
         <div className="h-[550px] flex flex-col">
           <PresetSelect onPreventDialogCloseChange={isPreventDialogClose.set} />
@@ -84,37 +84,37 @@ function SettingsContent() {
       return;
     }
     openPath(platformSettings.cacheDirPath).catch((err) => {
-      toastError(t('Failed to open cache folder'), err);
+      toastError(t('failedToOpenCacheFolder'), err);
     });
   };
 
   return (
     <ScrollArea className="flex-1">
       <Form className="pr-3" value={settings} onChange={handleSettingsChange}>
-        <GroupTitle>{t('General settings')}</GroupTitle>
+        <GroupTitle>{t('generalSettings')}</GroupTitle>
         <FormItem
           name="excludedItems"
-          label={t('Excluded items')}
+          label={t('excludedItems')}
           comp="textarea"
         >
           <Textarea rows={2} />
         </FormItem>
         <FormItem
           name="allowedExtensions"
-          label={t('Allowed extensions')}
+          label={t('allowedExtensions')}
           comp="textarea"
         >
           <Textarea rows={2} />
         </FormItem>
         <FormItem
           name="excludedExtensions"
-          label={t('Excluded extensions')}
+          label={t('excludedExtensions')}
           comp="textarea"
         >
           <Textarea rows={2} />
         </FormItem>
         <div className="flex items-center gap-2">
-          <Label className="flex-shrink-0">{t('File size')}(KB):</Label>
+          <Label className="flex-shrink-0">{t('fileSize')}(KB):</Label>
           <FormItem name="minimumFileSize" comp="input-number">
             <InputNumber minValue={16} maxValue={MAXIMUM_FILE_SIZE} />
           </FormItem>
@@ -125,24 +125,24 @@ function SettingsContent() {
         </div>
         <FormItem
           name="recursiveSearch"
-          label={t('Recursive search')}
+          label={t('recursiveSearch')}
           comp="switch"
         >
           <Switch />
         </FormItem>
-        <FormItem name="useCache" label={t('Use cache')} comp="switch">
+        <FormItem name="useCache" label={t('useCache')} comp="switch">
           <Switch />
         </FormItem>
         <FormItem
           name="saveAlsoAsJson"
-          label={t('Also save cache as JSON file')}
+          label={t('alsoSaveCacheAsJsonFile')}
           comp="switch"
         >
           <Switch />
         </FormItem>
         <FormItem
           name="moveDeletedFilesToTrash"
-          label={t('Move deleted files to trash')}
+          label={t('moveDeletedFilesToTrash')}
           comp="switch"
         >
           <Switch />
@@ -151,9 +151,9 @@ function SettingsContent() {
           name="threadNumber"
           label={
             <span className="inline-flex items-center">
-              {t('Thread number')}
+              {t('threadNumber')}
               <TooltipButton
-                tooltip={t('Thread number tip')}
+                tooltip={t('threadNumberTip')}
                 onClick={eventPreventDefault}
               >
                 <CircleHelp />
@@ -169,98 +169,98 @@ function SettingsContent() {
         >
           <Slider min={1} max={platformSettings.availableThreadNumber} />
         </FormItem>
-        <GroupTitle>{t('Duplicate Files')}</GroupTitle>
+        <GroupTitle>{t('duplicateFiles')}</GroupTitle>
         <FormItem
           name="duplicateMinimalHashCacheSize"
-          label={`${t('Minimal size of cached files')} - ${t('Hash')} (KB)`}
+          label={`${t('minimalSizeOfCachedFiles')} - ${t('hash')} (KB)`}
           comp="input-number"
         >
           <InputNumber minValue={1} />
         </FormItem>
         <FormItem
           name="duplicateMinimalPrehashCacheSize"
-          label={`${t('Minimal size of cached files')} - ${t('Prehash')} (KB)`}
+          label={`${t('minimalSizeOfCachedFiles')} - ${t('prehash')} (KB)`}
           comp="input-number"
         >
           <InputNumber minValue={1} />
         </FormItem>
         <FormItem
           name="duplicateImagePreview"
-          label={t('Image preview')}
+          label={t('imagePreview')}
           comp="switch"
         >
           <Switch />
         </FormItem>
         <FormItem
           name="duplicateHideHardLinks"
-          label={t('Hide hard links')}
+          label={t('hideHardLinks')}
           comp="switch"
         >
           <Switch />
         </FormItem>
         <FormItem
           name="duplicateUsePrehash"
-          label={t('Use prehash')}
+          label={t('usePrehash')}
           comp="switch"
         >
           <Switch />
         </FormItem>
         <FormItem
           name="duplicateDeleteOutdatedEntries"
-          label={t('Delete automatically outdated entries')}
+          label={t('deleteAutomaticallyOutdatedEntries')}
           comp="switch"
         >
           <Switch />
         </FormItem>
-        <GroupTitle>{t('Similar Images')}</GroupTitle>
+        <GroupTitle>{t('similarImages')}</GroupTitle>
         <FormItem
           name="similarImagesShowImagePreview"
-          label={t('Image preview')}
+          label={t('imagePreview')}
           comp="switch"
         >
           <Switch />
         </FormItem>
         <FormItem
           name="similarImagesHideHardLinks"
-          label={t('Hide hard links')}
+          label={t('hideHardLinks')}
           comp="switch"
         >
           <Switch />
         </FormItem>
         <FormItem
           name="similarImagesDeleteOutdatedEntries"
-          label={t('Delete automatically outdated entries')}
+          label={t('deleteAutomaticallyOutdatedEntries')}
           comp="switch"
         >
           <Switch />
         </FormItem>
-        <GroupTitle>{t('Similar Videos')}</GroupTitle>
+        <GroupTitle>{t('similarVideos')}</GroupTitle>
         <FormItem
           name="similarVideosHideHardLinks"
-          label={t('Hide hard links')}
+          label={t('hideHardLinks')}
           comp="switch"
         >
           <Switch />
         </FormItem>
         <FormItem
           name="similarVideosDeleteOutdatedEntries"
-          label={t('Delete automatically outdated entries')}
+          label={t('deleteAutomaticallyOutdatedEntries')}
           comp="switch"
         >
           <Switch />
         </FormItem>
-        <GroupTitle>{t('Music Duplicates')}</GroupTitle>
+        <GroupTitle>{t('musicDuplicates')}</GroupTitle>
         <FormItem
           name="similarMusicDeleteOutdatedEntries"
-          label={t('Delete automatically outdated entries')}
+          label={t('deleteAutomaticallyOutdatedEntries')}
           comp="switch"
         >
           <Switch />
         </FormItem>
       </Form>
-      <GroupTitle>{t('Other')}</GroupTitle>
+      <GroupTitle>{t('other')}</GroupTitle>
       <Button variant="secondary" onClick={handleOpenCacheFolder}>
-        {t('Open cache folder')}
+        {t('openCacheFolder')}
       </Button>
     </ScrollArea>
   );

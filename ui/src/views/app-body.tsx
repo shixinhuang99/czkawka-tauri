@@ -43,17 +43,17 @@ export function AppBody() {
         <div className="h-20 border-t px-3">
           {progress.stopping ? (
             <div className="h-full flex justify-center items-center">
-              {t('Stopping scan')}
+              {t('stoppingScan')}
             </div>
           ) : (
             <>
               <div className="text-center h-6">{progress.data.stepName}</div>
               <ProgressWrap
-                label={t('Current stage')}
+                label={t('currentStage')}
                 value={progress.data.currentProgress}
               />
               <ProgressWrap
-                label={t('All stages')}
+                label={t('allStages')}
                 value={progress.data.allProgress}
               />
             </>

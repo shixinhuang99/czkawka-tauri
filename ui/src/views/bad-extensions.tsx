@@ -21,31 +21,31 @@ export function BadExtensions() {
   const columns = createColumns<BadFileEntry>([
     {
       accessorKey: 'fileName',
-      header: t('File name'),
+      header: t('fileName'),
       size: 170,
       minSize: 100,
     },
     {
       accessorKey: 'path',
-      header: t('Path'),
+      header: t('path'),
       size: 200,
       minSize: 100,
     },
     {
       accessorKey: 'currentExtension',
-      header: t('Current extension'),
+      header: t('currentExtension'),
       size: 140,
       minSize: 140,
     },
     {
       accessorKey: 'properExtensionsGroup',
-      header: t('Proper extension'),
+      header: t('properExtension'),
       size: 140,
       minSize: 140,
     },
     {
       accessorKey: 'modifiedDate',
-      header: t('Modified date'),
+      header: t('modifiedDate'),
       size: 160,
       minSize: 120,
     },

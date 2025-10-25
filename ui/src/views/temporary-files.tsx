@@ -21,19 +21,19 @@ export function TemporaryFiles() {
   const columns = createColumns<TemporaryFileEntry>([
     {
       accessorKey: 'fileName',
-      header: t('File name'),
+      header: t('fileName'),
       size: 180,
       minSize: 100,
     },
     {
       accessorKey: 'path',
-      header: t('Path'),
+      header: t('path'),
       size: 430,
       minSize: 100,
     },
     {
       accessorKey: 'modifiedDate',
-      header: t('Modified date'),
+      header: t('modifiedDate'),
       size: 160,
       minSize: 120,
     },

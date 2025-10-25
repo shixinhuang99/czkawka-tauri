@@ -66,7 +66,7 @@ export function PresetSelect(props: PresetSelectProps) {
   const handleNamingPresetValidate = (name: string) => {
     if (presets.some((preset) => preset.name === name)) {
       onPreventDialogCloseChange(false);
-      return t('Name already exists', { name });
+      return t('nameAlreadyExists', { name });
     }
   };
 
@@ -95,7 +95,7 @@ export function PresetSelect(props: PresetSelectProps) {
 
   return (
     <div className="flex items-center gap-1 pb-2 border-b">
-      <Label>{t('Current preset')}:</Label>
+      <Label>{t('currentPreset')}:</Label>
       {!(newPresetInputVisible.value || editPresetInputVisible.value) && (
         <Select
           name="presetSelect"
@@ -110,7 +110,7 @@ export function PresetSelect(props: PresetSelectProps) {
       {newPresetInputVisible.value && (
         <EditInput
           className="flex-1"
-          placeholder={t('New preset name')}
+          placeholder={t('newPresetName')}
           name="newPresetName"
           onOk={handleAddPresetOk}
           onValidate={handleNamingPresetValidate}
@@ -131,7 +131,7 @@ export function PresetSelect(props: PresetSelectProps) {
       )}
       <span>
         <TooltipButton
-          tooltip={t('Add preset')}
+          tooltip={t('addPreset')}
           onClick={() => {
             newPresetInputVisible.on();
             onPreventDialogCloseChange(true);
@@ -141,7 +141,7 @@ export function PresetSelect(props: PresetSelectProps) {
           <FilePlus />
         </TooltipButton>
         <TooltipButton
-          tooltip={t('Edit name')}
+          tooltip={t('editName')}
           onClick={() => {
             editPresetInputVisible.on();
             onPreventDialogCloseChange(true);
@@ -151,7 +151,7 @@ export function PresetSelect(props: PresetSelectProps) {
           <FilePenLine />
         </TooltipButton>
         <TooltipButton
-          tooltip={t('Remove preset')}
+          tooltip={t('removePreset')}
           onClick={handlePresetRemove}
           disabled={
             presets.length === 1 ||
@@ -162,7 +162,7 @@ export function PresetSelect(props: PresetSelectProps) {
           <Trash2 />
         </TooltipButton>
         <TooltipButton
-          tooltip={t('Reset settings')}
+          tooltip={t('resetSettings')}
           onClick={handleSettingsReset}
         >
           <TimerReset />

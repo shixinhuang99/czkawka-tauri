@@ -55,14 +55,14 @@ export function SaveResult(props: SaveResultProps) {
         onClick={open.on}
       >
         <FileJson />
-        {t('Save')}
+        {t('save')}
       </OperationButton>
       <AlertDialog
         open={open.value}
         onOpenChange={handleOpenChange}
-        title={t('Saving results')}
+        title={t('savingResults')}
         okLoading={loading.value}
-        description={<span>{t('Save confirm')}</span>}
+        description={<span>{t('saveConfirm')}</span>}
         onOk={handleOk}
       />
     </>

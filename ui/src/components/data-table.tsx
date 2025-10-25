@@ -220,7 +220,7 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
         ) : (
           <TableRow className="h-full">
             <TableCell className="h-full flex justify-center items-center">
-              {emptyTip || t('No data')}
+              {emptyTip || t('noData')}
             </TableCell>
           </TableRow>
         )}
@@ -287,12 +287,12 @@ export function TableActions(props: { path: string }) {
 
   return (
     <TooltipButton
-      tooltip={t('Reveal in dir', {
-        name: PLATFORM === 'darwin' ? t('Finder') : t('File Explorer'),
+      tooltip={t('revealInDir', {
+        name: PLATFORM === 'darwin' ? t('finder') : t('fileExplorer'),
       })}
       onClick={() =>
         revealItemInDir(path).catch((err) =>
-          toastError(t('Opreation failed'), err),
+          toastError(t('opreationFailed'), err),
         )
       }
     >

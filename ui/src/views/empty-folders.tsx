@@ -19,19 +19,19 @@ export function EmptyFolders() {
   const columns = createColumns<FolderEntry>([
     {
       accessorKey: 'folderName',
-      header: t('Folder name'),
+      header: t('folderName'),
       size: 180,
       minSize: 100,
     },
     {
       accessorKey: 'path',
-      header: t('Path'),
+      header: t('path'),
       size: 430,
       minSize: 100,
     },
     {
       accessorKey: 'modifiedDate',
-      header: t('Modified date'),
+      header: t('modifiedDate'),
       size: 160,
       minSize: 120,
     },

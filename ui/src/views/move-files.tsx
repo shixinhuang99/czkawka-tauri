@@ -109,17 +109,17 @@ export function MoveFiles(props: MoveFilesProps) {
         ) : (
           <FolderSymlink />
         )}
-        {t('Move')}
+        {t('move')}
       </OperationButton>
       <AlertDialog
         open={open.value}
         onOpenChange={handleOpenChange}
-        title={t('Moving files')}
+        title={t('movingFiles')}
         okLoading={loading.value}
         description={
           <span>
             <Trans
-              i18nKey="Move confirm"
+              i18nKey="moveConfirm"
               values={{ length: paths.length, destination }}
             >
               Moving
@@ -137,21 +137,21 @@ export function MoveFiles(props: MoveFilesProps) {
         >
           <FormItem
             name="copyMode"
-            label={t('Copy files instead of moving')}
+            label={t('copyFilesInsteadOfMoving')}
             comp="switch"
           >
             <Switch />
           </FormItem>
           <FormItem
             name="preserveStructure"
-            label={t('Preserve folder structure')}
+            label={t('preserveFolderStructure')}
             comp="switch"
           >
             <Switch />
           </FormItem>
           <FormItem
             name="overrideMode"
-            label={t('Override files')}
+            label={t('overrideFiles')}
             comp="switch"
           >
             <Switch />

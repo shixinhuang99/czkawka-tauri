@@ -70,16 +70,16 @@ export function RenameExt(props: RenameExtProps) {
     <>
       <OperationButton disabled={disabled || !paths.length} onClick={open.on}>
         <TextCursorInput />
-        {t('Rename')}
+        {t('rename')}
       </OperationButton>
       <AlertDialog
         open={open.value}
         onOpenChange={handleOpenChange}
-        title={t('Renaming files')}
+        title={t('renamingFiles')}
         okLoading={loading.value}
         description={
           <span>
-            <Trans i18nKey="Rename confirm" values={{ length: paths.length }}>
+            <Trans i18nKey="renameConfirm" values={{ length: paths.length }}>
               This will rename extensions of selected
               <span className="text-primary p-1" /> files to more proper. Are
               you want to continue?

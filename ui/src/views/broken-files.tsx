@@ -16,31 +16,31 @@ export function BrokenFiles() {
   const columns = createColumns<BrokenEntry>([
     {
       accessorKey: 'fileName',
-      header: t('File name'),
+      header: t('fileName'),
       size: 180,
       minSize: 100,
     },
     {
       accessorKey: 'path',
-      header: t('Path'),
+      header: t('path'),
       size: 200,
       minSize: 100,
     },
     {
       accessorKey: 'errorString',
-      header: t('Type of error'),
+      header: t('typeOfError'),
       size: 150,
       minSize: 110,
     },
     {
       accessorKey: 'size',
-      header: t('Size'),
+      header: t('size'),
       size: 110,
       minSize: 50,
     },
     {
       accessorKey: 'modifiedDate',
-      header: t('Modified date'),
+      header: t('modifiedDate'),
       size: 160,
       minSize: 120,
     },

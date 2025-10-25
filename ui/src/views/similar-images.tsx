@@ -42,25 +42,25 @@ export function SimilarImages() {
     },
     {
       accessorKey: 'similarity',
-      header: t('Similarity'),
+      header: t('similarity'),
       size: 100,
       minSize: 80,
     },
     {
       accessorKey: 'size',
-      header: t('Size'),
+      header: t('size'),
       size: 100,
       minSize: 50,
     },
     {
       accessorKey: 'dimensions',
-      header: t('Dimensions'),
+      header: t('dimensions'),
       size: 100,
       minSize: 100,
     },
     {
       accessorKey: 'fileName',
-      header: t('File name'),
+      header: t('fileName'),
       size: 150,
       minSize: 100,
       cell: ({ row }) => {
@@ -69,7 +69,7 @@ export function SimilarImages() {
     },
     {
       accessorKey: 'path',
-      header: t('Path'),
+      header: t('path'),
       size: 160,
       minSize: 100,
       cell: ({ row }) => {
@@ -81,7 +81,7 @@ export function SimilarImages() {
     },
     {
       accessorKey: 'modifiedDate',
-      header: t('Modified date'),
+      header: t('modifiedDate'),
       size: 160,
       minSize: 120,
     },

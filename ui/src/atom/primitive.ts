@@ -24,6 +24,7 @@ import type {
   ToolsValues,
   VideosEntry,
 } from '~/types';
+import { isValidTool } from '~/utils/common';
 
 export const themeAtom = atom<ThemeCfg>({
   display: '',
@@ -31,7 +32,7 @@ export const themeAtom = atom<ThemeCfg>({
 });
 
 export const presetsAtom = atomWithStorage<Preset[]>(
-  'setting-presets',
+  'settingPresets',
   [getDefaultPreset()],
   undefined,
   { getOnInit: true },
@@ -44,7 +45,18 @@ export const platformSettingsAtom = atom<PlatformSettings>(
 export const currentToolAtom = atomWithStorage<ToolsValues>(
   'currentTool',
   Tools.DuplicateFiles,
-  undefined,
+  {
+    getItem: (key) => {
+      const value = localStorage.getItem(key);
+      return !value || !isValidTool(value) ? Tools.DuplicateFiles : value;
+    },
+    setItem: (key, value) => {
+      localStorage.setItem(key, value);
+    },
+    removeItem: (key) => {
+      localStorage.removeItem(key);
+    },
+  },
   { getOnInit: true },
 );
 

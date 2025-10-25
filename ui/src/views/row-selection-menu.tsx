@@ -49,7 +49,7 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
       <DropdownMenuTrigger asChild>
         <OperationButton disabled={disabled}>
           <SquareMousePointer />
-          {t('Select')}
+          {t('select')}
         </OperationButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent side="top">
@@ -58,33 +58,33 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
             <DropdownMenuItem
               onClick={() => handleSelectXXX('resolution', 'asc')}
             >
-              {t('Select the highest resolution')}
+              {t('selectTheHighestResolution')}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => handleSelectXXX('resolution', 'desc')}
             >
-              {t('Select the lowest resolution')}
+              {t('selectTheLowestResolution')}
             </DropdownMenuItem>
           </>
         )}
         {toolsWithSizeAndDateSelect.has(currentTool) && (
           <>
             <DropdownMenuItem onClick={() => handleSelectXXX('size', 'asc')}>
-              {t('Select the biggest size')}
+              {t('selectTheBiggestSize')}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleSelectXXX('size', 'desc')}>
-              {t('Select the smallest size')}
+              {t('selectTheSmallestSize')}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleSelectXXX('date', 'asc')}>
-              {t('Select the newest')}
+              {t('selectTheNewest')}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleSelectXXX('date', 'desc')}>
-              {t('Select the oldest')}
+              {t('selectTheOldest')}
             </DropdownMenuItem>
           </>
         )}
         <DropdownMenuItem onClick={handleInvertSelection}>
-          {t('Invert selection')}
+          {t('invertSelection')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

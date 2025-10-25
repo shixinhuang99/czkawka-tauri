@@ -30,7 +30,7 @@ export function ThemeToggle() {
   }, []);
 
   return (
-    <TooltipButton tooltip={t('Toggle theme')} onClick={toggleTheme}>
+    <TooltipButton tooltip={t('toggleTheme')} onClick={toggleTheme}>
       {theme.display === Theme.Light && <Sun />}
       {theme.display === Theme.Dark && <Moon />}
       {theme.display === Theme.System && <TvMinimal />}

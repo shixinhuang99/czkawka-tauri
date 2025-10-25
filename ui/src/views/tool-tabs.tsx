@@ -1,9 +1,9 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { LoaderCircle } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { currentToolAtom, progressAtom } from '~/atom/primitive';
 import { Button, ScrollArea } from '~/components';
 import { Tools } from '~/consts';
+import { useT } from '~/hooks';
 import { blueBgBorderVariants } from '~/styles/variants';
 import type { ToolsValues } from '~/types';
 import { cn } from '~/utils/cn';
@@ -17,7 +17,7 @@ function isValidTool(s: string): s is ToolsValues {
 export function ToolTabs() {
   const [currentTool, setCurrentTool] = useAtom(currentToolAtom);
   const progress = useAtomValue(progressAtom);
-  const { t } = useTranslation();
+  const t = useT();
 
   const handleClick = (name: string) => {
     if (!isValidTool(name)) {

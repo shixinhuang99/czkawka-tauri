@@ -105,7 +105,7 @@ export function ScanButton() {
       {progress.tool ? (
         <OperationButton disabled={progress.stopping} onClick={handleStopScan}>
           <Ban />
-          {t('Stop')}
+          {t('stop')}
         </OperationButton>
       ) : (
         <OperationButton
@@ -113,7 +113,7 @@ export function ScanButton() {
           onClick={handleScan}
         >
           <Search />
-          {t('Scan')}
+          {t('scan')}
         </OperationButton>
       )}
     </>

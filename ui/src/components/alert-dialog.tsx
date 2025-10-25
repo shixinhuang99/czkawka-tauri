@@ -41,13 +41,13 @@ export function AlertDialog({
         {children}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={okLoading}>
-            {t('Cancel')}
+            {t('cancel')}
           </AlertDialogCancel>
           <Button onClick={onOk} disabled={okLoading}>
             {okLoading ? (
               <LoaderCircleIcon className="animate-spin" />
             ) : (
-              t('Ok')
+              t('ok')
             )}
           </Button>
         </AlertDialogFooter>

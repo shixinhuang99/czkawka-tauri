@@ -63,7 +63,7 @@ function Image(props: { path: string }) {
   return (
     <div className="h-full w-full flex flex-col justify-center items-center">
       <ImageOff className="size-24" />
-      {t('Failed to read image')}
+      {t('failedToReadImage')}
     </div>
   );
 }

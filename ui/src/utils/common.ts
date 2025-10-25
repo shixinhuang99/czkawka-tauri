@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { filesize } from 'filesize';
 import type { RowSelection } from '~/components/data-table';
+import { Tools } from '~/consts';
 import type {
   BadFileEntry,
   BaseEntry,
@@ -22,6 +23,7 @@ import type {
   RefEntry,
   SymlinksFileEntry,
   TemporaryFileEntry,
+  ToolsValues,
   TupleWithRefItem,
   VideosEntry,
 } from '~/types';
@@ -57,6 +59,12 @@ export function getPathsFromEntries<T extends BaseEntry & Partial<RefEntry>>(
     paths.push(item.path);
   }
   return paths;
+}
+
+const toolSet = new Set<string>(Object.values(Tools));
+
+export function isValidTool(s: string): s is ToolsValues {
+  return toolSet.has(s);
 }
 
 function fmtFileSize(v: number): string {

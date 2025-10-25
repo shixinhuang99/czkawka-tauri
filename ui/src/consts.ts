@@ -133,17 +133,17 @@ export function getDefaultPlatformSettings(): PlatformSettings {
 }
 
 export const Tools = {
-  DuplicateFiles: 'Duplicate Files',
-  EmptyFolders: 'Empty Folders',
-  BigFiles: 'Big Files',
-  EmptyFiles: 'Empty Files',
-  TemporaryFiles: 'Temporary Files',
-  SimilarImages: 'Similar Images',
-  SimilarVideos: 'Similar Videos',
-  MusicDuplicates: 'Music Duplicates',
-  InvalidSymlinks: 'Invalid Symlinks',
-  BrokenFiles: 'Broken Files',
-  BadExtensions: 'Bad Extensions',
+  DuplicateFiles: 'duplicateFiles',
+  EmptyFolders: 'emptyFolders',
+  BigFiles: 'bigFiles',
+  EmptyFiles: 'emptyFiles',
+  TemporaryFiles: 'temporaryFiles',
+  SimilarImages: 'similarImages',
+  SimilarVideos: 'similarVideos',
+  MusicDuplicates: 'musicDuplicates',
+  InvalidSymlinks: 'invalidSymlinks',
+  BrokenFiles: 'brokenFiles',
+  BadExtensions: 'badExtensions',
 } as const;
 
 export function getDefaultProgress(): Progress {

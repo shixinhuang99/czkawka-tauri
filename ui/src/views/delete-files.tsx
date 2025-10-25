@@ -74,16 +74,16 @@ export function DeleteFiles(props: DeleteFilesProps) {
     <>
       <OperationButton disabled={disabled || !paths.length} onClick={open.on}>
         <Trash2 />
-        {t('Delete')}
+        {t('delete')}
       </OperationButton>
       <AlertDialog
         open={open.value}
         onOpenChange={handleOpenChange}
-        title={t('Delete items')}
+        title={t('deleteItems')}
         okLoading={loading.value}
         description={
           <span>
-            <Trans i18nKey="Delete comfirm" values={{ length: paths.length }}>
+            <Trans i18nKey="deleteComfirm" values={{ length: paths.length }}>
               Are you sure you want to delete the selected
               <span className="text-primary p-1" /> items?
             </Trans>

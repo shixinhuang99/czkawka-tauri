@@ -16,25 +16,25 @@ export function BigFiles() {
   const columns = createColumns<FileEntry>([
     {
       accessorKey: 'size',
-      header: t('Size'),
+      header: t('size'),
       size: 110,
       minSize: 50,
     },
     {
       accessorKey: 'fileName',
-      header: t('File name'),
+      header: t('fileName'),
       size: 180,
       minSize: 100,
     },
     {
       accessorKey: 'path',
-      header: t('Path'),
+      header: t('path'),
       size: 320,
       minSize: 100,
     },
     {
       accessorKey: 'modifiedDate',
-      header: t('Modified date'),
+      header: t('modifiedDate'),
       size: 160,
       minSize: 120,
     },

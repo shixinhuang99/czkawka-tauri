@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { useT } from '~/hooks';
 import { initI18n } from '~/i18n';
+import { migrate } from '~/utils/migrate';
 
 function Loading() {
   return (
@@ -37,6 +38,7 @@ function main() {
     throw new Error('no root element');
   }
 
+  migrate();
   initI18n();
 
   createRoot(root).render(

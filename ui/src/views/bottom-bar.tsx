@@ -79,7 +79,7 @@ export function BottomBar() {
             </TabsList>
           </Tabs>
           <TooltipButton
-            tooltip={minimizeBottomBar.value ? t('Expand') : t('Collapse')}
+            tooltip={minimizeBottomBar.value ? t('expand') : t('collapse')}
             onClick={minimizeBottomBar.toggle}
             variant="outline"
           >
@@ -119,7 +119,7 @@ function IncludedDirsTable() {
   const columns = createColumns<TableData>([
     {
       accessorKey: 'path',
-      header: t('Path'),
+      header: t('path'),
       meta: {
         span: 10,
       },
@@ -148,7 +148,7 @@ function IncludedDirsTable() {
   return (
     <div className="w-1/2 flex flex-col">
       <div className="flex justify-between items-center">
-        <h3 className="text-center">{t('Include Directories')}</h3>
+        <h3 className="text-center">{t('includeDirectories')}</h3>
         <DirsActions
           rowSelection={rowSelection}
           onRowSelectionChange={handleRowSelectionChagne}
@@ -159,7 +159,7 @@ function IncludedDirsTable() {
         className="flex-1"
         data={data}
         columns={columns}
-        emptyTip={t('Please add path')}
+        emptyTip={t('pleaseAddPath')}
         layout="grid"
         rowSelection={rowSelection}
         onRowSelectionChange={handleRowSelectionChagne}
@@ -184,7 +184,7 @@ function ExcludedDirsTable() {
   const columns = createColumns<TableData>([
     {
       accessorKey: 'path',
-      header: t('Path'),
+      header: t('path'),
       meta: {
         span: 10,
       },
@@ -203,7 +203,7 @@ function ExcludedDirsTable() {
   return (
     <div className="flex-1 flex flex-col">
       <div className="flex justify-between items-center">
-        <h3 className="text-center">{t('Exclude Directories')}</h3>
+        <h3 className="text-center">{t('excludeDirectories')}</h3>
         <DirsActions
           rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
@@ -214,7 +214,7 @@ function ExcludedDirsTable() {
         className="flex-1"
         data={data}
         columns={columns}
-        emptyTip={t('Please add path')}
+        emptyTip={t('pleaseAddPath')}
         layout="grid"
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
@@ -307,7 +307,7 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
 
   return (
     <div>
-      <TooltipButton tooltip={t('Add')} onClick={handleAddPath}>
+      <TooltipButton tooltip={t('add')} onClick={handleAddPath}>
         {openFileDialogLoading.value ? (
           <LoaderCircle className="animate-spin" />
         ) : (
@@ -322,16 +322,14 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
         }}
       >
         <DialogTrigger asChild>
-          <TooltipButton tooltip={t('Manual add')}>
+          <TooltipButton tooltip={t('manualAdd')}>
             <FolderPen />
           </TooltipButton>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('Manual add')}</DialogTitle>
-            <DialogDescription>
-              {t('Manually add paths desc')}
-            </DialogDescription>
+            <DialogTitle>{t('manualAdd')}</DialogTitle>
+            <DialogDescription>{t('manuallyAddPathsDesc')}</DialogDescription>
           </DialogHeader>
           <Textarea
             rows={10}
@@ -341,13 +339,13 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
           />
           <DialogFooter>
             <Button variant="secondary" onClick={manualAddDialogOpen.off}>
-              {t('Cancel')}
+              {t('cancel')}
             </Button>
-            <Button onClick={handleManualAddOk}>{t('Ok')}</Button>
+            <Button onClick={handleManualAddOk}>{t('ok')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <TooltipButton tooltip={t('Remove selected')} onClick={handleRemovePaths}>
+      <TooltipButton tooltip={t('removeSelected')} onClick={handleRemovePaths}>
         <Trash2 />
       </TooltipButton>
     </div>
