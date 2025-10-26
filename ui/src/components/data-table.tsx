@@ -285,16 +285,18 @@ export function TableActions(props: { path: string }) {
   const { path } = props;
   const t = useT();
 
+  const handleClick = () => {
+    revealItemInDir(path).catch((err) => {
+      toastError(t('opreationFailed'), err);
+    });
+  };
+
   return (
     <TooltipButton
       tooltip={t('revealInDir', {
         name: PLATFORM === 'darwin' ? t('finder') : t('fileExplorer'),
       })}
-      onClick={() =>
-        revealItemInDir(path).catch((err) =>
-          toastError(t('opreationFailed'), err),
-        )
-      }
+      onClick={handleClick}
     >
       <FolderOpen />
     </TooltipButton>

@@ -157,6 +157,8 @@ export const en = {
   manuallyAddPathsDesc: 'Manually add paths(one per line)',
   removeSelected: 'Remove selected',
   somethingWentWrong: 'Something went wrong :(',
+  unexpectedError: 'Unexpected error',
+  unknownError: 'Unknown error',
 };
 
 export type TranslationKeys = keyof typeof en;

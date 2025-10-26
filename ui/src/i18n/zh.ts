@@ -157,4 +157,6 @@ export const zh: Record<TranslationKeys, string> = {
   manuallyAddPathsDesc: '手动填写路径(一行一个)',
   removeSelected: '移除已选择的',
   somethingWentWrong: '出错了 :(',
+  unexpectedError: '未预料的错误',
+  unknownError: '未知错误',
 };

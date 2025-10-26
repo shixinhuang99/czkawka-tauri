@@ -1,5 +1,6 @@
 import { CircleX } from 'lucide-react';
 import { toast } from 'sonner';
+import { t } from '~/i18n';
 
 function toastErrorImpl(msg: string, error?: string) {
   toast(msg, {
@@ -14,6 +15,7 @@ function toastErrorImpl(msg: string, error?: string) {
 }
 
 export function toastError(msg: string, error: unknown) {
+  console.error(error);
   if (typeof error === 'string') {
     toastErrorImpl(msg, error);
     return;
@@ -22,5 +24,5 @@ export function toastError(msg: string, error: unknown) {
     toastErrorImpl(msg, error.message);
     return;
   }
-  toastErrorImpl('Unknown error');
+  toastErrorImpl(t('unknownError'));
 }
