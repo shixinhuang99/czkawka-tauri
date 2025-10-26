@@ -9,7 +9,7 @@ import { migrate } from '~/utils/migrate';
 function Loading() {
   return (
     <div className="h-screen w-screen flex items-center justify-center">
-      <LoaderCircleIcon className="animate-spin size-14" />
+      <LoaderCircleIcon className="animate-spin size-8" />
     </div>
   );
 }

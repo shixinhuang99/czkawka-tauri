@@ -104,3 +104,19 @@ import { utilityFunction } from "~/utils";
 ```
 
 This structure ensures consistent import patterns across the codebase.
+
+### Control Flow Statements
+
+Always use curly braces for early return statements, even for single-line returns:
+
+```tsx
+// ✓ Correct
+if (!value) {
+  return;
+}
+
+// ✗ Incorrect
+if (!value) return;
+```
+
+This applies to all control flow statements including `if`, `for`, `while`, etc., to maintain consistency and readability.

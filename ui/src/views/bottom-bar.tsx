@@ -2,7 +2,6 @@ import type { Table } from '@tanstack/react-table';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
-  ArrowDownFromLineIcon,
   FolderIcon,
   FolderPenIcon,
   FolderPlusIcon,
@@ -33,9 +32,8 @@ import {
   DialogTrigger,
 } from '~/components/shadcn/dialog';
 import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
-import { useBoolean, useT } from '~/hooks';
+import { useT } from '~/hooks';
 import type { DirsType } from '~/types';
-import { cn } from '~/utils/cn';
 import { getRowSelectionKeys, splitStr } from '~/utils/common';
 import { Operations } from './operations';
 
@@ -58,14 +56,19 @@ type PropsWithRowSelection<T> = T & {
   onRowSelectionChange: (v: RowSelection) => void;
 };
 
-export function BottomBar() {
+interface BottomBarProps {
+  headerRef: React.RefObject<HTMLDivElement>;
+  panelSize: number;
+}
+
+export function BottomBar({ headerRef, panelSize }: BottomBarProps) {
   const [displayType, setDisplayType] = useState<string>(DisplayType.Dirs);
-  const minimizeBottomBar = useBoolean();
-  const t = useT();
+
+  const shouldShowContent = panelSize > 20;
 
   return (
-    <div className="flex flex-col px-2 py-1 gap-1 border-t">
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col h-full px-2 py-1 gap-1">
+      <div ref={headerRef} className="flex justify-between items-center">
         <Operations />
         <div className="flex items-center gap-1">
           <Tabs value={displayType} onValueChange={setDisplayType}>
@@ -78,27 +81,19 @@ export function BottomBar() {
               </TabsTrigger>
             </TabsList>
           </Tabs>
-          <TooltipButton
-            tooltip={minimizeBottomBar.value ? t('expand') : t('collapse')}
-            onClick={minimizeBottomBar.toggle}
-            variant="outline"
-          >
-            <ArrowDownFromLineIcon
-              className={cn(
-                'transition-transform duration-300',
-                minimizeBottomBar.value && 'rotate-180',
-              )}
-            />
-          </TooltipButton>
         </div>
       </div>
-      {displayType === DisplayType.Dirs && !minimizeBottomBar.value && (
-        <div className="flex gap-1 h-[200px]">
-          <IncludedDirsTable />
-          <ExcludedDirsTable />
-        </div>
+      {shouldShowContent && (
+        <>
+          {displayType === DisplayType.Dirs && (
+            <div className="flex gap-1 flex-1 min-h-0">
+              <IncludedDirsTable />
+              <ExcludedDirsTable />
+            </div>
+          )}
+          {displayType === DisplayType.Logs && <Logs />}
+        </>
       )}
-      {displayType === DisplayType.Logs && !minimizeBottomBar.value && <Logs />}
     </div>
   );
 }
@@ -257,9 +252,9 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
   const t = useT();
   const { field, rowSelection, onRowSelectionChange } = props;
   const setSettings = useSetAtom(settingsAtom);
-  const manualAddDialogOpen = useBoolean();
+  const [manualAddDialogOpen, setManualAddDialogOpen] = useState(false);
   const [manualAddPaths, setManualAddPaths] = useState('');
-  const openFileDialogLoading = useBoolean();
+  const [openFileDialogLoading, setOpenFileDialogLoading] = useState(false);
   const selected = new Set(getRowSelectionKeys(rowSelection));
 
   const handleRemovePaths = () => {
@@ -276,9 +271,9 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
   };
 
   const handleAddPath = async () => {
-    openFileDialogLoading.on();
+    setOpenFileDialogLoading(true);
     const dir = await openFileDialog({ multiple: false, directory: true });
-    openFileDialogLoading.off();
+    setOpenFileDialogLoading(false);
     if (!dir) {
       return;
     }
@@ -302,23 +297,23 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
         [field]: Array.from(new Set([...paths, ...settings[field]])),
       };
     });
-    manualAddDialogOpen.off();
+    setManualAddDialogOpen(false);
   };
 
   return (
     <div>
       <TooltipButton tooltip={t('add')} onClick={handleAddPath}>
-        {openFileDialogLoading.value ? (
-          <LoaderCircleIcon className="animate-spin size-4" />
+        {openFileDialogLoading ? (
+          <LoaderCircleIcon className="animate-spin" />
         ) : (
           <FolderPlusIcon />
         )}
       </TooltipButton>
       <Dialog
-        open={manualAddDialogOpen.value}
+        open={manualAddDialogOpen}
         onOpenChange={(v) => {
           setManualAddPaths('');
-          manualAddDialogOpen.set(v);
+          setManualAddDialogOpen(v);
         }}
       >
         <DialogTrigger asChild>
@@ -338,7 +333,10 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
             className="resize-none"
           />
           <DialogFooter>
-            <Button variant="secondary" onClick={manualAddDialogOpen.off}>
+            <Button
+              variant="secondary"
+              onClick={() => setManualAddDialogOpen(false)}
+            >
               {t('cancel')}
             </Button>
             <Button onClick={handleManualAddOk}>{t('ok')}</Button>
@@ -360,7 +358,7 @@ function Logs() {
   const logs = useAtomValue(logsAtom);
 
   return (
-    <ScrollArea className="h-[200px] rounded-md border text-card-foreground px-2 py-1 dark:bg-gray-900">
+    <ScrollArea className="flex-1 rounded-md border text-card-foreground px-2 py-1 dark:bg-gray-900">
       <div className="whitespace-break-spaces">{logs}</div>
     </ScrollArea>
   );
