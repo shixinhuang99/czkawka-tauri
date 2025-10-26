@@ -1,5 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai';
-import { SquareMousePointer } from 'lucide-react';
+import { SquareMousePointerIcon } from 'lucide-react';
 import { currentToolAtom } from '~/atom/primitive';
 import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
 import { OperationButton } from '~/components';
@@ -48,7 +48,7 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <OperationButton disabled={disabled}>
-          <SquareMousePointer />
+          <SquareMousePointerIcon />
           {t('select')}
         </OperationButton>
       </DropdownMenuTrigger>

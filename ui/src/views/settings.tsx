@@ -1,6 +1,6 @@
 import { openPath } from '@tauri-apps/plugin-opener';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { CircleHelp, Settings } from 'lucide-react';
+import { CircleHelpIcon, SettingsIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { initCurrentPresetAtom } from '~/atom/preset';
 import { platformSettingsAtom } from '~/atom/primitive';
@@ -53,7 +53,7 @@ export function SettingsButton() {
     >
       <DialogTrigger asChild>
         <TooltipButton tooltip={t('settings')}>
-          <Settings />
+          <SettingsIcon />
         </TooltipButton>
       </DialogTrigger>
       <DialogContent className="max-w-[700px] outline-none">
@@ -156,7 +156,7 @@ function SettingsContent() {
                 tooltip={t('threadNumberTip')}
                 onClick={eventPreventDefault}
               >
-                <CircleHelp />
+                <CircleHelpIcon />
               </TooltipButton>
             </span>
           }

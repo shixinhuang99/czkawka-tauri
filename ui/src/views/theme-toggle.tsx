@@ -1,5 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai';
-import { Moon, Sun, TvMinimal } from 'lucide-react';
+import { MoonIcon, SunIcon, TvMinimalIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { themeAtom } from '~/atom/primitive';
 import {
@@ -31,9 +31,9 @@ export function ThemeToggle() {
 
   return (
     <TooltipButton tooltip={t('toggleTheme')} onClick={toggleTheme}>
-      {theme.display === Theme.Light && <Sun />}
-      {theme.display === Theme.Dark && <Moon />}
-      {theme.display === Theme.System && <TvMinimal />}
+      {theme.display === Theme.Light && <SunIcon />}
+      {theme.display === Theme.Dark && <MoonIcon />}
+      {theme.display === Theme.System && <TvMinimalIcon />}
     </TooltipButton>
   );
 }

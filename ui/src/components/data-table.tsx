@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { revealItemInDir } from '@tauri-apps/plugin-opener';
-import { FolderOpen } from 'lucide-react';
+import { FolderOpenIcon } from 'lucide-react';
 import { useRef } from 'react';
 import { useT } from '~/hooks';
 import { scrollBar } from '~/styles';
@@ -298,7 +298,7 @@ export function TableActions(props: { path: string }) {
       })}
       onClick={handleClick}
     >
-      <FolderOpen />
+      <FolderOpenIcon />
     </TooltipButton>
   );
 }

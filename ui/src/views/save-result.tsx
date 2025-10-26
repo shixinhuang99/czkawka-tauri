@@ -1,6 +1,6 @@
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { FileJson } from 'lucide-react';
+import { FileJsonIcon } from 'lucide-react';
 import { currentToolAtom, logsAtom } from '~/atom/primitive';
 import { currentToolDataAtom } from '~/atom/tools';
 import { OperationButton } from '~/components';
@@ -54,7 +54,7 @@ export function SaveResult(props: SaveResultProps) {
         disabled={disabled || !currentToolData.length}
         onClick={open.on}
       >
-        <FileJson />
+        <FileJsonIcon />
         {t('save')}
       </OperationButton>
       <AlertDialog

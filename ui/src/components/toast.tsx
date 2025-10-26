@@ -1,10 +1,10 @@
-import { CircleX } from 'lucide-react';
+import { CircleXIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { t } from '~/i18n';
 
 function toastErrorImpl(msg: string, error?: string) {
   toast(msg, {
-    icon: <CircleX className="text-red-500" />,
+    icon: <CircleXIcon className="text-red-500" />,
     className: 'gap-2',
     classNames: {
       title: 'text-red-500',

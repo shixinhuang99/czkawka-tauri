@@ -2,13 +2,13 @@ import type { Table } from '@tanstack/react-table';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
-  ArrowDownFromLine,
-  Folder,
-  FolderPen,
-  FolderPlus,
-  LoaderCircle,
-  ScrollText,
-  Trash2,
+  ArrowDownFromLineIcon,
+  FolderIcon,
+  FolderPenIcon,
+  FolderPlusIcon,
+  LoaderCircleIcon,
+  ScrollTextIcon,
+  Trash2Icon,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import {
@@ -71,10 +71,10 @@ export function BottomBar() {
           <Tabs value={displayType} onValueChange={setDisplayType}>
             <TabsList>
               <TabsTrigger value={DisplayType.Dirs}>
-                <Folder />
+                <FolderIcon />
               </TabsTrigger>
               <TabsTrigger value={DisplayType.Logs}>
-                <ScrollText />
+                <ScrollTextIcon />
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -83,7 +83,7 @@ export function BottomBar() {
             onClick={minimizeBottomBar.toggle}
             variant="outline"
           >
-            <ArrowDownFromLine
+            <ArrowDownFromLineIcon
               className={cn(
                 'transition-transform duration-300',
                 minimizeBottomBar.value && 'rotate-180',
@@ -248,7 +248,7 @@ function DirsRemoveButton(props: PropsWithTable<TableData>) {
       size="icon"
       onClick={handleRemovePath}
     >
-      <Trash2 />
+      <Trash2Icon />
     </Button>
   );
 }
@@ -309,9 +309,9 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
     <div>
       <TooltipButton tooltip={t('add')} onClick={handleAddPath}>
         {openFileDialogLoading.value ? (
-          <LoaderCircle className="animate-spin" />
+          <LoaderCircleIcon className="animate-spin size-4" />
         ) : (
-          <FolderPlus />
+          <FolderPlusIcon />
         )}
       </TooltipButton>
       <Dialog
@@ -323,7 +323,7 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
       >
         <DialogTrigger asChild>
           <TooltipButton tooltip={t('manualAdd')}>
-            <FolderPen />
+            <FolderPenIcon />
           </TooltipButton>
         </DialogTrigger>
         <DialogContent>
@@ -350,7 +350,7 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
         onClick={handleRemovePaths}
         disabled={!selected.size}
       >
-        <Trash2 />
+        <Trash2Icon />
       </TooltipButton>
     </div>
   );

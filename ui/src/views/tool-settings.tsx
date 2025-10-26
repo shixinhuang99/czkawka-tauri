@@ -1,5 +1,5 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { Settings2 } from 'lucide-react';
+import { Settings2Icon } from 'lucide-react';
 import { currentToolAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import {
@@ -79,7 +79,7 @@ export function ToolSettings() {
     <Dialog open={dialogOpen.value} onOpenChange={dialogOpen.set}>
       <DialogTrigger asChild>
         <OperationButton>
-          <Settings2 />
+          <Settings2Icon />
           {t('toolSettings')}
         </OperationButton>
       </DialogTrigger>

@@ -1,5 +1,10 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { FilePenLine, FilePlus, TimerReset, Trash2 } from 'lucide-react';
+import {
+  FilePenLineIcon,
+  FilePlusIcon,
+  TimerResetIcon,
+  Trash2Icon,
+} from 'lucide-react';
 import { currentPresetAtom } from '~/atom/preset';
 import {
   excludedDirsRowSelectionAtom,
@@ -138,7 +143,7 @@ export function PresetSelect(props: PresetSelectProps) {
           }}
           disabled={editPresetInputVisible.value}
         >
-          <FilePlus />
+          <FilePlusIcon />
         </TooltipButton>
         <TooltipButton
           tooltip={t('editName')}
@@ -148,7 +153,7 @@ export function PresetSelect(props: PresetSelectProps) {
           }}
           disabled={newPresetInputVisible.value}
         >
-          <FilePenLine />
+          <FilePenLineIcon />
         </TooltipButton>
         <TooltipButton
           tooltip={t('removePreset')}
@@ -159,13 +164,13 @@ export function PresetSelect(props: PresetSelectProps) {
             editPresetInputVisible.value
           }
         >
-          <Trash2 />
+          <Trash2Icon />
         </TooltipButton>
         <TooltipButton
           tooltip={t('resetSettings')}
           onClick={handleSettingsReset}
         >
-          <TimerReset />
+          <TimerResetIcon />
         </TooltipButton>
       </span>
     </div>

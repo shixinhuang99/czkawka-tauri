@@ -1,5 +1,18 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { LoaderCircle } from 'lucide-react';
+import {
+  ClockIcon,
+  FileQuestionIcon,
+  FilesIcon,
+  FileWarningIcon,
+  FileXIcon,
+  FolderOpenIcon,
+  HardDriveIcon,
+  ImageIcon,
+  LinkIcon,
+  LoaderCircleIcon,
+  MusicIcon,
+  VideoIcon,
+} from 'lucide-react';
 import { currentToolAtom, progressAtom } from '~/atom/primitive';
 import { Button, ScrollArea } from '~/components';
 import { Tools } from '~/consts';
@@ -13,6 +26,23 @@ const toolSet = new Set<string>(Object.values(Tools));
 function isValidTool(s: string): s is ToolsValues {
   return toolSet.has(s);
 }
+
+const toolIcons: Record<
+  ToolsValues,
+  React.ComponentType<{ className?: string }>
+> = {
+  [Tools.DuplicateFiles]: FilesIcon,
+  [Tools.EmptyFolders]: FolderOpenIcon,
+  [Tools.BigFiles]: HardDriveIcon,
+  [Tools.EmptyFiles]: FileXIcon,
+  [Tools.TemporaryFiles]: ClockIcon,
+  [Tools.SimilarImages]: ImageIcon,
+  [Tools.SimilarVideos]: VideoIcon,
+  [Tools.MusicDuplicates]: MusicIcon,
+  [Tools.InvalidSymlinks]: LinkIcon,
+  [Tools.BrokenFiles]: FileWarningIcon,
+  [Tools.BadExtensions]: FileQuestionIcon,
+};
 
 export function ToolTabs() {
   const [currentTool, setCurrentTool] = useAtom(currentToolAtom);
@@ -42,6 +72,7 @@ export function ToolTabs() {
       </div>
       <ScrollArea className="px-3 pb-1 flex-1">
         {Object.values(Tools).map((name) => {
+          const Icon = toolIcons[name];
           return (
             <Button
               key={name}
@@ -54,9 +85,12 @@ export function ToolTabs() {
               variant="ghost"
               onClick={() => handleClick(name)}
             >
-              {t(name)}
+              <div className="flex items-center gap-2">
+                <Icon className="size-4" />
+                {t(name)}
+              </div>
               {progress.tool === name && (
-                <LoaderCircle className="animate-spin" />
+                <LoaderCircleIcon className="animate-spin" />
               )}
             </Button>
           );

@@ -1,5 +1,5 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { Trash2 } from 'lucide-react';
+import { Trash2Icon } from 'lucide-react';
 import { Trans } from 'react-i18next';
 import { currentToolAtom, logsAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
@@ -73,7 +73,7 @@ export function DeleteFiles(props: DeleteFilesProps) {
   return (
     <>
       <OperationButton disabled={disabled || !paths.length} onClick={open.on}>
-        <Trash2 />
+        <Trash2Icon />
         {t('delete')}
       </OperationButton>
       <AlertDialog

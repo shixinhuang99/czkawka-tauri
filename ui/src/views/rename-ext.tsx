@@ -1,5 +1,5 @@
 import { useAtom, useSetAtom } from 'jotai';
-import { TextCursorInput } from 'lucide-react';
+import { TextCursorInputIcon } from 'lucide-react';
 import { Trans } from 'react-i18next';
 import { logsAtom } from '~/atom/primitive';
 import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
@@ -69,7 +69,7 @@ export function RenameExt(props: RenameExtProps) {
   return (
     <>
       <OperationButton disabled={disabled || !paths.length} onClick={open.on}>
-        <TextCursorInput />
+        <TextCursorInputIcon />
         {t('rename')}
       </OperationButton>
       <AlertDialog

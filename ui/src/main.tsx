@@ -1,4 +1,4 @@
-import { LoaderCircle } from 'lucide-react';
+import { LoaderCircleIcon } from 'lucide-react';
 import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
@@ -9,7 +9,7 @@ import { migrate } from '~/utils/migrate';
 function Loading() {
   return (
     <div className="h-screen w-screen flex items-center justify-center">
-      <LoaderCircle className="animate-spin size-8" />
+      <LoaderCircleIcon className="animate-spin size-14" />
     </div>
   );
 }

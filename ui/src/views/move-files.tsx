@@ -1,6 +1,6 @@
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtom, useSetAtom } from 'jotai';
-import { FolderSymlink, LoaderCircle } from 'lucide-react';
+import { FolderSymlinkIcon, LoaderCircleIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Trans } from 'react-i18next';
 import { logsAtom } from '~/atom/primitive';
@@ -105,9 +105,9 @@ export function MoveFiles(props: MoveFilesProps) {
         onClick={handleChooseDestination}
       >
         {openFileDialogLoading.value ? (
-          <LoaderCircle className="animate-spin" />
+          <LoaderCircleIcon className="animate-spin" />
         ) : (
-          <FolderSymlink />
+          <FolderSymlinkIcon />
         )}
         {t('move')}
       </OperationButton>

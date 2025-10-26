@@ -1,5 +1,5 @@
 import { openUrl } from '@tauri-apps/plugin-opener';
-import { Languages } from 'lucide-react';
+import { LanguagesIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Select, TooltipButton } from '~/components';
@@ -54,7 +54,7 @@ function ChangeLanguageButton() {
     <Select
       trigger={
         <SelectIconTrigger>
-          <Languages />
+          <LanguagesIcon />
         </SelectIconTrigger>
       }
       value={value}

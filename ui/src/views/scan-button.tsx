@@ -1,5 +1,5 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { Ban, Search } from 'lucide-react';
+import { BanIcon, SearchIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { currentToolAtom, logsAtom, progressAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
@@ -104,7 +104,7 @@ export function ScanButton() {
     <>
       {progress.tool ? (
         <OperationButton disabled={progress.stopping} onClick={handleStopScan}>
-          <Ban />
+          <BanIcon />
           {t('stop')}
         </OperationButton>
       ) : (
@@ -112,7 +112,7 @@ export function ScanButton() {
           disabled={!settings.includedDirectories.length}
           onClick={handleScan}
         >
-          <Search />
+          <SearchIcon />
           {t('scan')}
         </OperationButton>
       )}
