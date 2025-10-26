@@ -260,9 +260,9 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
   const manualAddDialogOpen = useBoolean();
   const [manualAddPaths, setManualAddPaths] = useState('');
   const openFileDialogLoading = useBoolean();
+  const selected = new Set(getRowSelectionKeys(rowSelection));
 
   const handleRemovePaths = () => {
-    const selected = new Set(getRowSelectionKeys(rowSelection));
     if (!selected.size) {
       return;
     }
@@ -345,7 +345,11 @@ function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <TooltipButton tooltip={t('removeSelected')} onClick={handleRemovePaths}>
+      <TooltipButton
+        tooltip={t('removeSelected')}
+        onClick={handleRemovePaths}
+        disabled={!selected.size}
+      >
         <Trash2 />
       </TooltipButton>
     </div>
