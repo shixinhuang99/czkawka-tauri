@@ -1,23 +1,14 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { Settings2Icon } from 'lucide-react';
 import { currentToolAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import {
   InputNumber,
   LabelCheckbox,
-  OperationButton,
+  ScrollArea,
   Select,
   Slider,
   Switch,
 } from '~/components';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '~/components/shadcn/dialog';
 import { Form, FormItem } from '~/components/simple-form';
 import {
   BigFilesSearchMode,
@@ -28,7 +19,7 @@ import {
   SimilarMusicAudioCheckType,
   Tools,
 } from '~/consts';
-import { useBoolean, useT } from '~/hooks';
+import { useT } from '~/hooks';
 import type { TranslationKeys } from '~/i18n/en';
 
 const toolsWithoutSettings = new Set<string>([
@@ -51,48 +42,32 @@ const settingsCompMap: Record<string, () => React.JSX.Element> = {
 export function ToolSettings() {
   const currentTool = useAtomValue(currentToolAtom);
   const [settings, setSettings] = useAtom(settingsAtom);
-  const dialogOpen = useBoolean();
   const t = useT();
-
-  if (toolsWithoutSettings.has(currentTool)) {
-    return null;
-  }
-
-  const descMap: Record<string, string> = {
-    [Tools.DuplicateFiles]: t('duplicateFilesSettings'),
-    [Tools.BigFiles]: t('bigFilesSettings'),
-    [Tools.SimilarImages]: t('similarImagesSettings'),
-    [Tools.SimilarVideos]: t('similarVideosSettings'),
-    [Tools.MusicDuplicates]: t('musicDuplicatesSettings'),
-    [Tools.BrokenFiles]: t('brokenFilesSettings'),
-  };
-
-  const desc = descMap[currentTool];
 
   const handleSettingsChange = (v: Record<string, any>) => {
     setSettings((old) => ({ ...old, ...v }));
   };
 
+  if (toolsWithoutSettings.has(currentTool)) {
+    return (
+      <div className="flex-1 rounded-md border text-card-foreground dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-muted-foreground">
+          {t('noSettingsForThisTool')}
+        </div>
+      </div>
+    );
+  }
+
   const SettingsComponent = settingsCompMap[currentTool] || Fallback;
 
   return (
-    <Dialog open={dialogOpen.value} onOpenChange={dialogOpen.set}>
-      <DialogTrigger asChild>
-        <OperationButton>
-          <Settings2Icon />
-          {t('toolSettings')}
-        </OperationButton>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('toolSettings')}</DialogTitle>
-          <DialogDescription>{desc}</DialogDescription>
-        </DialogHeader>
+    <ScrollArea className="flex-1 rounded-md border text-card-foreground dark:bg-gray-900">
+      <div className="px-4 py-3">
         <Form value={settings} onChange={handleSettingsChange}>
           <SettingsComponent />
         </Form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </ScrollArea>
   );
 }
 

@@ -7,6 +7,7 @@ import {
   FolderPlusIcon,
   LoaderCircleIcon,
   ScrollTextIcon,
+  Settings2Icon,
   Trash2Icon,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -36,10 +37,12 @@ import { useT } from '~/hooks';
 import type { DirsType } from '~/types';
 import { getRowSelectionKeys, splitStr } from '~/utils/common';
 import { Operations } from './operations';
+import { ToolSettings } from './tool-settings';
 
 const DisplayType = {
   Dirs: 'dirs',
   Logs: 'logs',
+  ToolSettings: 'toolSettings',
 } as const;
 
 interface TableData {
@@ -58,13 +61,11 @@ type PropsWithRowSelection<T> = T & {
 
 interface BottomBarProps {
   headerRef: React.RefObject<HTMLDivElement>;
-  panelSize: number;
 }
 
-export function BottomBar({ headerRef, panelSize }: BottomBarProps) {
+export function BottomBar({ headerRef }: BottomBarProps) {
+  const t = useT();
   const [displayType, setDisplayType] = useState<string>(DisplayType.Dirs);
-
-  const shouldShowContent = panelSize > 20;
 
   return (
     <div className="flex flex-col h-full px-2 py-1 gap-1">
@@ -75,25 +76,28 @@ export function BottomBar({ headerRef, panelSize }: BottomBarProps) {
             <TabsList>
               <TabsTrigger value={DisplayType.Dirs}>
                 <FolderIcon />
+                <span className="ml-2">{t('directories')}</span>
+              </TabsTrigger>
+              <TabsTrigger value={DisplayType.ToolSettings}>
+                <Settings2Icon />
+                <span className="ml-2">{t('toolSettings')}</span>
               </TabsTrigger>
               <TabsTrigger value={DisplayType.Logs}>
                 <ScrollTextIcon />
+                <span className="ml-2">{t('logs')}</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
       </div>
-      {shouldShowContent && (
-        <>
-          {displayType === DisplayType.Dirs && (
-            <div className="flex gap-1 flex-1 min-h-0">
-              <IncludedDirsTable />
-              <ExcludedDirsTable />
-            </div>
-          )}
-          {displayType === DisplayType.Logs && <Logs />}
-        </>
+      {displayType === DisplayType.Dirs && (
+        <div className="flex gap-1 flex-1 min-h-0">
+          <IncludedDirsTable />
+          <ExcludedDirsTable />
+        </div>
       )}
+      {displayType === DisplayType.Logs && <Logs />}
+      {displayType === DisplayType.ToolSettings && <ToolSettings />}
     </div>
   );
 }

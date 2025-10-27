@@ -19,7 +19,6 @@ const PANEL_SIZE = 35;
 
 export default function App() {
   const [bottomPanelMinSize, setBottomPanelMinSize] = useState(PANEL_SIZE);
-  const [bottomPanelSize, setBottomPanelSize] = useState(PANEL_SIZE);
   const headerRef = useRef<HTMLDivElement>(null);
   const bottomPanelRef = useRef<ImperativePanelHandle>(null);
 
@@ -85,9 +84,8 @@ export default function App() {
             defaultSize={PANEL_SIZE}
             minSize={bottomPanelMinSize}
             maxSize={50}
-            onResize={setBottomPanelSize}
           >
-            <BottomBar headerRef={headerRef} panelSize={bottomPanelSize} />
+            <BottomBar headerRef={headerRef} />
           </ResizablePanel>
         </ResizablePanelGroup>
       </TooltipProvider>

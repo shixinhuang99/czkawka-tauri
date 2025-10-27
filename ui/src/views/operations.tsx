@@ -8,7 +8,6 @@ import { RenameExt } from './rename-ext';
 import { RowSelectionMenu } from './row-selection-menu';
 import { SaveResult } from './save-result';
 import { ScanButton } from './scan-button';
-import { ToolSettings } from './tool-settings';
 
 export function Operations() {
   const progress = useAtomValue(progressAtom);
@@ -20,7 +19,6 @@ export function Operations() {
   return (
     <div className="flex gap-1">
       <ScanButton />
-      <ToolSettings />
       <RowSelectionMenu disabled={disabled} />
       <MoveFiles disabled={disabled} />
       <DeleteFiles disabled={disabled} />

@@ -149,6 +149,9 @@ export const zh: Record<TranslationKeys, string> = {
 
   expand: '展开',
   collapse: '收起',
+  directories: '目录',
+  logs: '日志',
+  noSettingsForThisTool: '该工具不支持设置',
   includeDirectories: '包含的文件夹',
   excludeDirectories: '排除的文件夹',
   pleaseAddPath: '请添加路径',

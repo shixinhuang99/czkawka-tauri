@@ -149,6 +149,9 @@ export const en = {
 
   expand: 'Expand',
   collapse: 'Collapse',
+  directories: 'Directories',
+  logs: 'Logs',
+  noSettingsForThisTool: 'This tool does not support settings',
   includeDirectories: 'Include Directories',
   excludeDirectories: 'Exclude Directories',
   pleaseAddPath: 'Please add path',
