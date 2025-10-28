@@ -7,7 +7,7 @@ import { logsAtom } from '~/atom/primitive';
 import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
 import { OperationButton, Switch } from '~/components';
 import { AlertDialog } from '~/components/alert-dialog';
-import { Form, FormItem } from '~/components/simple-form';
+import { Form, FormItem } from '~/components/form';
 import { useBoolean, useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
 import { getRowSelectionKeys } from '~/utils/common';

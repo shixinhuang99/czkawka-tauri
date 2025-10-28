@@ -9,7 +9,7 @@ import {
   Slider,
   Switch,
 } from '~/components';
-import { Form, FormItem } from '~/components/simple-form';
+import { Form, FormItem } from '~/components/form';
 import {
   BigFilesSearchMode,
   DuplicatesAvailableHashType,
