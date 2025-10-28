@@ -1,6 +1,14 @@
 import { openPath } from '@tauri-apps/plugin-opener';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { CircleHelpIcon, SettingsIcon } from 'lucide-react';
+import {
+  CircleHelpIcon,
+  ClockIcon,
+  FilesIcon,
+  ImageIcon,
+  MusicIcon,
+  SettingsIcon,
+  VideoIcon,
+} from 'lucide-react';
 import { useEffect } from 'react';
 import { initCurrentPresetAtom } from '~/atom/preset';
 import { platformSettingsAtom } from '~/atom/primitive';
@@ -16,6 +24,7 @@ import {
   TooltipButton,
   toastError,
 } from '~/components';
+import { Form, FormItem } from '~/components/form';
 import {
   Dialog,
   DialogContent,
@@ -24,7 +33,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/shadcn/dialog';
-import { Form, FormItem } from '~/components/form';
 import { MAXIMUM_FILE_SIZE } from '~/consts';
 import { useBoolean, useT } from '~/hooks';
 import { eventPreventDefault } from '~/utils/event';
@@ -91,7 +99,9 @@ function SettingsContent() {
   return (
     <ScrollArea className="flex-1">
       <Form className="pr-3" value={settings} onChange={handleSettingsChange}>
-        <GroupTitle>{t('generalSettings')}</GroupTitle>
+        <SectionHeader icon={SettingsIcon}>
+          {t('generalSettings')}
+        </SectionHeader>
         <FormItem
           name="excludedItems"
           label={t('excludedItems')}
@@ -169,7 +179,7 @@ function SettingsContent() {
         >
           <Slider min={1} max={platformSettings.availableThreadNumber} />
         </FormItem>
-        <GroupTitle>{t('duplicateFiles')}</GroupTitle>
+        <SectionHeader icon={FilesIcon}>{t('duplicateFiles')}</SectionHeader>
         <FormItem
           name="duplicateMinimalHashCacheSize"
           label={`${t('minimalSizeOfCachedFiles')} - ${t('hash')} (KB)`}
@@ -212,7 +222,7 @@ function SettingsContent() {
         >
           <Switch />
         </FormItem>
-        <GroupTitle>{t('similarImages')}</GroupTitle>
+        <SectionHeader icon={ImageIcon}>{t('similarImages')}</SectionHeader>
         <FormItem
           name="similarImagesShowImagePreview"
           label={t('imagePreview')}
@@ -234,7 +244,7 @@ function SettingsContent() {
         >
           <Switch />
         </FormItem>
-        <GroupTitle>{t('similarVideos')}</GroupTitle>
+        <SectionHeader icon={VideoIcon}>{t('similarVideos')}</SectionHeader>
         <FormItem
           name="similarVideosHideHardLinks"
           label={t('hideHardLinks')}
@@ -249,7 +259,7 @@ function SettingsContent() {
         >
           <Switch />
         </FormItem>
-        <GroupTitle>{t('musicDuplicates')}</GroupTitle>
+        <SectionHeader icon={MusicIcon}>{t('musicDuplicates')}</SectionHeader>
         <FormItem
           name="similarMusicDeleteOutdatedEntries"
           label={t('deleteAutomaticallyOutdatedEntries')}
@@ -258,7 +268,7 @@ function SettingsContent() {
           <Switch />
         </FormItem>
       </Form>
-      <GroupTitle>{t('other')}</GroupTitle>
+      <SectionHeader icon={ClockIcon}>{t('other')}</SectionHeader>
       <Button variant="secondary" onClick={handleOpenCacheFolder}>
         {t('openCacheFolder')}
       </Button>
@@ -266,8 +276,22 @@ function SettingsContent() {
   );
 }
 
-function GroupTitle(props: { children?: React.ReactNode }) {
-  const { children } = props;
+interface SectionHeaderProps {
+  icon: React.ComponentType<{ className?: string }>;
+  children?: React.ReactNode;
+}
 
-  return <h3 className="w-full text-center">{children}</h3>;
+function SectionHeader({ icon: Icon, children }: SectionHeaderProps) {
+  return (
+    <div className="flex items-center w-full my-6">
+      <div className="flex-grow border-t border-border" />
+      <div className="flex items-center gap-2 px-4">
+        <Icon className="w-4 h-4 text-muted-foreground" />
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+          {children}
+        </h3>
+      </div>
+      <div className="flex-grow border-t border-border" />
+    </div>
+  );
 }
