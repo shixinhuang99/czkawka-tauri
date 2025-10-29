@@ -24,7 +24,7 @@ import {
   TooltipButton,
   toastError,
 } from '~/components';
-import { Form, FormItem } from '~/components/form';
+import { Form, FormItem, RawFormItem } from '~/components/form';
 import {
   Dialog,
   DialogContent,
@@ -102,177 +102,214 @@ function SettingsContent() {
         <SectionHeader icon={SettingsIcon}>
           {t('generalSettings')}
         </SectionHeader>
-        <FormItem
-          name="excludedItems"
-          label={t('excludedItems')}
-          comp="textarea"
-        >
-          <Textarea rows={2} />
-        </FormItem>
-        <FormItem
-          name="allowedExtensions"
-          label={t('allowedExtensions')}
-          comp="textarea"
-        >
-          <Textarea rows={2} />
-        </FormItem>
-        <FormItem
-          name="excludedExtensions"
-          label={t('excludedExtensions')}
-          comp="textarea"
-        >
-          <Textarea rows={2} />
-        </FormItem>
-        <div className="flex items-center gap-2">
-          <Label className="flex-shrink-0">{t('fileSize')}(KB):</Label>
-          <FormItem name="minimumFileSize" comp="input-number">
-            <InputNumber minValue={16} maxValue={MAXIMUM_FILE_SIZE} />
+        <SectionContent>
+          <FormItem
+            name="excludedItems"
+            label={t('excludedItems')}
+            comp="textarea"
+          >
+            <Textarea rows={2} className="w-[60%]" />
           </FormItem>
-          ~
-          <FormItem name="maximumFileSize" comp="input-number">
-            <InputNumber minValue={16} maxValue={MAXIMUM_FILE_SIZE} />
+          <FormItem
+            name="allowedExtensions"
+            label={t('allowedExtensions')}
+            comp="textarea"
+          >
+            <Textarea rows={2} className="w-[60%]" />
           </FormItem>
-        </div>
-        <FormItem
-          name="recursiveSearch"
-          label={t('recursiveSearch')}
-          comp="switch"
-        >
-          <Switch />
-        </FormItem>
-        <FormItem name="useCache" label={t('useCache')} comp="switch">
-          <Switch />
-        </FormItem>
-        <FormItem
-          name="saveAlsoAsJson"
-          label={t('alsoSaveCacheAsJsonFile')}
-          comp="switch"
-        >
-          <Switch />
-        </FormItem>
-        <FormItem
-          name="moveDeletedFilesToTrash"
-          label={t('moveDeletedFilesToTrash')}
-          comp="switch"
-        >
-          <Switch />
-        </FormItem>
-        <FormItem
-          name="threadNumber"
-          label={
-            <span className="inline-flex items-center">
-              {t('threadNumber')}
-              <TooltipButton
-                tooltip={t('threadNumberTip')}
-                onClick={eventPreventDefault}
-              >
-                <CircleHelpIcon />
-              </TooltipButton>
-            </span>
-          }
-          comp="slider"
-          suffix={
-            <span>
-              {settings.threadNumber}/{platformSettings.availableThreadNumber}
-            </span>
-          }
-        >
-          <Slider min={1} max={platformSettings.availableThreadNumber} />
-        </FormItem>
+          <FormItem
+            name="excludedExtensions"
+            label={t('excludedExtensions')}
+            comp="textarea"
+          >
+            <Textarea rows={2} className="w-[60%]" />
+          </FormItem>
+          <RawFormItem>
+            <Label className="flex-shrink-0">{t('fileSize')}(KB):</Label>
+            <div className="w-[60%] flex items-center gap-2">
+              <FormItem name="minimumFileSize" comp="input-number">
+                <InputNumber minValue={16} maxValue={MAXIMUM_FILE_SIZE} />
+              </FormItem>
+              ~
+              <FormItem name="maximumFileSize" comp="input-number">
+                <InputNumber minValue={16} maxValue={MAXIMUM_FILE_SIZE} />
+              </FormItem>
+            </div>
+          </RawFormItem>
+          <FormItem
+            name="recursiveSearch"
+            label={t('recursiveSearch')}
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+          <FormItem name="useCache" label={t('useCache')} comp="switch">
+            <Switch />
+          </FormItem>
+          <FormItem
+            name="saveAlsoAsJson"
+            label={t('alsoSaveCacheAsJsonFile')}
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+          <FormItem
+            name="moveDeletedFilesToTrash"
+            label={t('moveDeletedFilesToTrash')}
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+          <FormItem
+            name="threadNumber"
+            label={
+              <span className="inline-flex items-center">
+                {t('threadNumber')}
+                <TooltipButton
+                  tooltip={t('threadNumberTip')}
+                  onClick={eventPreventDefault}
+                  className="cursor-default"
+                >
+                  <CircleHelpIcon />
+                </TooltipButton>
+              </span>
+            }
+            comp="slider"
+          >
+            {(slotProps) => {
+              return (
+                <div className="w-[60%] flex items-center gap-2">
+                  <Slider
+                    min={1}
+                    max={platformSettings.availableThreadNumber}
+                    id={slotProps.name}
+                    {...slotProps}
+                  />
+                  <span>
+                    {settings.threadNumber}/
+                    {platformSettings.availableThreadNumber}
+                  </span>
+                </div>
+              );
+            }}
+          </FormItem>
+        </SectionContent>
         <SectionHeader icon={FilesIcon}>{t('duplicateFiles')}</SectionHeader>
-        <FormItem
-          name="duplicateMinimalHashCacheSize"
-          label={`${t('minimalSizeOfCachedFiles')} - ${t('hash')} (KB)`}
-          comp="input-number"
-        >
-          <InputNumber minValue={1} />
-        </FormItem>
-        <FormItem
-          name="duplicateMinimalPrehashCacheSize"
-          label={`${t('minimalSizeOfCachedFiles')} - ${t('prehash')} (KB)`}
-          comp="input-number"
-        >
-          <InputNumber minValue={1} />
-        </FormItem>
-        <FormItem
-          name="duplicateImagePreview"
-          label={t('imagePreview')}
-          comp="switch"
-        >
-          <Switch />
-        </FormItem>
-        <FormItem
-          name="duplicateHideHardLinks"
-          label={t('hideHardLinks')}
-          comp="switch"
-        >
-          <Switch />
-        </FormItem>
-        <FormItem
-          name="duplicateUsePrehash"
-          label={t('usePrehash')}
-          comp="switch"
-        >
-          <Switch />
-        </FormItem>
-        <FormItem
-          name="duplicateDeleteOutdatedEntries"
-          label={t('deleteAutomaticallyOutdatedEntries')}
-          comp="switch"
-        >
-          <Switch />
-        </FormItem>
+        <SectionContent>
+          <FormItem
+            name="duplicateMinimalHashCacheSize"
+            label={`${t('minimalSizeOfCachedFiles')} - ${t('hash')} (KB)`}
+            comp="input-number"
+          >
+            <InputNumber minValue={1} className="w-[40%]" />
+          </FormItem>
+          <FormItem
+            name="duplicateMinimalPrehashCacheSize"
+            label={`${t('minimalSizeOfCachedFiles')} - ${t('prehash')} (KB)`}
+            comp="input-number"
+          >
+            <InputNumber minValue={1} className="w-[40%]" />
+          </FormItem>
+          <FormItem
+            name="duplicateImagePreview"
+            label={t('imagePreview')}
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+          <FormItem
+            name="duplicateHideHardLinks"
+            label={t('hideHardLinks')}
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+          <FormItem
+            name="duplicateUsePrehash"
+            label={t('usePrehash')}
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+          <FormItem
+            name="duplicateDeleteOutdatedEntries"
+            label={t('deleteAutomaticallyOutdatedEntries')}
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+        </SectionContent>
         <SectionHeader icon={ImageIcon}>{t('similarImages')}</SectionHeader>
-        <FormItem
-          name="similarImagesShowImagePreview"
-          label={t('imagePreview')}
-          comp="switch"
-        >
-          <Switch />
-        </FormItem>
-        <FormItem
-          name="similarImagesHideHardLinks"
-          label={t('hideHardLinks')}
-          comp="switch"
-        >
-          <Switch />
-        </FormItem>
-        <FormItem
-          name="similarImagesDeleteOutdatedEntries"
-          label={t('deleteAutomaticallyOutdatedEntries')}
-          comp="switch"
-        >
-          <Switch />
-        </FormItem>
+        <SectionContent>
+          <FormItem
+            name="similarImagesShowImagePreview"
+            label={t('imagePreview')}
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+          <FormItem
+            name="similarImagesHideHardLinks"
+            label={t('hideHardLinks')}
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+          <FormItem
+            name="similarImagesDeleteOutdatedEntries"
+            label={t('deleteAutomaticallyOutdatedEntries')}
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+        </SectionContent>
         <SectionHeader icon={VideoIcon}>{t('similarVideos')}</SectionHeader>
-        <FormItem
-          name="similarVideosHideHardLinks"
-          label={t('hideHardLinks')}
-          comp="switch"
-        >
-          <Switch />
-        </FormItem>
-        <FormItem
-          name="similarVideosDeleteOutdatedEntries"
-          label={t('deleteAutomaticallyOutdatedEntries')}
-          comp="switch"
-        >
-          <Switch />
-        </FormItem>
+        <SectionContent>
+          <FormItem
+            name="similarVideosHideHardLinks"
+            label={t('hideHardLinks')}
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+          <FormItem
+            name="similarVideosDeleteOutdatedEntries"
+            label={t('deleteAutomaticallyOutdatedEntries')}
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+        </SectionContent>
         <SectionHeader icon={MusicIcon}>{t('musicDuplicates')}</SectionHeader>
-        <FormItem
-          name="similarMusicDeleteOutdatedEntries"
-          label={t('deleteAutomaticallyOutdatedEntries')}
-          comp="switch"
-        >
-          <Switch />
-        </FormItem>
+        <SectionContent>
+          <FormItem
+            name="similarMusicDeleteOutdatedEntries"
+            label={t('deleteAutomaticallyOutdatedEntries')}
+            comp="switch"
+          >
+            <Switch />
+          </FormItem>
+        </SectionContent>
       </Form>
       <SectionHeader icon={ClockIcon}>{t('other')}</SectionHeader>
-      <Button variant="secondary" onClick={handleOpenCacheFolder}>
-        {t('openCacheFolder')}
-      </Button>
+      <SectionContent>
+        <Button variant="secondary" onClick={handleOpenCacheFolder}>
+          {t('openCacheFolder')}
+        </Button>
+      </SectionContent>
     </ScrollArea>
+  );
+}
+
+interface SectionContentProps {
+  children: React.ReactNode;
+}
+
+function SectionContent({ children }: SectionContentProps) {
+  return (
+    <div className="border border-border rounded-lg p-4 divide-y divide-border [&>*]:py-4 [&>*:first-child]:pt-0 [&>*:last-child]:pb-0 bg-neutral-50 dark:bg-gray-900">
+      {children}
+    </div>
   );
 }
 

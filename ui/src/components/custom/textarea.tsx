@@ -12,7 +12,7 @@ export const Textarea = forwardRef<
       ref={ref}
       className={cn(
         scrollBar(),
-        'dark:bg-gray-900 placeholder:italic break-all',
+        'bg-white dark:bg-black placeholder:italic break-all',
         className,
       )}
       autoCapitalize="off"

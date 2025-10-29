@@ -48,19 +48,25 @@ type CompType =
   | 'select'
   | 'checkbox';
 
-export function FormItem(
-  props: React.PropsWithChildren<{
-    name: string;
-    label?: React.ReactNode;
-    comp: CompType;
-    suffix?: React.ReactNode;
-  }>,
-) {
-  const { name, label, comp, suffix, children } = props;
+interface SlotProps {
+  name: string;
+  [key: string]: any;
+}
+
+interface FormItemProps {
+  name: string;
+  label?: React.ReactNode;
+  comp: CompType;
+  className?: string;
+  children: React.ReactNode | ((props: SlotProps) => React.ReactNode);
+}
+
+export function FormItem(props: FormItemProps) {
+  const { name, label, comp, children, className } = props;
 
   const { value, onChange } = useContext(FormContext);
 
-  const slotProps: Record<string, any> = useMemo(() => {
+  const slotProps: SlotProps = useMemo(() => {
     const compPropsMap: Record<CompType, Record<string, any>> = {
       textarea: {
         value: value[name],
@@ -103,23 +109,43 @@ export function FormItem(
     return { name, ...compProps };
   }, [value, name, comp, onChange]);
 
-  if (!label) {
-    return (
+  const content =
+    typeof children === 'function' ? (
+      children(slotProps)
+    ) : (
       <Slot id={name} {...slotProps}>
         {children}
       </Slot>
     );
+
+  if (!label) {
+    return content;
   }
 
   return (
-    <div className="flex items-center gap-2 min-h-9">
+    <RawFormItem className={className}>
       <Label className="flex-shrink-0" htmlFor={name}>
         {label}:
       </Label>
-      <Slot id={name} {...slotProps}>
-        {children}
-      </Slot>
-      {suffix}
+      {content}
+    </RawFormItem>
+  );
+}
+
+export function RawFormItem({
+  children,
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<'div'>) {
+  return (
+    <div
+      className={cn(
+        'flex items-center gap-2 min-h-9 justify-between',
+        className,
+      )}
+      {...props}
+    >
+      {children}
     </div>
   );
 }
