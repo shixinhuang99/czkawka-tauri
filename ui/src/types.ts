@@ -4,11 +4,6 @@ type ValueOf<T> = T[keyof T];
 
 export type ToolsValues = ValueOf<typeof Tools>;
 
-export interface ThemeCfg {
-  display: string;
-  className: string;
-}
-
 export interface Preset {
   name: string;
   active: boolean;

@@ -1,15 +1,13 @@
-import { isTauri } from '@tauri-apps/api/core';
 import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
 import { atom } from 'jotai';
-import { Theme } from '~/consts';
-import { storage } from '~/utils/storage';
-import { isSystemDark } from '~/utils/theme';
+import { DARK_MODE_MEDIA, Theme } from '~/consts';
 import { themeAtom } from './primitive';
 
-function setTheme(theme: string) {
-  if (!isTauri()) {
-    return;
-  }
+function isSystemDark() {
+  return window.matchMedia(DARK_MODE_MEDIA).matches;
+}
+
+function setSystemTheme(theme: string) {
   const ww = getCurrentWebviewWindow();
   if (theme === Theme.Light || theme === Theme.Dark) {
     ww.setTheme(theme);
@@ -19,48 +17,36 @@ function setTheme(theme: string) {
 }
 
 function applyTheme(theme: string) {
-  let finalTheme = theme;
+  let className = theme;
   if (theme === Theme.System) {
-    finalTheme = isSystemDark() ? Theme.Dark : Theme.Light;
+    className = isSystemDark() ? Theme.Dark : Theme.Light;
   }
   const root = window.document.documentElement;
   root.classList.remove(Theme.Light, Theme.Dark);
-  root.classList.add(finalTheme);
-  return finalTheme;
+  root.classList.add(className);
 }
 
-export const initThemeAtom = atom(null, (_, set) => {
-  const theme = storage.getTheme();
-  const className = applyTheme(theme);
-  set(themeAtom, { display: theme, className });
-  setTheme(theme);
+export const initThemeAtom = atom(null, (get) => {
+  const theme = get(themeAtom);
+  applyTheme(theme);
+  setSystemTheme(theme);
 });
 
-export const toggleThemeAtom = atom(null, (get, set) => {
-  const display = get(themeAtom).display;
-  const displayList: string[] = [Theme.Light, Theme.Dark, Theme.System];
-  let idx = displayList.indexOf(display);
-  if (idx < 0) {
-    idx = 0;
-  }
-  idx += 1;
-  if (idx >= displayList.length) {
-    idx = 0;
-  }
-  const newDisplay = displayList[idx];
-  const newClassName = applyTheme(newDisplay);
-  set(themeAtom, { display: newDisplay, className: newClassName });
-  storage.setTheme(newDisplay);
-  setTheme(newDisplay);
-});
-
-export const applyMatchMediaAtom = atom(null, (get, set, matches: boolean) => {
-  const display = get(themeAtom).display;
-  if (display !== Theme.System) {
+export const applyMatchMediaAtom = atom(null, (get, _, isDark: boolean) => {
+  const theme = get(themeAtom);
+  if (theme !== Theme.System) {
     return;
   }
-  const theme = matches ? Theme.Dark : Theme.Light;
-  const newClassName = applyTheme(theme);
-  set(themeAtom, { display, className: newClassName });
-  setTheme(display);
+  applyTheme(isDark ? Theme.Dark : Theme.Light);
+  setSystemTheme(theme);
+});
+
+export const setThemeAtom = atom(null, (get, set, choose: string) => {
+  const theme = get(themeAtom);
+  if (theme === choose) {
+    return;
+  }
+  set(themeAtom, choose);
+  applyTheme(choose);
+  setSystemTheme(choose);
 });

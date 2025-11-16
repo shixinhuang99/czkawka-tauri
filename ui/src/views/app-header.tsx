@@ -8,7 +8,6 @@ import { SelectIconTrigger } from '~/components/select';
 import { useT } from '~/hooks';
 import { storage } from '~/utils/storage';
 import { SettingsButton } from './settings';
-import { ThemeToggle } from './theme-toggle';
 
 export function AppHeader() {
   return (
@@ -19,7 +18,6 @@ export function AppHeader() {
       <div className="flex items-center gap-1.5">
         <ChangeLanguageButton />
         <SettingsButton />
-        <ThemeToggle />
         <ViewGitHubButton />
       </div>
     </div>

@@ -10,7 +10,9 @@ export const en = {
   nameAlreadyExists: '`{{name}}` already exists',
 
   failedToOpenCacheFolder: 'Failed to open cache folder',
-  generalSettings: 'General settings',
+  appearance: 'Appearance',
+  scanner: 'Scanner',
+  general: 'General',
   excludedItems: 'Excluded items',
   allowedExtensions: 'Allowed extensions',
   excludedExtensions: 'Excluded extensions',

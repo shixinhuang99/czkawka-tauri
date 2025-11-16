@@ -1,5 +1,9 @@
 import type { PlatformSettings, Preset, Progress, Settings } from '~/types';
 
+export const THEME_KEY = 'theme';
+export const SETTINGS_PRESETS_KEY = 'settingPresets';
+export const CURRENT_TOOL_KEY = 'currentTool';
+
 export const Theme = {
   Dark: 'dark',
   Light: 'light',

@@ -12,7 +12,9 @@ export const zh: Record<TranslationKeys, string> = {
   nameAlreadyExists: '`{{name}}` 已存在',
 
   failedToOpenCacheFolder: '打开缓存文件夹失败',
-  generalSettings: '通用设置',
+  appearance: '外观',
+  scanner: '扫描器',
+  general: '通用',
   excludedItems: '排除的项目',
   allowedExtensions: '允许的拓展名',
   excludedExtensions: '排除的拓展名',

@@ -59,7 +59,7 @@ export function ToolTabs() {
   return (
     <div
       className={cn(
-        'h-full w-[200px] border-r flex flex-col',
+        'h-full w-[220px] border-r flex flex-col',
         PLATFORM === 'darwin' && 'pt-5',
       )}
     >

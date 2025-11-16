@@ -2,9 +2,13 @@ import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import type { RowSelection } from '~/components/data-table';
 import {
+  CURRENT_TOOL_KEY,
   getDefaultPlatformSettings,
   getDefaultPreset,
   getDefaultProgress,
+  SETTINGS_PRESETS_KEY,
+  THEME_KEY,
+  Theme,
   Tools,
 } from '~/consts';
 import type {
@@ -20,19 +24,19 @@ import type {
   Progress,
   SymlinksFileEntry,
   TemporaryFileEntry,
-  ThemeCfg,
   ToolsValues,
   VideosEntry,
 } from '~/types';
-import { isValidTool } from '~/utils/common';
 
-export const themeAtom = atom<ThemeCfg>({
-  display: '',
-  className: '',
-});
+export const themeAtom = atomWithStorage<string>(
+  THEME_KEY,
+  Theme.System,
+  undefined,
+  { getOnInit: true },
+);
 
 export const presetsAtom = atomWithStorage<Preset[]>(
-  'settingPresets',
+  SETTINGS_PRESETS_KEY,
   [getDefaultPreset()],
   undefined,
   { getOnInit: true },
@@ -43,20 +47,9 @@ export const platformSettingsAtom = atom<PlatformSettings>(
 );
 
 export const currentToolAtom = atomWithStorage<ToolsValues>(
-  'currentTool',
+  CURRENT_TOOL_KEY,
   Tools.DuplicateFiles,
-  {
-    getItem: (key) => {
-      const value = localStorage.getItem(key);
-      return !value || !isValidTool(value) ? Tools.DuplicateFiles : value;
-    },
-    setItem: (key, value) => {
-      localStorage.setItem(key, value);
-    },
-    removeItem: (key) => {
-      localStorage.removeItem(key);
-    },
-  },
+  undefined,
   { getOnInit: true },
 );
 
