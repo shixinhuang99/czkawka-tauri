@@ -103,6 +103,7 @@ export function PresetSelect(props: PresetSelectProps) {
       <Label>{t('currentPreset')}:</Label>
       {!(newPresetInputVisible.value || editPresetInputVisible.value) && (
         <Select
+          className="flex-1"
           name="presetSelect"
           value={currentPreset.name}
           onValueChange={handlePresetSelect}

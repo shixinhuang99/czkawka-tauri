@@ -123,20 +123,24 @@ export function FormItem(props: FormItemProps) {
   }
 
   return (
-    <RawFormItem className={className}>
-      <Label className="flex-shrink-0" htmlFor={name}>
-        {label}:
-      </Label>
+    <RawFormItem className={className} name={name} label={label}>
       {content}
     </RawFormItem>
   );
 }
 
+interface RawFormItemProps extends React.ComponentPropsWithoutRef<'div'> {
+  name?: string;
+  label?: React.ReactNode;
+}
+
 export function RawFormItem({
   children,
   className,
+  name,
+  label,
   ...props
-}: React.ComponentPropsWithoutRef<'div'>) {
+}: RawFormItemProps) {
   return (
     <div
       className={cn(
@@ -145,6 +149,9 @@ export function RawFormItem({
       )}
       {...props}
     >
+      <Label className="flex-shrink-0" htmlFor={name}>
+        {label}:
+      </Label>
       {children}
     </div>
   );

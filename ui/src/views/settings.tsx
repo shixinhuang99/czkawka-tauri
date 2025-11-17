@@ -5,21 +5,31 @@ import {
   ClockIcon,
   FilesIcon,
   ImageIcon,
+  MoonIcon,
   MusicIcon,
   PaletteIcon,
   SearchIcon,
   SettingsIcon,
+  SunIcon,
+  TvMinimalIcon,
   VideoIcon,
 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { setLanguageAtom } from '~/atom/language';
 import { initCurrentPresetAtom } from '~/atom/preset';
-import { platformSettingsAtom } from '~/atom/primitive';
+import {
+  languageAtom,
+  platformSettingsAtom,
+  themeAtom,
+} from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
+import { setThemeAtom } from '~/atom/theme';
 import {
   Button,
   InputNumber,
-  Label,
   ScrollArea,
+  Select,
   Slider,
   Switch,
   Textarea,
@@ -36,7 +46,7 @@ import {
   DialogTrigger,
 } from '~/components/shadcn/dialog';
 import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
-import { MAXIMUM_FILE_SIZE } from '~/consts';
+import { Languages, MAXIMUM_FILE_SIZE, Theme } from '~/consts';
 import { useOnceEffect, useT } from '~/hooks';
 import { eventPreventDefault } from '~/utils/event';
 import { PresetSelect } from './preset-select';
@@ -73,7 +83,7 @@ export function SettingsButton() {
           <SettingsIcon />
         </TooltipButton>
       </DialogTrigger>
-      <DialogContent className="max-w-[700px] outline-none">
+      <DialogContent className="max-w-[600px] outline-none">
         <DialogHeader>
           <DialogTitle>{t('settings')}</DialogTitle>
           <DialogDescription>{t('applicationSettings')}</DialogDescription>
@@ -91,6 +101,7 @@ export function SettingsButton() {
               </TabsTrigger>
             </TabsList>
           </Tabs>
+          {tabValue === SettingsTab.Appearance && <AppearancesSettings />}
           {tabValue === SettingsTab.Scanner && (
             <ScanerSettings
               onPreventDialogCloseChange={setPreventDialogClose}
@@ -99,6 +110,54 @@ export function SettingsButton() {
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function AppearancesSettings() {
+  const t = useT();
+  const { i18n } = useTranslation();
+  const language = useAtomValue(languageAtom);
+  const setLanguage = useSetAtom(setLanguageAtom);
+  const theme = useAtomValue(themeAtom);
+  const setTheme = useSetAtom(setThemeAtom);
+
+  const handleLanguageChange = (v: string) => {
+    setLanguage(v);
+    i18n.changeLanguage(v);
+  };
+
+  return (
+    <SectionContent>
+      <RawFormItem label={t('language')}>
+        <Select
+          className="w-[60%]"
+          value={language}
+          onValueChange={handleLanguageChange}
+          options={[
+            { label: 'English', value: Languages.En },
+            { label: '简体中文', value: Languages.Zh },
+          ]}
+        />
+      </RawFormItem>
+      <RawFormItem label={t('theme')}>
+        <Tabs className="w-[60%]" value={theme} onValueChange={setTheme}>
+          <TabsList className="w-full">
+            <TabsTrigger className="w-full" value={Theme.Light}>
+              <SunIcon className="size-4 mr-1" />
+              {t('light')}
+            </TabsTrigger>
+            <TabsTrigger className="w-full" value={Theme.Dark}>
+              <MoonIcon className="size-4 mr-1" />
+              {t('dark')}
+            </TabsTrigger>
+            <TabsTrigger className="w-full" value={Theme.System}>
+              <TvMinimalIcon className="size-4 mr-1" />
+              {t('system')}
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </RawFormItem>
+    </SectionContent>
   );
 }
 
@@ -152,8 +211,7 @@ function ScanerSettings({ onPreventDialogCloseChange }: ScannerSettingsProps) {
             >
               <Textarea rows={2} className="w-[60%]" />
             </FormItem>
-            <RawFormItem>
-              <Label className="flex-shrink-0">{t('fileSize')}(KB):</Label>
+            <RawFormItem label={<>{t('fileSize')}(KB)</>}>
               <div className="w-[60%] flex items-center gap-2">
                 <FormItem name="minimumFileSize" comp="input-number">
                   <InputNumber minValue={16} maxValue={MAXIMUM_FILE_SIZE} />

@@ -6,6 +6,8 @@ import {
   getDefaultPlatformSettings,
   getDefaultPreset,
   getDefaultProgress,
+  LANGUAGE_KEY,
+  Languages,
   SETTINGS_PRESETS_KEY,
   THEME_KEY,
   Theme,
@@ -31,6 +33,13 @@ import type {
 export const themeAtom = atomWithStorage<string>(
   THEME_KEY,
   Theme.System,
+  undefined,
+  { getOnInit: true },
+);
+
+export const languageAtom = atomWithStorage<string>(
+  LANGUAGE_KEY,
+  Languages.En,
   undefined,
   { getOnInit: true },
 );

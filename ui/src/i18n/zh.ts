@@ -12,8 +12,6 @@ export const zh: Record<TranslationKeys, string> = {
   nameAlreadyExists: '`{{name}}` 已存在',
 
   failedToOpenCacheFolder: '打开缓存文件夹失败',
-  appearance: '外观',
-  scanner: '扫描器',
   general: '通用',
   excludedItems: '排除的项目',
   allowedExtensions: '允许的拓展名',
@@ -164,4 +162,12 @@ export const zh: Record<TranslationKeys, string> = {
   somethingWentWrong: '出错了 :(',
   unexpectedError: '未预料的错误',
   unknownError: '未知错误',
+
+  appearance: '外观',
+  scanner: '扫描器',
+  language: '语言',
+  theme: '主题',
+  light: '明亮',
+  dark: '黑暗',
+  system: '系统',
 };

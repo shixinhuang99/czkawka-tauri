@@ -10,8 +10,6 @@ export const en = {
   nameAlreadyExists: '`{{name}}` already exists',
 
   failedToOpenCacheFolder: 'Failed to open cache folder',
-  appearance: 'Appearance',
-  scanner: 'Scanner',
   general: 'General',
   excludedItems: 'Excluded items',
   allowedExtensions: 'Allowed extensions',
@@ -164,6 +162,14 @@ export const en = {
   somethingWentWrong: 'Something went wrong :(',
   unexpectedError: 'Unexpected error',
   unknownError: 'Unknown error',
+
+  appearance: 'Appearance',
+  scanner: 'Scanner',
+  language: 'Language',
+  theme: 'Theme',
+  light: 'Light',
+  dark: 'Dark',
+  system: 'System',
 };
 
 export type TranslationKeys = keyof typeof en;
