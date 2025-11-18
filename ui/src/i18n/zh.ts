@@ -31,7 +31,6 @@ export const zh: Record<TranslationKeys, string> = {
   usePrehash: '使用预哈希',
   deleteAutomaticallyOutdatedEntries: '自动删除过时的条目',
   openCacheFolder: '打开缓存文件夹',
-  other: '其它',
 
   toggleTheme: '切换主题',
   viewSourceCode: '查看源代码',
@@ -170,4 +169,5 @@ export const zh: Record<TranslationKeys, string> = {
   light: '明亮',
   dark: '黑暗',
   system: '系统',
+  version: '版本',
 };

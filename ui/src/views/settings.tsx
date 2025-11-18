@@ -1,9 +1,10 @@
-import { openPath } from '@tauri-apps/plugin-opener';
+import { openPath, openUrl } from '@tauri-apps/plugin-opener';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   CircleHelpIcon,
-  ClockIcon,
+  ExternalLinkIcon,
   FilesIcon,
+  FolderOpenIcon,
   ImageIcon,
   MoonIcon,
   MusicIcon,
@@ -24,7 +25,7 @@ import {
   themeAtom,
 } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
-import { setThemeAtom } from '~/atom/theme';
+import { applyMatchMediaAtom, initThemeAtom, setThemeAtom } from '~/atom/theme';
 import {
   Button,
   InputNumber,
@@ -46,8 +47,9 @@ import {
   DialogTrigger,
 } from '~/components/shadcn/dialog';
 import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
-import { Languages, MAXIMUM_FILE_SIZE, Theme } from '~/consts';
+import { DARK_MODE_MEDIA, Languages, MAXIMUM_FILE_SIZE, Theme } from '~/consts';
 import { useOnceEffect, useT } from '~/hooks';
+import { cn } from '~/utils/cn';
 import { eventPreventDefault } from '~/utils/event';
 import { PresetSelect } from './preset-select';
 
@@ -61,10 +63,18 @@ export function SettingsButton() {
   const [preventDialogClose, setPreventDialogClose] = useState(false);
   const [tabValue, setTabValue] = useState<string>(SettingsTab.Scanner);
   const initCurrentPreset = useSetAtom(initCurrentPresetAtom);
+  const initTheme = useSetAtom(initThemeAtom);
+  const applyMatchMedia = useSetAtom(applyMatchMediaAtom);
   const t = useT();
 
   useOnceEffect(() => {
     initCurrentPreset();
+    initTheme();
+    const mql = window.matchMedia(DARK_MODE_MEDIA);
+    applyMatchMedia(mql.matches);
+    mql.addEventListener('change', (e) => {
+      applyMatchMedia(e.matches);
+    });
   });
 
   return (
@@ -120,44 +130,77 @@ function AppearancesSettings() {
   const setLanguage = useSetAtom(setLanguageAtom);
   const theme = useAtomValue(themeAtom);
   const setTheme = useSetAtom(setThemeAtom);
+  const platformSettings = useAtomValue(platformSettingsAtom);
 
   const handleLanguageChange = (v: string) => {
     setLanguage(v);
     i18n.changeLanguage(v);
   };
 
+  const handleOpenCacheFolder = () => {
+    if (!platformSettings.cacheDirPath) {
+      return;
+    }
+    openPath(platformSettings.cacheDirPath).catch((err) => {
+      toastError(t('failedToOpenCacheFolder'), err);
+    });
+  };
+
   return (
-    <SectionContent>
-      <RawFormItem label={t('language')}>
-        <Select
-          className="w-[60%]"
-          value={language}
-          onValueChange={handleLanguageChange}
-          options={[
-            { label: 'English', value: Languages.En },
-            { label: '简体中文', value: Languages.Zh },
-          ]}
-        />
-      </RawFormItem>
-      <RawFormItem label={t('theme')}>
-        <Tabs className="w-[60%]" value={theme} onValueChange={setTheme}>
-          <TabsList className="w-full">
-            <TabsTrigger className="w-full" value={Theme.Light}>
-              <SunIcon className="size-4 mr-1" />
-              {t('light')}
-            </TabsTrigger>
-            <TabsTrigger className="w-full" value={Theme.Dark}>
-              <MoonIcon className="size-4 mr-1" />
-              {t('dark')}
-            </TabsTrigger>
-            <TabsTrigger className="w-full" value={Theme.System}>
-              <TvMinimalIcon className="size-4 mr-1" />
-              {t('system')}
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </RawFormItem>
-    </SectionContent>
+    <>
+      <SectionContent>
+        <RawFormItem label={t('language')}>
+          <Select
+            className="w-[60%]"
+            value={language}
+            onValueChange={handleLanguageChange}
+            options={[
+              { label: 'English', value: Languages.En },
+              { label: '简体中文', value: Languages.Zh },
+            ]}
+          />
+        </RawFormItem>
+        <RawFormItem label={t('theme')}>
+          <Tabs className="w-[60%]" value={theme} onValueChange={setTheme}>
+            <TabsList className="w-full">
+              <TabsTrigger className="w-full" value={Theme.Light}>
+                <SunIcon className="size-4 mr-1" />
+                {t('light')}
+              </TabsTrigger>
+              <TabsTrigger className="w-full" value={Theme.Dark}>
+                <MoonIcon className="size-4 mr-1" />
+                {t('dark')}
+              </TabsTrigger>
+              <TabsTrigger className="w-full" value={Theme.System}>
+                <TvMinimalIcon className="size-4 mr-1" />
+                {t('system')}
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </RawFormItem>
+      </SectionContent>
+      <SectionContent className="mt-4 [&>div]:text-center">
+        <div className="text-muted-foreground">
+          {t('version')}: {PKG_VERSION}
+        </div>
+        <div>
+          <Button
+            variant="link"
+            onClick={() => openUrl(REPOSITORY_URL)}
+            title={REPOSITORY_URL}
+          >
+            {t('viewSourceCode')}
+            <ExternalLinkIcon />
+          </Button>
+        </div>
+        <div>
+          <Button variant="link" onClick={handleOpenCacheFolder}>
+            {t('openCacheFolder')}
+            <FolderOpenIcon />
+          </Button>
+        </div>
+      </SectionContent>
+    </>
   );
 }
 
@@ -174,19 +217,10 @@ function ScanerSettings({ onPreventDialogCloseChange }: ScannerSettingsProps) {
     setSettings((prev) => ({ ...prev, ...v }));
   };
 
-  const handleOpenCacheFolder = () => {
-    if (!platformSettings.cacheDirPath) {
-      return;
-    }
-    openPath(platformSettings.cacheDirPath).catch((err) => {
-      toastError(t('failedToOpenCacheFolder'), err);
-    });
-  };
-
   return (
     <>
       <PresetSelect onPreventDialogCloseChange={onPreventDialogCloseChange} />
-      <ScrollArea className="flex-1 mt-2">
+      <ScrollArea className="flex-1">
         <Form className="pr-3" value={settings} onChange={handleSettingsChange}>
           <SectionHeader icon={SettingsIcon}>{t('general')}</SectionHeader>
           <SectionContent>
@@ -376,21 +410,25 @@ function ScanerSettings({ onPreventDialogCloseChange }: ScannerSettingsProps) {
               <Switch />
             </FormItem>
           </SectionContent>
-          <SectionHeader icon={ClockIcon}>{t('other')}</SectionHeader>
-          <SectionContent>
-            <Button variant="secondary" onClick={handleOpenCacheFolder}>
-              {t('openCacheFolder')}
-            </Button>
-          </SectionContent>
         </Form>
       </ScrollArea>
     </>
   );
 }
 
-function SectionContent({ children }: React.PropsWithChildren) {
+function SectionContent({
+  children,
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<'div'>) {
   return (
-    <div className="border border-border rounded-lg p-4 divide-y divide-border [&>*]:py-4 [&>*:first-child]:pt-0 [&>*:last-child]:pb-0 bg-neutral-50 dark:bg-gray-900">
+    <div
+      className={cn(
+        'border border-border rounded-lg p-4 divide-y divide-border [&>*]:py-4 [&>*:first-child]:pt-0 [&>*:last-child]:pb-0 bg-neutral-50 dark:bg-gray-900',
+        className,
+      )}
+      {...props}
+    >
       {children}
     </div>
   );

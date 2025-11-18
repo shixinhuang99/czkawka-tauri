@@ -1,7 +1,3 @@
-import { openUrl } from '@tauri-apps/plugin-opener';
-import { TooltipButton } from '~/components';
-import { GitHub } from '~/components/icons';
-import { useT } from '~/hooks';
 import { SettingsButton } from './settings';
 
 export function AppHeader() {
@@ -12,21 +8,7 @@ export function AppHeader() {
     >
       <div className="flex items-center gap-1.5">
         <SettingsButton />
-        <ViewGitHubButton />
       </div>
     </div>
-  );
-}
-
-function ViewGitHubButton() {
-  const t = useT();
-
-  return (
-    <TooltipButton
-      tooltip={t('viewSourceCode')}
-      onClick={() => openUrl(REPOSITORY_URL)}
-    >
-      <GitHub />
-    </TooltipButton>
   );
 }

@@ -29,7 +29,6 @@ export const en = {
   usePrehash: 'Use prehash',
   deleteAutomaticallyOutdatedEntries: 'Delete automatically outdated entries',
   openCacheFolder: 'Open cache folder',
-  other: 'Other',
 
   toggleTheme: 'Toggle theme',
   viewSourceCode: 'View source code',
@@ -170,6 +169,7 @@ export const en = {
   light: 'Light',
   dark: 'Dark',
   system: 'System',
+  version: 'Version',
 };
 
 export type TranslationKeys = keyof typeof en;
