@@ -8,8 +8,7 @@ import {
 import { Toaster } from '~/components/shadcn/sonner';
 import { TooltipProvider } from '~/components/shadcn/tooltip';
 import { toastError } from '~/components/toast';
-import { useOnceEffect } from '~/hooks';
-import { t } from '~/i18n';
+import { useOnceEffect, useT } from '~/hooks';
 import { AppBody } from '~/views/app-body';
 import { AppHeader } from '~/views/app-header';
 import { BottomBar } from '~/views/bottom-bar';
@@ -21,6 +20,7 @@ export default function App() {
   const [bottomPanelMinSize, setBottomPanelMinSize] = useState(PANEL_SIZE);
   const headerRef = useRef<HTMLDivElement>(null);
   const bottomPanelRef = useRef<ImperativePanelHandle>(null);
+  const t = useT();
 
   const handleResetPanelSize = () => {
     if (bottomPanelRef.current) {
@@ -78,7 +78,11 @@ export default function App() {
               </div>
             </div>
           </ResizablePanel>
-          <ResizableHandle withHandle onDoubleClick={handleResetPanelSize} />
+          <ResizableHandle
+            withHandle
+            onDoubleClick={handleResetPanelSize}
+            title={t('resetOnDoubleClick')}
+          />
           <ResizablePanel
             ref={bottomPanelRef}
             defaultSize={PANEL_SIZE}

@@ -8,7 +8,6 @@ export const en = {
   removePreset: 'Remove preset',
   resetSettings: 'Reset settings',
   nameAlreadyExists: '`{{name}}` already exists',
-
   failedToOpenCacheFolder: 'Failed to open cache folder',
   general: 'General',
   excludedItems: 'Excluded items',
@@ -29,10 +28,8 @@ export const en = {
   usePrehash: 'Use prehash',
   deleteAutomaticallyOutdatedEntries: 'Delete automatically outdated entries',
   openCacheFolder: 'Open cache folder',
-
   toggleTheme: 'Toggle theme',
   viewSourceCode: 'View source code',
-
   duplicateFiles: 'Duplicate Files',
   emptyFolders: 'Empty Folders',
   bigFiles: 'Big Files',
@@ -44,7 +41,6 @@ export const en = {
   invalidSymlinks: 'Invalid Symlinks',
   brokenFiles: 'Broken Files',
   badExtensions: 'Bad Extensions',
-
   size: 'Size',
   fileName: 'File name',
   path: 'Path',
@@ -63,20 +59,17 @@ export const en = {
   typeOfError: 'Type of error',
   currentExtension: 'Current extension',
   properExtension: 'Proper extension',
-
   revealInDir: 'Reveal in {{name}}',
   finder: 'Finder',
   fileExplorer: 'File Explorer',
   opreationFailed: 'Opreation failed',
   failedToReadImage: 'Failed to read image',
   noData: 'No data',
-
   scan: 'Scan',
   stop: 'Stop',
   stoppingScan: 'Stopping scan, please wait...',
   currentStage: 'Current stage',
   allStages: 'All stages',
-
   toolSettings: 'Tool settings',
   duplicateFilesSettings: 'Duplicate files settings',
   bigFilesSettings: 'Big files settings',
@@ -110,10 +103,8 @@ export const en = {
   pdf: 'Pdf',
   archive: 'Archive',
   image: 'Image',
-
   ok: 'Ok',
   cancel: 'Cancel',
-
   select: 'Select',
   selectTheHighestResolution: 'Select the highest resolution',
   selectTheLowestResolution: 'Select the lowest resolution',
@@ -122,7 +113,6 @@ export const en = {
   selectTheNewest: 'Select the newest',
   selectTheOldest: 'Select the oldest',
   invertSelection: 'Invert selection',
-
   move: 'Move',
   movingFiles: 'Moving files',
   moveConfirm:
@@ -130,22 +120,18 @@ export const en = {
   copyFilesInsteadOfMoving: 'Copy files instead of moving',
   preserveFolderStructure: 'Preserve folder structure',
   overrideFiles: 'Override files',
-
   delete: 'Delete',
   deleteItems: 'Delete items',
   deleteComfirm:
     'Are you sure you want to delete the selected <1>{{length}}</1> items?',
-
   save: 'Save',
   savingResults: 'Saving results',
   saveConfirm:
     'This will save results to 3 different files. Are you want to continue?',
-
   rename: 'Rename',
   renamingFiles: 'Renaming files',
   renameConfirm:
     'This will rename extensions of selected <1>{{length}}</1> files to more proper. Are you want to continue?',
-
   expand: 'Expand',
   collapse: 'Collapse',
   directories: 'Directories',
@@ -161,7 +147,6 @@ export const en = {
   somethingWentWrong: 'Something went wrong :(',
   unexpectedError: 'Unexpected error',
   unknownError: 'Unknown error',
-
   appearance: 'Appearance',
   scanner: 'Scanner',
   language: 'Language',
@@ -170,6 +155,7 @@ export const en = {
   dark: 'Dark',
   system: 'System',
   version: 'Version',
+  resetOnDoubleClick: 'Double-click to reset',
 };
 
 export type TranslationKeys = keyof typeof en;

@@ -10,7 +10,6 @@ export const zh: Record<TranslationKeys, string> = {
   removePreset: '移除预设',
   resetSettings: '重置设置',
   nameAlreadyExists: '`{{name}}` 已存在',
-
   failedToOpenCacheFolder: '打开缓存文件夹失败',
   general: '通用',
   excludedItems: '排除的项目',
@@ -31,10 +30,8 @@ export const zh: Record<TranslationKeys, string> = {
   usePrehash: '使用预哈希',
   deleteAutomaticallyOutdatedEntries: '自动删除过时的条目',
   openCacheFolder: '打开缓存文件夹',
-
   toggleTheme: '切换主题',
   viewSourceCode: '查看源代码',
-
   duplicateFiles: '重复文件',
   emptyFolders: '空文件夹',
   bigFiles: '大文件',
@@ -46,7 +43,6 @@ export const zh: Record<TranslationKeys, string> = {
   invalidSymlinks: '无效符号链接',
   brokenFiles: '损坏文件',
   badExtensions: '不正确扩展名',
-
   size: '大小',
   fileName: '名称',
   path: '路径',
@@ -65,20 +61,17 @@ export const zh: Record<TranslationKeys, string> = {
   typeOfError: '错误类型',
   currentExtension: '当前拓展名',
   properExtension: '预期拓展名',
-
   revealInDir: '在{{name}}中显示',
   finder: '访达',
   fileExplorer: '文件资源管理器',
   opreationFailed: '操作失败',
   failedToReadImage: '读取图片失败',
   noData: '无数据',
-
   scan: '扫描',
   stop: '停止',
   stoppingScan: '停止中, 请等待...',
   currentStage: '当前阶段进度',
   allStages: '全部阶段进度',
-
   toolSettings: '工具设置',
   duplicateFilesSettings: '重复文件设置',
   bigFilesSettings: '大文件设置',
@@ -112,10 +105,8 @@ export const zh: Record<TranslationKeys, string> = {
   pdf: 'Pdf',
   archive: '压缩包',
   image: '图片',
-
   ok: '确定',
   cancel: '取消',
-
   select: '选择',
   selectTheHighestResolution: '选择分辨率最高的',
   selectTheLowestResolution: '选择分辨率最低的',
@@ -124,7 +115,6 @@ export const zh: Record<TranslationKeys, string> = {
   selectTheNewest: '选择最新的',
   selectTheOldest: '选择最旧的',
   invertSelection: '反向选择',
-
   move: '移动',
   movingFiles: '移动文件',
   moveConfirm:
@@ -132,20 +122,16 @@ export const zh: Record<TranslationKeys, string> = {
   copyFilesInsteadOfMoving: '复制文件而不是移动',
   preserveFolderStructure: '保留文件夹结构',
   overrideFiles: '覆盖文件',
-
   delete: '删除',
   deleteItems: '删除项目',
   deleteComfirm: '你确认想要删除选择的 <1>{{length}}</1> 个项目吗?',
-
   save: '保存',
   savingResults: '保存结果',
   saveConfirm: '这将把结果保存到3个不同的文件中。您是否要继续?',
-
   rename: '重命名',
   renamingFiles: '重命名拓展名',
   renameConfirm:
     '这将把所选的 <1>{{length}}</1> 个文件的扩展名更改为预计更合适的扩展名。您是否要继续?',
-
   expand: '展开',
   collapse: '收起',
   directories: '目录',
@@ -161,7 +147,6 @@ export const zh: Record<TranslationKeys, string> = {
   somethingWentWrong: '出错了 :(',
   unexpectedError: '未预料的错误',
   unknownError: '未知错误',
-
   appearance: '外观',
   scanner: '扫描器',
   language: '语言',
@@ -170,4 +155,5 @@ export const zh: Record<TranslationKeys, string> = {
   dark: '黑暗',
   system: '系统',
   version: '版本',
+  resetOnDoubleClick: '双击复原',
 };

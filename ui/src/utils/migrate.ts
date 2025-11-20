@@ -72,6 +72,10 @@ function themeMigrate() {
     return;
   }
 
+  if (getStringifyValue(localStorage.getItem(THEME_KEY))) {
+    return;
+  }
+
   localStorage.setItem(THEME_KEY, JSON.stringify(Theme.System));
 }
 
@@ -80,6 +84,10 @@ function languageMigrate() {
 
   if (language && Object.values<string>(Languages).includes(language)) {
     localStorage.setItem(LANGUAGE_KEY, JSON.stringify(language));
+    return;
+  }
+
+  if (getStringifyValue(localStorage.getItem(LANGUAGE_KEY))) {
     return;
   }
 

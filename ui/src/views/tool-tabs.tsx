@@ -65,7 +65,7 @@ export function ToolTabs() {
     >
       <div className="flex items-end gap-1 p-3">
         <img className="size-8" src="/icon.ico" alt="czkawka icon" />
-        <span className="font-serif">{PKG_NAME}</span>
+        <span className="font-serif tracking-wider">{PKG_NAME}</span>
         <span className="font-extralight text-xs pl-1 pb-[3px]">
           {PKG_VERSION}
         </span>

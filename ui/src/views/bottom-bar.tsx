@@ -147,7 +147,7 @@ function IncludedDirsTable() {
   return (
     <div className="w-1/2 flex flex-col">
       <div className="flex justify-between items-center">
-        <h3 className="text-center">{t('includeDirectories')}</h3>
+        <SectionHeader>{t('includeDirectories')}</SectionHeader>
         <DirsActions
           rowSelection={rowSelection}
           onRowSelectionChange={handleRowSelectionChagne}
@@ -202,7 +202,7 @@ function ExcludedDirsTable() {
   return (
     <div className="flex-1 flex flex-col">
       <div className="flex justify-between items-center">
-        <h3 className="text-center">{t('excludeDirectories')}</h3>
+        <SectionHeader>{t('excludeDirectories')}</SectionHeader>
         <DirsActions
           rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
@@ -365,5 +365,13 @@ function Logs() {
     <ScrollArea className="flex-1 rounded-md border text-card-foreground px-2 py-1 dark:bg-gray-900">
       <div className="whitespace-break-spaces">{logs}</div>
     </ScrollArea>
+  );
+}
+
+function SectionHeader({ children }: React.ComponentPropsWithoutRef<'h3'>) {
+  return (
+    <h3 className="text-sm font-semibold text-muted-foreground tracking-wider">
+      {children}
+    </h3>
   );
 }
