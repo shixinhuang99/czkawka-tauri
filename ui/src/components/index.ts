@@ -12,5 +12,6 @@ export { Progress } from './shadcn/progress';
 export { ScrollArea } from './shadcn/scroll-area';
 export { Slider } from './shadcn/slider';
 export { Switch } from './shadcn/switch';
+export { SliderValue } from './slider-value';
 export { toastError } from './toast';
 export { TooltipButton } from './tooltip-button';

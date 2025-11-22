@@ -7,9 +7,10 @@ import {
   ScrollArea,
   Select,
   Slider,
+  SliderValue,
   Switch,
 } from '~/components';
-import { Form, FormItem } from '~/components/form';
+import { Form, FormItem, RawFormItem } from '~/components/form';
 import {
   BigFilesSearchMode,
   DuplicatesAvailableHashType,
@@ -62,11 +63,13 @@ export function ToolSettings() {
 
   return (
     <ScrollArea className="flex-1 rounded-md border text-card-foreground dark:bg-gray-900">
-      <div className="px-4 py-3">
-        <Form value={settings} onChange={handleSettingsChange}>
-          <SettingsComponent />
-        </Form>
-      </div>
+      <Form
+        className="px-6 py-6 grid grid-cols-2 gap-6"
+        value={settings}
+        onChange={handleSettingsChange}
+      >
+        <SettingsComponent />
+      </Form>
     </ScrollArea>
   );
 }
@@ -86,6 +89,7 @@ function DuplicateFilesSettings() {
         comp="select"
       >
         <Select
+          className="w-[75%]"
           options={[
             { label: t('hash'), value: DuplicatesCheckMethod.Hash },
             { label: t('name'), value: DuplicatesCheckMethod.Name },
@@ -103,6 +107,7 @@ function DuplicateFilesSettings() {
         comp="select"
       >
         <Select
+          className="w-[75%]"
           options={[
             { label: 'Blake3', value: DuplicatesAvailableHashType.Blake3 },
             { label: 'CRC32', value: DuplicatesAvailableHashType.CRC32 },
@@ -132,6 +137,7 @@ function BigFilesSettings() {
         comp="select"
       >
         <Select
+          className="w-[75%]"
           options={[
             { label: t('biggest'), value: BigFilesSearchMode.BiggestFiles },
             { label: t('smallest'), value: BigFilesSearchMode.SmallestFiles },
@@ -143,7 +149,7 @@ function BigFilesSettings() {
         label={t('numberOfLines')}
         comp="input-number"
       >
-        <InputNumber minValue={1} />
+        <InputNumber className="w-[75%]" minValue={1} />
       </FormItem>
     </>
   );
@@ -161,6 +167,7 @@ function SimilarImagesSettings() {
         comp="select"
       >
         <Select
+          className="w-[75%]"
           options={['8', '16', '32', '64'].map((value) => ({
             label: value,
             value,
@@ -173,6 +180,7 @@ function SimilarImagesSettings() {
         comp="select"
       >
         <Select
+          className="w-[75%]"
           options={Object.values(SimilarImagesResizeAlgorithm).map((value) => ({
             label: value,
             value,
@@ -185,6 +193,7 @@ function SimilarImagesSettings() {
         comp="select"
       >
         <Select
+          className="w-[75%]"
           options={Object.values(SimilarImagesHashAlgorithm).map((value) => ({
             label: value,
             value,
@@ -194,7 +203,7 @@ function SimilarImagesSettings() {
       <FormItem
         name="similarImagesSubIgnoreSameSize"
         label={t('ignoreSameSize')}
-        comp="select"
+        comp="switch"
       >
         <Switch />
       </FormItem>
@@ -202,9 +211,17 @@ function SimilarImagesSettings() {
         name="similarImagesSubSimilarity"
         label={t('maxDifference')}
         comp="slider"
-        suffix={<span>({settings.similarImagesSubSimilarity}/40)</span>}
       >
-        <Slider min={0} max={40} />
+        {(slotProps) => (
+          <div className="flex items-center gap-2 w-[75%]">
+            <Slider min={0} max={40} id={slotProps.name} {...slotProps} />
+            <SliderValue
+              className="w-11"
+              value={settings.similarImagesSubSimilarity}
+              max={40}
+            />
+          </div>
+        )}
       </FormItem>
     </>
   );
@@ -220,9 +237,17 @@ function SimilarVideosSettings() {
         name="similarVideosSubSimilarity"
         label={t('maxDifference')}
         comp="slider"
-        suffix={<span>({settings.similarVideosSubSimilarity}/20)</span>}
       >
-        <Slider min={0} max={20} />
+        {(slotProps) => (
+          <div className="flex items-center gap-2 w-[75%]">
+            <Slider min={0} max={20} id={slotProps.name} {...slotProps} />
+            <SliderValue
+              className="w-11"
+              value={settings.similarVideosSubSimilarity}
+              max={20}
+            />
+          </div>
+        )}
       </FormItem>
       <FormItem
         name="similarVideosSubIgnoreSameSize"
@@ -247,6 +272,7 @@ function MusicDuplicatesSettings() {
         comp="select"
       >
         <Select
+          className="w-[60%]"
           options={Object.values(SimilarMusicAudioCheckType).map((value) => ({
             label: t(value.toLowerCase() as TranslationKeys),
             value,
@@ -263,27 +289,28 @@ function MusicDuplicatesSettings() {
           >
             <Switch />
           </FormItem>
-          <span className="text-center">{t('comparedTags')}</span>
-          <div className="grid grid-cols-3 gap-2 *:pl-4">
-            <FormItem name="similarMusicSubTitle" comp="checkbox">
-              <LabelCheckbox label={t('title')} />
-            </FormItem>
-            <FormItem name="similarMusicSubArtist" comp="checkbox">
-              <LabelCheckbox label={t('artist')} />
-            </FormItem>
-            <FormItem name="similarMusicSubBitrate" comp="checkbox">
-              <LabelCheckbox label={t('bitrate')} />
-            </FormItem>
-            <FormItem name="similarMusicSubGenre" comp="checkbox">
-              <LabelCheckbox label={t('genre')} />
-            </FormItem>
-            <FormItem name="similarMusicSubYear" comp="checkbox">
-              <LabelCheckbox label={t('year')} />
-            </FormItem>
-            <FormItem name="similarMusicSubLength" comp="checkbox">
-              <LabelCheckbox label={t('length')} />
-            </FormItem>
-          </div>
+          <RawFormItem label={t('comparedTags')}>
+            <div className="grid grid-cols-3 gap-2 w-[60%]">
+              <FormItem name="similarMusicSubTitle" comp="checkbox">
+                <LabelCheckbox label={t('title')} />
+              </FormItem>
+              <FormItem name="similarMusicSubArtist" comp="checkbox">
+                <LabelCheckbox label={t('artist')} />
+              </FormItem>
+              <FormItem name="similarMusicSubBitrate" comp="checkbox">
+                <LabelCheckbox label={t('bitrate')} />
+              </FormItem>
+              <FormItem name="similarMusicSubGenre" comp="checkbox">
+                <LabelCheckbox label={t('genre')} />
+              </FormItem>
+              <FormItem name="similarMusicSubYear" comp="checkbox">
+                <LabelCheckbox label={t('year')} />
+              </FormItem>
+              <FormItem name="similarMusicSubLength" comp="checkbox">
+                <LabelCheckbox label={t('length')} />
+              </FormItem>
+            </div>
+          </RawFormItem>
         </>
       )}
       {settings.similarMusicSubAudioCheckType ===
@@ -293,23 +320,32 @@ function MusicDuplicatesSettings() {
             name="similarMusicSubMaximumDifferenceValue"
             label={t('maxDifference')}
             comp="slider"
-            suffix={
-              <span>({settings.similarMusicSubMaximumDifferenceValue}/10)</span>
-            }
           >
-            <Slider min={0} max={10} />
+            {(slotProps) => (
+              <div className="flex items-center gap-2 w-[55%]">
+                <Slider min={0} max={10} id={slotProps.name} {...slotProps} />
+                <SliderValue
+                  value={settings.similarMusicSubMaximumDifferenceValue}
+                  max={10}
+                />
+              </div>
+            )}
           </FormItem>
           <FormItem
             name="similarMusicSubMinimalFragmentDurationValue"
             label={t('minimalFragmentDuration')}
             comp="slider"
-            suffix={
-              <span>
-                {settings.similarMusicSubMinimalFragmentDurationValue}
-              </span>
-            }
           >
-            <Slider min={0} max={180} />
+            {(slotProps) => (
+              <div className="flex items-center gap-2 w-[60%]">
+                <Slider min={0} max={180} id={slotProps.name} {...slotProps} />
+                <SliderValue
+                  className="w-[58px]"
+                  value={settings.similarMusicSubMinimalFragmentDurationValue}
+                  max={180}
+                />
+              </div>
+            )}
           </FormItem>
           <FormItem
             name="similarMusicCompareFingerprintsOnlyWithSimilarTitles"
@@ -328,9 +364,8 @@ function BrokenFilesSettings() {
   const t = useT();
 
   return (
-    <>
-      <span className="text-center">{t('typeOfFilesToCheck')}</span>
-      <div className="grid grid-cols-4 justify-items-center">
+    <RawFormItem label={t('typeOfFilesToCheck')}>
+      <div className="flex gap-4">
         <FormItem name="brokenFilesSubAudio" comp="checkbox">
           <LabelCheckbox label={t('audio')} />
         </FormItem>
@@ -344,6 +379,6 @@ function BrokenFilesSettings() {
           <LabelCheckbox label={t('image')} />
         </FormItem>
       </div>
-    </>
+    </RawFormItem>
   );
 }

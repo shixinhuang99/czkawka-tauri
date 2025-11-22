@@ -32,6 +32,7 @@ import {
   ScrollArea,
   Select,
   Slider,
+  SliderValue,
   Switch,
   Textarea,
   TooltipButton,
@@ -305,10 +306,10 @@ function ScanerSettings({ onPreventDialogCloseChange }: ScannerSettingsProps) {
                       id={slotProps.name}
                       {...slotProps}
                     />
-                    <span>
-                      {settings.threadNumber}/
-                      {platformSettings.availableThreadNumber}
-                    </span>
+                    <SliderValue
+                      value={settings.threadNumber}
+                      max={platformSettings.availableThreadNumber}
+                    />
                   </div>
                 );
               }}

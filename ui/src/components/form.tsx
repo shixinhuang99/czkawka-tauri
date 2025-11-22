@@ -94,7 +94,7 @@ export function FormItem(props: FormItemProps) {
       },
       select: {
         value: value[name],
-        onChange: (v: string) => {
+        onValueChange: (v: string) => {
           onChange({ [name]: v });
         },
       },
@@ -123,21 +123,19 @@ export function FormItem(props: FormItemProps) {
   }
 
   return (
-    <RawFormItem className={className} name={name} label={label}>
+    <RawFormItem className={className} label={label}>
       {content}
     </RawFormItem>
   );
 }
 
 interface RawFormItemProps extends React.ComponentPropsWithoutRef<'div'> {
-  name?: string;
   label?: React.ReactNode;
 }
 
 export function RawFormItem({
   children,
   className,
-  name,
   label,
   ...props
 }: RawFormItemProps) {
@@ -149,9 +147,7 @@ export function RawFormItem({
       )}
       {...props}
     >
-      <Label className="flex-shrink-0" htmlFor={name}>
-        {label}:
-      </Label>
+      <Label className="flex-shrink-0">{label}:</Label>
       {children}
     </div>
   );

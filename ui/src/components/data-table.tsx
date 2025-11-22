@@ -220,7 +220,9 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
         ) : (
           <TableRow className="h-full">
             <TableCell className="h-full flex justify-center items-center">
-              {emptyTip || t('noData')}
+              <span className="text-muted-foreground">
+                {emptyTip || t('noData')}
+              </span>
             </TableCell>
           </TableRow>
         )}
