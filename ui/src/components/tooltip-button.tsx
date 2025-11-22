@@ -13,16 +13,17 @@ export const TooltipButton = forwardRef<HTMLButtonElement, TooltipButtonProps>(
     return (
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className={cn(disabled && 'cursor-not-allowed')}>
-            <Button
-              ref={ref}
-              variant="ghost"
-              size="icon"
-              disabled={disabled}
-              className={cn(disabled && 'pointer-events-none', className)}
-              {...props}
-            />
-          </span>
+          <Button
+            ref={ref}
+            variant="ghost"
+            size="icon"
+            disabled={disabled}
+            className={cn(
+              disabled && 'pointer-events-none cursor-not-allowed',
+              className,
+            )}
+            {...props}
+          />
         </TooltipTrigger>
         <TooltipContent>{tooltip}</TooltipContent>
       </Tooltip>

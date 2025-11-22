@@ -4,9 +4,7 @@ import { blueBgBorderVariants } from '~/styles/variants';
 import { cn } from '~/utils/cn';
 
 export const OperationButton = forwardRef<HTMLButtonElement, ButtonProps>(
-  (props, ref) => {
-    const { children, className, ...restProps } = props;
-
+  ({ children, className, ...props }, ref) => {
     return (
       <Button
         ref={ref}
@@ -16,7 +14,7 @@ export const OperationButton = forwardRef<HTMLButtonElement, ButtonProps>(
           blueBgBorderVariants({ variant: 'hoverOnly' }),
           className,
         )}
-        {...restProps}
+        {...props}
       >
         {children}
       </Button>
