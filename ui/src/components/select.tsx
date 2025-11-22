@@ -22,7 +22,7 @@ export function Select({
 }: SelectProps) {
   return (
     <RawSelect {...props}>
-      <SelectTrigger className={cn('bg-white dark:bg-black', className)}>
+      <SelectTrigger className={cn('bg-white dark:bg-gray-900', className)}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

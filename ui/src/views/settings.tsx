@@ -152,7 +152,7 @@ function AppearancesSettings() {
       <SectionContent>
         <RawFormItem label={t('language')}>
           <Select
-            className="w-[60%]"
+            className="w-[60%] dark:bg-background"
             value={language}
             onValueChange={handleLanguageChange}
             options={[
@@ -230,30 +230,38 @@ function ScanerSettings({ onPreventDialogCloseChange }: ScannerSettingsProps) {
               label={t('excludedItems')}
               comp="textarea"
             >
-              <Textarea rows={2} className="w-[60%]" />
+              <Textarea rows={2} className="w-[60%] dark:bg-background" />
             </FormItem>
             <FormItem
               name="allowedExtensions"
               label={t('allowedExtensions')}
               comp="textarea"
             >
-              <Textarea rows={2} className="w-[60%]" />
+              <Textarea rows={2} className="w-[60%] dark:bg-background" />
             </FormItem>
             <FormItem
               name="excludedExtensions"
               label={t('excludedExtensions')}
               comp="textarea"
             >
-              <Textarea rows={2} className="w-[60%]" />
+              <Textarea rows={2} className="w-[60%] dark:bg-background" />
             </FormItem>
             <RawFormItem label={<>{t('fileSize')}(KB)</>}>
               <div className="w-[60%] flex items-center gap-2">
                 <FormItem name="minimumFileSize" comp="input-number">
-                  <InputNumber minValue={16} maxValue={MAXIMUM_FILE_SIZE} />
+                  <InputNumber
+                    minValue={16}
+                    maxValue={MAXIMUM_FILE_SIZE}
+                    className="dark:bg-background"
+                  />
                 </FormItem>
                 ~
                 <FormItem name="maximumFileSize" comp="input-number">
-                  <InputNumber minValue={16} maxValue={MAXIMUM_FILE_SIZE} />
+                  <InputNumber
+                    minValue={16}
+                    maxValue={MAXIMUM_FILE_SIZE}
+                    className="dark:bg-background"
+                  />
                 </FormItem>
               </div>
             </RawFormItem>
@@ -322,14 +330,20 @@ function ScanerSettings({ onPreventDialogCloseChange }: ScannerSettingsProps) {
               label={`${t('minimalSizeOfCachedFiles')} - ${t('hash')} (KB)`}
               comp="input-number"
             >
-              <InputNumber minValue={1} className="w-[40%]" />
+              <InputNumber
+                minValue={1}
+                className="w-[40%] dark:bg-background"
+              />
             </FormItem>
             <FormItem
               name="duplicateMinimalPrehashCacheSize"
               label={`${t('minimalSizeOfCachedFiles')} - ${t('prehash')} (KB)`}
               comp="input-number"
             >
-              <InputNumber minValue={1} className="w-[40%]" />
+              <InputNumber
+                minValue={1}
+                className="w-[40%] dark:bg-background"
+              />
             </FormItem>
             <FormItem
               name="duplicateImagePreview"

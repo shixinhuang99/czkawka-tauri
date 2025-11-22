@@ -51,7 +51,7 @@ export function ToolSettings() {
 
   if (toolsWithoutSettings.has(currentTool)) {
     return (
-      <div className="flex-1 rounded-md border text-card-foreground dark:bg-gray-900 flex items-center justify-center">
+      <div className="flex-1 rounded-md border text-card-foreground flex items-center justify-center">
         <div className="text-muted-foreground">
           {t('noSettingsForThisTool')}
         </div>
@@ -62,7 +62,7 @@ export function ToolSettings() {
   const SettingsComponent = settingsCompMap[currentTool] || Fallback;
 
   return (
-    <ScrollArea className="flex-1 rounded-md border text-card-foreground dark:bg-gray-900">
+    <ScrollArea className="flex-1 rounded-md border text-card-foreground">
       <Form
         className="px-6 py-6 grid grid-cols-2 gap-6"
         value={settings}
