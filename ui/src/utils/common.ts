@@ -188,6 +188,7 @@ export function convertFileEntries(list: RawFileEntry[]): FileEntry[] {
       fileName: pathBaseName(item.path),
       path: item.path,
       modifiedDate: fmtDate(item.modified_date),
+      rawData: item,
     };
   });
 }

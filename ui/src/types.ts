@@ -130,6 +130,7 @@ export interface FileEntry extends BaseEntry {
   size: string;
   fileName: string;
   modifiedDate: string;
+  rawData: RawFileEntry;
 }
 
 export interface RawDuplicateEntry {

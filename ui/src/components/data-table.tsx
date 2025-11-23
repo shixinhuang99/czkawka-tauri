@@ -1,20 +1,29 @@
 import {
+  type Column,
   type ColumnDef,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   type Row,
   type RowSelectionState,
+  type SortingState,
   type Table as TTable,
   useReactTable,
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { revealItemInDir } from '@tauri-apps/plugin-opener';
-import { FolderOpenIcon } from 'lucide-react';
+import {
+  ArrowDownIcon,
+  ArrowUpDownIcon,
+  ArrowUpIcon,
+  FolderOpenIcon,
+} from 'lucide-react';
 import { useRef } from 'react';
 import { useT } from '~/hooks';
 import { scrollBar } from '~/styles';
 import type { BaseEntry } from '~/types';
 import { cn } from '~/utils/cn';
+import { Button } from './shadcn/button';
 import { Checkbox } from './shadcn/checkbox';
 import {
   Table,
@@ -35,6 +44,8 @@ interface DataTableProps<T> {
   layout?: 'grid' | 'resizeable';
   rowSelection: RowSelectionState;
   onRowSelectionChange: (v: RowSelectionState) => void;
+  sorting: SortingState;
+  onSortingChange: (v: SortingState) => void;
 }
 
 export type RowSelection = RowSelectionState;
@@ -50,6 +61,8 @@ export function DataTable<T extends BaseEntry>(props: DataTableProps<T>) {
     layout = 'resizeable',
     rowSelection,
     onRowSelectionChange,
+    sorting,
+    onSortingChange,
   } = props;
 
   const table = useReactTable({
@@ -71,9 +84,17 @@ export function DataTable<T extends BaseEntry>(props: DataTableProps<T>) {
     },
     state: {
       rowSelection,
+      sorting,
     },
     columnResizeMode: 'onChange',
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: (updater) => {
+      const newSorting =
+        typeof updater === 'function' ? updater(sorting) : updater;
+      onSortingChange(newSorting);
+    },
   });
+  const t = useT();
 
   const isGrid = layout === 'grid';
   const isResizeable = layout === 'resizeable';
@@ -127,6 +148,7 @@ export function DataTable<T extends BaseEntry>(props: DataTableProps<T>) {
                         className="w-1 h-full border-border border-r hover:bg-primary cursor-col-resize absolute right-0"
                         onDoubleClick={() => header.column.resetSize()}
                         onMouseDown={header.getResizeHandler()}
+                        title={t('resetOnDoubleClick')}
                       />
                     )}
                   </TableHead>
@@ -231,10 +253,8 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
   );
 }
 
-export function TableRowSelectionHeader<T>(props: { table: TTable<T> }) {
+export function TableRowSelectionHeader<T>({ table }: { table: TTable<T> }) {
   'use no memo';
-
-  const { table } = props;
 
   return (
     <Checkbox
@@ -248,10 +268,8 @@ export function TableRowSelectionHeader<T>(props: { table: TTable<T> }) {
   );
 }
 
-export function TableRowSelectionCell<T>(props: { row: Row<T> }) {
+export function TableRowSelectionCell<T>({ row }: { row: Row<T> }) {
   'use no memo';
-
-  const { row } = props;
 
   return (
     <Checkbox
@@ -283,8 +301,7 @@ export function createColumns<T>(columns: ColumnDef<T>[]): ColumnDef<T>[] {
   ];
 }
 
-export function TableActions(props: { path: string }) {
-  const { path } = props;
+export function TableActions({ path }: { path: string }) {
   const t = useT();
 
   const handleClick = () => {
@@ -315,5 +332,42 @@ export function createActionsColumn<
     cell: ({ cell }) => {
       return <TableActions path={cell.row.original.path} />;
     },
+  };
+}
+
+export function createSortableColumnHeader(title: React.ReactNode) {
+  return function SortableColumnHeader({ column }: { column: Column<any> }) {
+    'use no memo';
+
+    const direction = column.getIsSorted();
+
+    const handleClick = () => {
+      if (direction === false) {
+        column.toggleSorting(true);
+      } else if (direction === 'desc') {
+        column.toggleSorting(false);
+      } else {
+        column.clearSorting();
+      }
+    };
+
+    return (
+      <Button variant="ghost" onClick={handleClick} className="gap-2">
+        {title}
+        {direction === 'asc' && <ArrowUpIcon />}
+        {direction === 'desc' && <ArrowDownIcon />}
+        {direction === false && <ArrowUpDownIcon />}
+      </Button>
+    );
+  };
+}
+
+export function createNumberSortingFn<
+  T extends { rawData: Record<string, any> },
+>(field: string) {
+  return (rowA: Row<T>, rowB: Row<T>) => {
+    const fieldA = rowA.original.rawData[field];
+    const fieldB = rowB.original.rawData[field];
+    return fieldA - fieldB;
   };
 }

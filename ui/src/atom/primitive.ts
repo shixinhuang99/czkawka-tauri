@@ -1,3 +1,4 @@
+import type { SortingState } from '@tanstack/react-table';
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import type { RowSelection } from '~/components/data-table';
@@ -79,8 +80,8 @@ export const emptyFoldersAtom = atom<FolderEntry[]>([]);
 export const emptyFoldersRowSelectionAtom = atom<RowSelection>({});
 
 export const bigFilesAtom = atom<FileEntry[]>([]);
-
 export const bigFilesRowSelectionAtom = atom<RowSelection>({});
+export const bigFilesSortingAtom = atom<SortingState>([]);
 
 export const emptyFilesAtom = atom<FileEntry[]>([]);
 

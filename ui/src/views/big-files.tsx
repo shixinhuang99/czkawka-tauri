@@ -1,24 +1,32 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { bigFilesAtom, bigFilesRowSelectionAtom } from '~/atom/primitive';
+import {
+  bigFilesAtom,
+  bigFilesRowSelectionAtom,
+  bigFilesSortingAtom,
+} from '~/atom/primitive';
 import {
   createActionsColumn,
   createColumns,
+  createNumberSortingFn,
+  createSortableColumnHeader,
   DataTable,
 } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { FileEntry } from '~/types';
 
 export function BigFiles() {
+  const t = useT();
   const data = useAtomValue(bigFilesAtom);
   const [rowSelection, setRowSelection] = useAtom(bigFilesRowSelectionAtom);
-  const t = useT();
+  const [sorting, setSorting] = useAtom(bigFilesSortingAtom);
 
   const columns = createColumns<FileEntry>([
     {
       accessorKey: 'size',
-      header: t('size'),
+      header: createSortableColumnHeader(t('size')),
       size: 110,
       minSize: 50,
+      sortingFn: createNumberSortingFn('size'),
     },
     {
       accessorKey: 'fileName',
@@ -48,6 +56,8 @@ export function BigFiles() {
       columns={columns}
       rowSelection={rowSelection}
       onRowSelectionChange={setRowSelection}
+      sorting={sorting}
+      onSortingChange={setSorting}
     />
   );
 }
