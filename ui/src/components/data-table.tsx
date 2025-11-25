@@ -362,12 +362,20 @@ export function createSortableColumnHeader(title: React.ReactNode) {
   };
 }
 
-export function createNumberSortingFn<
-  T extends { rawData: Record<string, any> },
->(field: string) {
+export function createSortingFn<T extends { rawData: Record<string, any> }>(
+  field: string,
+  type: 'string' | 'number',
+) {
+  if (type === 'number') {
+    return (rowA: Row<T>, rowB: Row<T>) => {
+      const fieldA = rowA.original.rawData[field];
+      const fieldB = rowB.original.rawData[field];
+      return fieldA - fieldB;
+    };
+  }
   return (rowA: Row<T>, rowB: Row<T>) => {
     const fieldA = rowA.original.rawData[field];
     const fieldB = rowB.original.rawData[field];
-    return fieldA - fieldB;
+    return fieldA.localeCompare(fieldB);
   };
 }

@@ -7,8 +7,8 @@ import {
 import {
   createActionsColumn,
   createColumns,
-  createNumberSortingFn,
   createSortableColumnHeader,
+  createSortingFn,
   DataTable,
 } from '~/components/data-table';
 import { useT } from '~/hooks';
@@ -26,11 +26,11 @@ export function BigFiles() {
       header: createSortableColumnHeader(t('size')),
       size: 110,
       minSize: 50,
-      sortingFn: createNumberSortingFn('size'),
+      sortingFn: createSortingFn('size', 'number'),
     },
     {
       accessorKey: 'fileName',
-      header: t('fileName'),
+      header: createSortableColumnHeader(t('fileName')),
       size: 180,
       minSize: 100,
     },
@@ -42,9 +42,10 @@ export function BigFiles() {
     },
     {
       accessorKey: 'modifiedDate',
-      header: t('modifiedDate'),
+      header: createSortableColumnHeader(t('modifiedDate')),
       size: 160,
       minSize: 120,
+      sortingFn: createSortingFn('modified_date', 'number'),
     },
     createActionsColumn(),
   ]);
