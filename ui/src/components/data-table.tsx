@@ -51,8 +51,6 @@ interface DataTableProps<T> {
 export type RowSelection = RowSelectionState;
 
 export function DataTable<T extends BaseEntry>(props: DataTableProps<T>) {
-  'use no memo';
-
   const {
     data,
     columns,
@@ -254,8 +252,6 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
 }
 
 export function TableRowSelectionHeader<T>({ table }: { table: TTable<T> }) {
-  'use no memo';
-
   return (
     <Checkbox
       checked={
@@ -269,8 +265,6 @@ export function TableRowSelectionHeader<T>({ table }: { table: TTable<T> }) {
 }
 
 export function TableRowSelectionCell<T>({ row }: { row: Row<T> }) {
-  'use no memo';
-
   return (
     <Checkbox
       checked={row.getIsSelected()}
@@ -337,8 +331,6 @@ export function createActionsColumn<
 
 export function createSortableColumnHeader(title: React.ReactNode) {
   return function SortableColumnHeader({ column }: { column: Column<any> }) {
-    'use no memo';
-
     const direction = column.getIsSorted();
 
     const handleClick = () => {
