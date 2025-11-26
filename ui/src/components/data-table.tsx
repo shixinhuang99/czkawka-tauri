@@ -36,6 +36,10 @@ import {
 import { toastError } from './toast';
 import { TooltipButton } from './tooltip-button';
 
+export type SortingStateUpdater =
+  | SortingState
+  | ((v: SortingState) => SortingState);
+
 interface DataTableProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
@@ -43,36 +47,38 @@ interface DataTableProps<T> {
   emptyTip?: React.ReactNode;
   layout?: 'grid' | 'resizeable';
   rowSelection: RowSelectionState;
-  onRowSelectionChange: (v: RowSelectionState) => void;
+  onRowSelectionChange: (
+    v: RowSelectionState | ((v: RowSelectionState) => RowSelectionState),
+  ) => void;
   sorting: SortingState;
-  onSortingChange: (v: SortingState) => void;
+  onSortingChange: (v: SortingStateUpdater) => void;
 }
 
 export type RowSelection = RowSelectionState;
 
-export function DataTable<T extends BaseEntry>(props: DataTableProps<T>) {
-  const {
-    data,
-    columns,
-    className,
-    emptyTip,
-    layout = 'resizeable',
-    rowSelection,
-    onRowSelectionChange,
-    sorting,
-    onSortingChange,
-  } = props;
-
+export function DataTable<T extends BaseEntry>({
+  data,
+  columns,
+  className,
+  emptyTip,
+  layout = 'resizeable',
+  rowSelection,
+  onRowSelectionChange,
+  sorting,
+  onSortingChange,
+}: DataTableProps<T>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    columnResizeMode: 'onChange',
     getRowId: (row) => row.path,
-    onRowSelectionChange: (updater) => {
-      const newSelection =
-        typeof updater === 'function' ? updater(rowSelection) : updater;
-      onRowSelectionChange(newSelection);
+    state: {
+      rowSelection,
+      sorting,
     },
+    onRowSelectionChange,
     enableRowSelection: (row) => {
       const original = row.original as { isRef?: boolean; hidden?: boolean };
       if (original.isRef || original.hidden) {
@@ -80,17 +86,7 @@ export function DataTable<T extends BaseEntry>(props: DataTableProps<T>) {
       }
       return true;
     },
-    state: {
-      rowSelection,
-      sorting,
-    },
-    columnResizeMode: 'onChange',
-    getSortedRowModel: getSortedRowModel(),
-    onSortingChange: (updater) => {
-      const newSorting =
-        typeof updater === 'function' ? updater(sorting) : updater;
-      onSortingChange(newSorting);
-    },
+    onSortingChange,
   });
   const t = useT();
 

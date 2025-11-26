@@ -81,7 +81,6 @@ export const emptyFoldersRowSelectionAtom = atom<RowSelection>({});
 
 export const bigFilesAtom = atom<FileEntry[]>([]);
 export const bigFilesRowSelectionAtom = atom<RowSelection>({});
-export const bigFilesSortingAtom = atom<SortingState>([]);
 
 export const emptyFilesAtom = atom<FileEntry[]>([]);
 
@@ -114,3 +113,17 @@ export const brokenFilesRowSelectionAtom = atom<RowSelection>({});
 export const badExtensionsAtom = atom<BadFileEntry[]>([]);
 
 export const badExtensionsRowSelectionAtom = atom<RowSelection>({});
+
+export const sortingAtom = atom<Record<ToolsValues, SortingState>>({
+  [Tools.DuplicateFiles]: [],
+  [Tools.EmptyFolders]: [],
+  [Tools.BigFiles]: [],
+  [Tools.EmptyFiles]: [],
+  [Tools.TemporaryFiles]: [],
+  [Tools.SimilarImages]: [],
+  [Tools.SimilarVideos]: [],
+  [Tools.MusicDuplicates]: [],
+  [Tools.InvalidSymlinks]: [],
+  [Tools.BrokenFiles]: [],
+  [Tools.BadExtensions]: [],
+});

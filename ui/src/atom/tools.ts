@@ -1,5 +1,8 @@
 import { atom, type PrimitiveAtom } from 'jotai';
-import type { RowSelection } from '~/components/data-table';
+import type {
+  RowSelection,
+  SortingStateUpdater,
+} from '~/components/data-table';
 import { Tools } from '~/consts';
 import type { ToolsValues } from '~/types';
 import {
@@ -25,6 +28,7 @@ import {
   similarImagesRowSelectionAtom,
   similarVideosAtom,
   similarVideosRowSelectionAtom,
+  sortingAtom,
   temporaryFilesAtom,
   temporaryFilesRowSelectionAtom,
 } from './primitive';
@@ -120,5 +124,22 @@ export const toolInProgressRowSelectionAtom = atom(
     }
     const targetAtom = rowSelectionAtomMap[progress.tool];
     set(targetAtom, updater);
+  },
+);
+
+export const currentToolSortingAtom = atom(
+  (get) => {
+    const currentTool = get(currentToolAtom);
+    const sorting = get(sortingAtom);
+    return sorting[currentTool];
+  },
+  (get, set, updater: SortingStateUpdater) => {
+    const currentTool = get(currentToolAtom);
+    const sorting = get(sortingAtom);
+    set(sortingAtom, {
+      ...sorting,
+      [currentTool]:
+        typeof updater === 'function' ? updater(sorting[currentTool]) : updater,
+    });
   },
 );

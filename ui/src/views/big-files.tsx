@@ -1,9 +1,6 @@
 import { useAtom, useAtomValue } from 'jotai';
-import {
-  bigFilesAtom,
-  bigFilesRowSelectionAtom,
-  bigFilesSortingAtom,
-} from '~/atom/primitive';
+import { bigFilesAtom, bigFilesRowSelectionAtom } from '~/atom/primitive';
+import { currentToolSortingAtom } from '~/atom/tools';
 import {
   createActionsColumn,
   createColumns,
@@ -18,7 +15,7 @@ export function BigFiles() {
   const t = useT();
   const data = useAtomValue(bigFilesAtom);
   const [rowSelection, setRowSelection] = useAtom(bigFilesRowSelectionAtom);
-  const [sorting, setSorting] = useAtom(bigFilesSortingAtom);
+  const [sorting, setSorting] = useAtom(currentToolSortingAtom);
 
   const columns = createColumns<FileEntry>([
     {
