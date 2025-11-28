@@ -3,11 +3,7 @@ import {
   temporaryFilesAtom,
   temporaryFilesRowSelectionAtom,
 } from '~/atom/primitive';
-import {
-  createActionsColumn,
-  createColumns,
-  DataTable,
-} from '~/components/data-table';
+import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { TemporaryFileEntry } from '~/types';
 
@@ -37,7 +33,6 @@ export function TemporaryFiles() {
       size: 160,
       minSize: 120,
     },
-    createActionsColumn(),
   ]);
 
   return (

@@ -64,8 +64,10 @@ export const currentToolAtom = atomWithStorage<ToolsValues>(
 );
 
 export const includedDirsRowSelectionAtom = atom<RowSelection>({});
+export const includedDirsRowSortingAtom = atom<SortingState>([]);
 
 export const excludedDirsRowSelectionAtom = atom<RowSelection>({});
+export const excludedDirsRowSortingAtom = atom<SortingState>([]);
 
 export const logsAtom = atom<string>('');
 

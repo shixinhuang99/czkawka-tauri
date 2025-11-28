@@ -1,4 +1,6 @@
 import {
+  type AccessorKeyColumnDef,
+  type Cell,
   type Column,
   type ColumnDef,
   flexRender,
@@ -36,6 +38,10 @@ import {
 import { toastError } from './toast';
 import { TooltipButton } from './tooltip-button';
 
+export type RowSelectionUpdater =
+  | RowSelectionState
+  | ((v: RowSelectionState) => RowSelectionState);
+
 export type SortingStateUpdater =
   | SortingState
   | ((v: SortingState) => SortingState);
@@ -47,11 +53,9 @@ interface DataTableProps<T> {
   emptyTip?: React.ReactNode;
   layout?: 'grid' | 'resizeable';
   rowSelection: RowSelectionState;
-  onRowSelectionChange: (
-    v: RowSelectionState | ((v: RowSelectionState) => RowSelectionState),
-  ) => void;
+  onRowSelectionChange: (updater: RowSelectionUpdater) => void;
   sorting: SortingState;
-  onSortingChange: (v: SortingStateUpdater) => void;
+  onSortingChange: (updater: SortingStateUpdater) => void;
 }
 
 export type RowSelection = RowSelectionState;
@@ -248,6 +252,8 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
 }
 
 export function TableRowSelectionHeader<T>({ table }: { table: TTable<T> }) {
+  'use no memo';
+
   return (
     <Checkbox
       checked={
@@ -260,7 +266,17 @@ export function TableRowSelectionHeader<T>({ table }: { table: TTable<T> }) {
   );
 }
 
-export function TableRowSelectionCell<T>({ row }: { row: Row<T> }) {
+export function TableRowSelectionCell<T extends { isRef?: boolean }>({
+  row,
+}: {
+  row: Row<T>;
+}) {
+  'use no memo';
+
+  if (typeof row.original.isRef === 'boolean' && row.original.isRef) {
+    return null;
+  }
+
   return (
     <Checkbox
       checked={row.getIsSelected()}
@@ -271,7 +287,48 @@ export function TableRowSelectionCell<T>({ row }: { row: Row<T> }) {
   );
 }
 
-export function createColumns<T>(columns: ColumnDef<T>[]): ColumnDef<T>[] {
+export function createColumns<T extends BaseEntry & { isRef?: boolean }>(
+  columns: ColumnDef<T>[],
+  options?: {
+    withOutActions?: boolean;
+    enableSortingKeys?: string[];
+    disableSortingKeys?: string[];
+    customSortableColumnHeader?: boolean;
+  },
+): ColumnDef<T>[] {
+  let processedColumns = columns;
+
+  if (!options?.customSortableColumnHeader) {
+    const shouldEnableSorting = options?.enableSortingKeys;
+    const shouldDisableSorting =
+      !shouldEnableSorting && options?.disableSortingKeys;
+    const shouldEnableAll = !shouldEnableSorting && !shouldDisableSorting;
+
+    if (shouldEnableSorting || shouldDisableSorting || shouldEnableAll) {
+      processedColumns = (columns as AccessorKeyColumnDef<T>[]).map(
+        (column) => {
+          const shouldWrapHeader = shouldEnableAll
+            ? true
+            : shouldEnableSorting
+              ? options.enableSortingKeys?.includes(
+                  column.accessorKey as string,
+                )
+              : !options.disableSortingKeys?.includes(
+                  column.accessorKey as string,
+                );
+
+          if (shouldWrapHeader) {
+            return {
+              ...column,
+              header: createSortableColumnHeader(column.header as string),
+            };
+          }
+
+          return column;
+        },
+      );
+    }
+  }
   return [
     {
       id: 'select',
@@ -280,24 +337,40 @@ export function createColumns<T>(columns: ColumnDef<T>[]): ColumnDef<T>[] {
       },
       size: 40,
       minSize: 40,
-      header: ({ table }) => {
-        return <TableRowSelectionHeader table={table} />;
-      },
-      cell: ({ row }) => {
-        return <TableRowSelectionCell row={row} />;
-      },
+      header: TableRowSelectionHeader,
+      cell: TableRowSelectionCell,
     },
-    ...columns,
+    ...processedColumns,
+    ...(options?.withOutActions
+      ? []
+      : [
+          {
+            id: 'actions',
+            size: 55,
+            minSize: 55,
+            cell: TableActions,
+          },
+        ]),
   ];
 }
 
-export function TableActions({ path }: { path: string }) {
+function TableActions<T extends BaseEntry & { isRef?: boolean }>({
+  cell,
+}: {
+  cell: Cell<T, unknown>;
+}) {
   const t = useT();
 
-  const handleClick = () => {
-    revealItemInDir(path).catch((err) => {
+  if (typeof cell.row.original.isRef === 'boolean' && cell.row.original.isRef) {
+    return null;
+  }
+
+  const handleClick = async () => {
+    try {
+      await revealItemInDir(cell.row.original.path);
+    } catch (err) {
       toastError(t('opreationFailed'), err);
-    });
+    }
   };
 
   return (
@@ -312,20 +385,7 @@ export function TableActions({ path }: { path: string }) {
   );
 }
 
-export function createActionsColumn<
-  T extends { path: string },
->(): ColumnDef<T> {
-  return {
-    id: 'actions',
-    size: 55,
-    minSize: 55,
-    cell: ({ cell }) => {
-      return <TableActions path={cell.row.original.path} />;
-    },
-  };
-}
-
-export function createSortableColumnHeader(title: React.ReactNode) {
+export function createSortableColumnHeader(title: string, className?: string) {
   return function SortableColumnHeader({ column }: { column: Column<any> }) {
     const direction = column.getIsSorted();
 
@@ -340,7 +400,11 @@ export function createSortableColumnHeader(title: React.ReactNode) {
     };
 
     return (
-      <Button variant="ghost" onClick={handleClick} className="gap-2">
+      <Button
+        variant="ghost"
+        onClick={handleClick}
+        className={cn('gap-2', className)}
+      >
         {title}
         {direction === 'asc' && <ArrowUpIcon />}
         {direction === 'desc' && <ArrowDownIcon />}
@@ -350,10 +414,9 @@ export function createSortableColumnHeader(title: React.ReactNode) {
   };
 }
 
-export function createSortingFn<T extends { rawData: Record<string, any> }>(
-  field: string,
-  type: 'string' | 'number',
-) {
+export function createSortingFnByRawData<
+  T extends { rawData: Record<string, any> },
+>(field: string, type: 'string' | 'number') {
   if (type === 'number') {
     return (rowA: Row<T>, rowB: Row<T>) => {
       const fieldA = rowA.original.rawData[field];

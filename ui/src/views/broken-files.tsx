@@ -1,10 +1,6 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { brokenFilesAtom, brokenFilesRowSelectionAtom } from '~/atom/primitive';
-import {
-  createActionsColumn,
-  createColumns,
-  DataTable,
-} from '~/components/data-table';
+import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { BrokenEntry } from '~/types';
 
@@ -44,7 +40,6 @@ export function BrokenFiles() {
       size: 160,
       minSize: 120,
     },
-    createActionsColumn(),
   ]);
 
   return (

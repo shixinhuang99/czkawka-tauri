@@ -14,38 +14,41 @@ export function InvalidSymlinks() {
   );
   const t = useT();
 
-  const columns = createColumns<SymlinksFileEntry>([
-    {
-      accessorKey: 'symlinkName',
-      header: t('symlinkName'),
-      size: 180,
-      minSize: 110,
-    },
-    {
-      accessorKey: 'path',
-      header: t('symlinkPath'),
-      size: 220,
-      minSize: 110,
-    },
-    {
-      accessorKey: 'destinationPath',
-      header: t('destinationPath'),
-      size: 220,
-      minSize: 130,
-    },
-    {
-      accessorKey: 'typeOfError',
-      header: t('typeOfError'),
-      size: 140,
-      minSize: 110,
-    },
-    {
-      accessorKey: 'modifiedDate',
-      header: t('modifiedDate'),
-      size: 160,
-      minSize: 120,
-    },
-  ]);
+  const columns = createColumns<SymlinksFileEntry>(
+    [
+      {
+        accessorKey: 'symlinkName',
+        header: t('symlinkName'),
+        size: 180,
+        minSize: 110,
+      },
+      {
+        accessorKey: 'path',
+        header: t('symlinkPath'),
+        size: 220,
+        minSize: 110,
+      },
+      {
+        accessorKey: 'destinationPath',
+        header: t('destinationPath'),
+        size: 220,
+        minSize: 130,
+      },
+      {
+        accessorKey: 'typeOfError',
+        header: t('typeOfError'),
+        size: 140,
+        minSize: 110,
+      },
+      {
+        accessorKey: 'modifiedDate',
+        header: t('modifiedDate'),
+        size: 160,
+        minSize: 120,
+      },
+    ],
+    { withOutActions: true },
+  );
 
   return (
     <DataTable

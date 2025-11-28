@@ -3,11 +3,7 @@ import {
   emptyFoldersAtom,
   emptyFoldersRowSelectionAtom,
 } from '~/atom/primitive';
-import {
-  createActionsColumn,
-  createColumns,
-  DataTable,
-} from '~/components/data-table';
+import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { FolderEntry } from '~/types';
 
@@ -35,7 +31,6 @@ export function EmptyFolders() {
       size: 160,
       minSize: 120,
     },
-    createActionsColumn(),
   ]);
 
   return (

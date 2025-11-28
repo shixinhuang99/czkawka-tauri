@@ -1,16 +1,11 @@
-import type { ColumnDef, Row } from '@tanstack/react-table';
+import type { Row } from '@tanstack/react-table';
 import { useAtom, useAtomValue } from 'jotai';
 import {
   duplicateFilesAtom,
   duplicateFilesRowSelectionAtom,
 } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
-import {
-  DataTable,
-  TableActions,
-  TableRowSelectionCell,
-  TableRowSelectionHeader,
-} from '~/components/data-table';
+import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { DuplicateEntry } from '~/types';
 import { ImagePreview } from './image-preview';
@@ -22,24 +17,7 @@ export function DuplicateFiles() {
   );
   const t = useT();
 
-  const columns: ColumnDef<DuplicateEntry>[] = [
-    {
-      id: 'select',
-      meta: {
-        span: 1,
-      },
-      size: 40,
-      minSize: 40,
-      header: ({ table }) => {
-        return <TableRowSelectionHeader table={table} />;
-      },
-      cell: ({ row }) => {
-        if (row.original.isRef) {
-          return null;
-        }
-        return <TableRowSelectionCell row={row} />;
-      },
-    },
+  const columns = createColumns<DuplicateEntry>([
     {
       accessorKey: 'size',
       header: t('size'),
@@ -51,9 +29,7 @@ export function DuplicateFiles() {
       header: t('fileName'),
       size: 180,
       minSize: 100,
-      cell: ({ row }) => {
-        return <FileName row={row} />;
-      },
+      cell: FileName,
     },
     {
       accessorKey: 'path',
@@ -73,18 +49,7 @@ export function DuplicateFiles() {
       size: 160,
       minSize: 120,
     },
-    {
-      id: 'actions',
-      size: 55,
-      minSize: 55,
-      cell: ({ cell }) => {
-        if (cell.row.original.isRef) {
-          return null;
-        }
-        return <TableActions path={cell.row.original.path} />;
-      },
-    },
-  ];
+  ]);
 
   return (
     <DataTable
@@ -97,8 +62,7 @@ export function DuplicateFiles() {
   );
 }
 
-function FileName(props: { row: Row<DuplicateEntry> }) {
-  const { row } = props;
+function FileName({ row }: { row: Row<DuplicateEntry> }) {
   const { hidden, path, fileName, isImage } = row.original;
 
   const settings = useAtomValue(settingsAtom);

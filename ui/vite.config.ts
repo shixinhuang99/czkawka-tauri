@@ -6,7 +6,13 @@ export default defineConfig(async () => {
   const { default: pkg } = await import('./package.json');
 
   return {
-    plugins: [react()],
+    plugins: [
+      react({
+        babel: {
+          plugins: [['babel-plugin-react-compiler', { target: '18' }]],
+        },
+      }),
+    ],
     clearScreen: false,
     server: {
       port: 4000,
@@ -30,7 +36,6 @@ export default defineConfig(async () => {
     },
     build: {
       chunkSizeWarningLimit: 1000,
-      sourcemap: true,
     },
     base: './',
   };

@@ -1,10 +1,6 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { emptyFilesAtom, emptyFilesRowSelectionAtom } from '~/atom/primitive';
-import {
-  createActionsColumn,
-  createColumns,
-  DataTable,
-} from '~/components/data-table';
+import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { FileEntry } from '~/types';
 
@@ -32,7 +28,6 @@ export function EmptyFiles() {
       size: 160,
       minSize: 120,
     },
-    createActionsColumn(),
   ]);
 
   return (

@@ -1,16 +1,11 @@
-import type { ColumnDef, Row } from '@tanstack/react-table';
+import type { Row } from '@tanstack/react-table';
 import { useAtom, useAtomValue } from 'jotai';
 import {
   similarImagesAtom,
   similarImagesRowSelectionAtom,
 } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
-import {
-  DataTable,
-  TableActions,
-  TableRowSelectionCell,
-  TableRowSelectionHeader,
-} from '~/components/data-table';
+import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { ImagesEntry } from '~/types';
 import { ImagePreview } from './image-preview';
@@ -22,24 +17,7 @@ export function SimilarImages() {
   );
   const t = useT();
 
-  const columns: ColumnDef<ImagesEntry>[] = [
-    {
-      id: 'select',
-      meta: {
-        span: 1,
-      },
-      size: 40,
-      minSize: 40,
-      header: ({ table }) => {
-        return <TableRowSelectionHeader table={table} />;
-      },
-      cell: ({ row }) => {
-        if (row.original.isRef) {
-          return null;
-        }
-        return <TableRowSelectionCell row={row} />;
-      },
-    },
+  const columns = createColumns<ImagesEntry>([
     {
       accessorKey: 'similarity',
       header: t('similarity'),
@@ -85,18 +63,7 @@ export function SimilarImages() {
       size: 160,
       minSize: 120,
     },
-    {
-      id: 'actions',
-      size: 55,
-      minSize: 55,
-      cell: ({ cell }) => {
-        if (cell.row.original.isRef) {
-          return null;
-        }
-        return <TableActions path={cell.row.original.path} />;
-      },
-    },
-  ];
+  ]);
 
   return (
     <DataTable

@@ -1,15 +1,9 @@
-import type { ColumnDef } from '@tanstack/react-table';
 import { useAtom, useAtomValue } from 'jotai';
 import {
   musicDuplicatesAtom,
   musicDuplicatesRowSelectionAtom,
 } from '~/atom/primitive';
-import {
-  DataTable,
-  TableActions,
-  TableRowSelectionCell,
-  TableRowSelectionHeader,
-} from '~/components/data-table';
+import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { MusicEntry } from '~/types';
 
@@ -20,24 +14,7 @@ export function MusicDuplicates() {
   );
   const t = useT();
 
-  const columns: ColumnDef<MusicEntry>[] = [
-    {
-      id: 'select',
-      meta: {
-        span: 1,
-      },
-      size: 40,
-      minSize: 40,
-      header: ({ table }) => {
-        return <TableRowSelectionHeader table={table} />;
-      },
-      cell: ({ row }) => {
-        if (row.original.isRef) {
-          return null;
-        }
-        return <TableRowSelectionCell row={row} />;
-      },
-    },
+  const columns = createColumns<MusicEntry>([
     {
       accessorKey: 'size',
       header: t('size'),
@@ -98,18 +75,7 @@ export function MusicDuplicates() {
       size: 160,
       minSize: 120,
     },
-    {
-      id: 'actions',
-      size: 55,
-      minSize: 55,
-      cell: ({ cell }) => {
-        if (cell.row.original.isRef) {
-          return null;
-        }
-        return <TableActions path={cell.row.original.path} />;
-      },
-    },
-  ];
+  ]);
 
   return (
     <DataTable

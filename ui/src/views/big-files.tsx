@@ -2,10 +2,8 @@ import { useAtom, useAtomValue } from 'jotai';
 import { bigFilesAtom, bigFilesRowSelectionAtom } from '~/atom/primitive';
 import { currentToolSortingAtom } from '~/atom/tools';
 import {
-  createActionsColumn,
   createColumns,
-  createSortableColumnHeader,
-  createSortingFn,
+  createSortingFnByRawData,
   DataTable,
 } from '~/components/data-table';
 import { useT } from '~/hooks';
@@ -20,14 +18,14 @@ export function BigFiles() {
   const columns = createColumns<FileEntry>([
     {
       accessorKey: 'size',
-      header: createSortableColumnHeader(t('size')),
+      header: t('size'),
       size: 110,
       minSize: 50,
-      sortingFn: createSortingFn('size', 'number'),
+      sortingFn: createSortingFnByRawData('size', 'number'),
     },
     {
       accessorKey: 'fileName',
-      header: createSortableColumnHeader(t('fileName')),
+      header: t('fileName'),
       size: 180,
       minSize: 100,
     },
@@ -39,12 +37,11 @@ export function BigFiles() {
     },
     {
       accessorKey: 'modifiedDate',
-      header: createSortableColumnHeader(t('modifiedDate')),
+      header: t('modifiedDate'),
       size: 160,
       minSize: 120,
-      sortingFn: createSortingFn('modified_date', 'number'),
+      sortingFn: createSortingFnByRawData('modified_date', 'number'),
     },
-    createActionsColumn(),
   ]);
 
   return (

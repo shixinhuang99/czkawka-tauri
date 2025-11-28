@@ -3,11 +3,7 @@ import {
   badExtensionsAtom,
   badExtensionsRowSelectionAtom,
 } from '~/atom/primitive';
-import {
-  createActionsColumn,
-  createColumns,
-  DataTable,
-} from '~/components/data-table';
+import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { BadFileEntry } from '~/types';
 
@@ -49,7 +45,6 @@ export function BadExtensions() {
       size: 160,
       minSize: 120,
     },
-    createActionsColumn(),
   ]);
 
   return (
