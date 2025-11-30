@@ -1,18 +1,16 @@
 import { useAtom, useAtomValue } from 'jotai';
 import {
-  badExtensionsAtom,
-  badExtensionsRowSelectionAtom,
-} from '~/atom/primitive';
-import { currentToolSortingAtom } from '~/atom/tools';
+  currentToolDataAtom,
+  currentToolRowSelectionAtom,
+  currentToolSortingAtom,
+} from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { BadFileEntry } from '~/types';
 
 export function BadExtensions() {
-  const data = useAtomValue(badExtensionsAtom);
-  const [rowSelection, setRowSelection] = useAtom(
-    badExtensionsRowSelectionAtom,
-  );
+  const data = useAtomValue(currentToolDataAtom) as BadFileEntry[];
+  const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 

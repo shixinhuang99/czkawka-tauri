@@ -1,16 +1,16 @@
 import { useAtom, useAtomValue } from 'jotai';
 import {
-  emptyFoldersAtom,
-  emptyFoldersRowSelectionAtom,
-} from '~/atom/primitive';
-import { currentToolSortingAtom } from '~/atom/tools';
+  currentToolDataAtom,
+  currentToolRowSelectionAtom,
+  currentToolSortingAtom,
+} from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { FolderEntry } from '~/types';
 
 export function EmptyFolders() {
-  const data = useAtomValue(emptyFoldersAtom);
-  const [rowSelection, setRowSelection] = useAtom(emptyFoldersRowSelectionAtom);
+  const data = useAtomValue(currentToolDataAtom) as FolderEntry[];
+  const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 

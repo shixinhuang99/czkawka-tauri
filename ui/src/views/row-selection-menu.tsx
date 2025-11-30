@@ -1,9 +1,9 @@
+import type { RowSelectionState } from '@tanstack/react-table';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { SquareMousePointerIcon } from 'lucide-react';
 import { currentToolAtom } from '~/atom/primitive';
 import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
 import { OperationButton } from '~/components';
-import type { RowSelection } from '~/components/data-table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +12,8 @@ import {
 } from '~/components/shadcn/dropdown-menu';
 import { Tools } from '~/consts';
 import { useT } from '~/hooks';
-import type { BaseEntry, RefEntry } from '~/types';
-import { getPathsFromEntries, getRowSelectionKeys } from '~/utils/common';
+import type { BaseEntry } from '~/types';
+import { getPathsFromEntries, getRowSelectionKeys } from '~/utils/table-helper';
 
 const toolsWithSizeAndDateSelect = new Set<string>([
   Tools.DuplicateFiles,
@@ -26,7 +26,7 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
   const { disabled } = props;
 
   const currentTool = useAtomValue(currentToolAtom);
-  const currentToolData = useAtomValue(currentToolDataAtom);
+  const currentToolData = useAtomValue(currentToolDataAtom) as BaseEntry[];
   const setCurrentToolRowSelection = useSetAtom(currentToolRowSelectionAtom);
   const t = useT();
 
@@ -91,22 +91,25 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
   );
 }
 
-function invertSelection<T extends BaseEntry & Partial<RefEntry>>(
+function invertSelection<T extends BaseEntry>(
   data: T[],
-  setFn: (updater: (v: RowSelection) => RowSelection) => void,
+  setFn: (updater: (v: RowSelectionState) => RowSelectionState) => void,
 ) {
   const paths = getPathsFromEntries(data);
   setFn((old) => convertRowSelection(old, paths));
 }
 
-function convertRowSelection(old: RowSelection, paths: string[]): RowSelection {
+function convertRowSelection(
+  old: RowSelectionState,
+  paths: string[],
+): RowSelectionState {
   const selected = new Set(getRowSelectionKeys(old));
   const unselected = paths.filter((v) => !selected.has(v));
   const result = pathsToRowSelection(unselected);
   return result;
 }
 
-function pathsToRowSelection(paths: string[]): RowSelection {
+function pathsToRowSelection(paths: string[]): RowSelectionState {
   const obj = Object.fromEntries(
     paths.map((v) => {
       return [v, true];
@@ -115,7 +118,7 @@ function pathsToRowSelection(paths: string[]): RowSelection {
   return obj;
 }
 
-function groupBy<T extends RefEntry>(list: T[]): T[][] {
+function groupBy<T extends BaseEntry>(list: T[]): T[][] {
   const map: Map<number, T[]> = new Map();
 
   for (const item of list) {
@@ -133,17 +136,13 @@ function groupBy<T extends RefEntry>(list: T[]): T[][] {
   return Array.from(map.values());
 }
 
-interface WithRaw {
-  raw: Record<string, any>;
-}
-
-function selectItem<T extends BaseEntry & RefEntry & WithRaw>(
+function selectItem<T extends BaseEntry>(
   data: T[],
   type: 'size' | 'date' | 'resolution',
   dir: 'asc' | 'desc',
-): RowSelection {
+): RowSelectionState {
   const paths: string[] = [];
-  let compareFn: (<T extends WithRaw>(a: T, b: T) => T) | null = null;
+  let compareFn: ((a: T, b: T) => T) | null = null;
   if (type === 'size' && dir === 'asc') {
     compareFn = pickBiggest;
   } else if (type === 'size' && dir === 'desc') {
@@ -171,26 +170,32 @@ function selectItem<T extends BaseEntry & RefEntry & WithRaw>(
   return pathsToRowSelection(paths);
 }
 
-function pickBiggest<T extends WithRaw>(a: T, b: T): T {
-  return a.raw.size >= b.raw.size ? a : b;
+function pickBiggest<T extends BaseEntry>(a: T, b: T): T {
+  return a.rawData.size >= b.rawData.size ? a : b;
 }
 
-function pickSmallest<T extends WithRaw>(a: T, b: T): T {
-  return a.raw.size <= b.raw.size ? a : b;
+function pickSmallest<T extends BaseEntry>(a: T, b: T): T {
+  return a.rawData.size <= b.rawData.size ? a : b;
 }
 
-function pickNewst<T extends WithRaw>(a: T, b: T): T {
-  return a.raw.modified_date >= b.raw.modified_date ? a : b;
+function pickNewst<T extends BaseEntry>(a: T, b: T): T {
+  return a.rawData.modified_date >= b.rawData.modified_date ? a : b;
 }
 
-function pickOldest<T extends WithRaw>(a: T, b: T): T {
-  return a.raw.modified_date <= b.raw.modified_date ? a : b;
+function pickOldest<T extends BaseEntry>(a: T, b: T): T {
+  return a.rawData.modified_date <= b.rawData.modified_date ? a : b;
 }
 
-function pickHighestResolution<T extends WithRaw>(a: T, b: T): T {
-  return a.raw.width * a.raw.height >= b.raw.width * b.raw.height ? a : b;
+function pickHighestResolution<T extends BaseEntry>(a: T, b: T): T {
+  return a.rawData.width * a.rawData.height >=
+    b.rawData.width * b.rawData.height
+    ? a
+    : b;
 }
 
-function pickLowestResolution<T extends WithRaw>(a: T, b: T): T {
-  return a.raw.width * a.raw.height <= b.raw.width * b.raw.height ? a : b;
+function pickLowestResolution<T extends BaseEntry>(a: T, b: T): T {
+  return a.rawData.width * a.rawData.height <=
+    b.rawData.width * b.rawData.height
+    ? a
+    : b;
 }

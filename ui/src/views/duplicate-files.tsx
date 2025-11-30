@@ -1,21 +1,19 @@
 import type { Row } from '@tanstack/react-table';
 import { useAtom, useAtomValue } from 'jotai';
-import {
-  duplicateFilesAtom,
-  duplicateFilesRowSelectionAtom,
-} from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
-import { currentToolSortingAtom } from '~/atom/tools';
+import {
+  currentToolDataAtom,
+  currentToolRowSelectionAtom,
+  currentToolSortingAtom,
+} from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { DuplicateEntry } from '~/types';
 import { ImagePreview } from './image-preview';
 
 export function DuplicateFiles() {
-  const data = useAtomValue(duplicateFilesAtom);
-  const [rowSelection, setRowSelection] = useAtom(
-    duplicateFilesRowSelectionAtom,
-  );
+  const data = useAtomValue(currentToolDataAtom) as DuplicateEntry[];
+  const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 

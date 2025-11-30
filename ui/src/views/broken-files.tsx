@@ -1,13 +1,16 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { brokenFilesAtom, brokenFilesRowSelectionAtom } from '~/atom/primitive';
-import { currentToolSortingAtom } from '~/atom/tools';
+import {
+  currentToolDataAtom,
+  currentToolRowSelectionAtom,
+  currentToolSortingAtom,
+} from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { BrokenEntry } from '~/types';
 
 export function BrokenFiles() {
-  const data = useAtomValue(brokenFilesAtom);
-  const [rowSelection, setRowSelection] = useAtom(brokenFilesRowSelectionAtom);
+  const data = useAtomValue(currentToolDataAtom) as BrokenEntry[];
+  const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 

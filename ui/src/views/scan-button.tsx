@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 import { currentToolAtom, logsAtom, progressAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import {
-  toolInProgressDataAtom,
-  toolInProgressRowSelectionAtom,
+  clearToolInProgressRowSelectionAtom,
+  setToolInProgressDataAtom,
 } from '~/atom/tools';
 import { OperationButton } from '~/components';
 import { getDefaultProgress, Tools } from '~/consts';
@@ -23,7 +23,7 @@ import {
   convertSymlinksFileEntries,
   convertTemporaryFileEntries,
   convertVideosEntries,
-} from '~/utils/common';
+} from '~/utils/convert';
 
 const scanCmdMap: Record<string, ScanCmd> = {
   [Tools.DuplicateFiles]: 'scan_duplicate_files',
@@ -58,9 +58,9 @@ export function ScanButton() {
   const settings = useAtomValue(settingsAtom);
   const [progress, setProgress] = useAtom(progressAtom);
   const setLogs = useSetAtom(logsAtom);
-  const setToolInProgressData = useSetAtom(toolInProgressDataAtom);
-  const setToolInProgressRowSelection = useSetAtom(
-    toolInProgressRowSelectionAtom,
+  const setToolInProgressData = useSetAtom(setToolInProgressDataAtom);
+  const clearToolInProgressRowSelection = useSetAtom(
+    clearToolInProgressRowSelectionAtom,
   );
   const t = useT();
 
@@ -74,7 +74,7 @@ export function ScanButton() {
     const convertFn = convertFnMap[cmd];
     const data = convertFn(list);
     setToolInProgressData(data);
-    setToolInProgressRowSelection({});
+    clearToolInProgressRowSelection();
     setProgress(getDefaultProgress());
   });
 

@@ -1,4 +1,4 @@
-import type { Row, Table } from '@tanstack/react-table';
+import type { Row, RowSelectionState, Table } from '@tanstack/react-table';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
@@ -24,7 +24,6 @@ import {
   createColumns,
   createSortableColumnHeader,
   DataTable,
-  type RowSelection,
   type RowSelectionUpdater,
 } from '~/components/data-table';
 import {
@@ -39,7 +38,8 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
 import { useT } from '~/hooks';
 import type { DirsType } from '~/types';
-import { getRowSelectionKeys, splitStr } from '~/utils/common';
+import { splitStr } from '~/utils/common';
+import { getRowSelectionKeys } from '~/utils/table-helper';
 import { Operations } from './operations';
 import { ToolSettings } from './tool-settings';
 
@@ -49,9 +49,10 @@ const DisplayType = {
   ToolSettings: 'toolSettings',
 } as const;
 
-interface TableData {
+interface DirsData {
   path: string;
   field: DirsType;
+  rawData: Record<string, any>;
 }
 
 interface BottomBarProps {
@@ -102,14 +103,15 @@ function IncludedDirsTable() {
   const [settings, setSettings] = useAtom(settingsAtom);
   const [rowSelection, setRowSelection] = useAtom(includedDirsRowSelectionAtom);
   const [sorting, setSorting] = useAtom(includedDirsRowSortingAtom);
-  const data: TableData[] = settings.includedDirectories.map((path) => {
+  const data: DirsData[] = settings.includedDirectories.map((path) => {
     return {
       path,
       field: 'includedDirectories',
+      rawData: {},
     };
   });
 
-  const columns = createColumns<TableData>(
+  const columns = createColumns<DirsData>(
     [
       {
         accessorKey: 'path',
@@ -126,7 +128,7 @@ function IncludedDirsTable() {
         cell: DirsRemoveButton,
       },
     ],
-    { withOutActions: true, customSortableColumnHeader: true },
+    { customActions: true, customSortableColumnHeader: true },
   );
 
   const handleRowSelectionChange = (updater: RowSelectionUpdater) => {
@@ -171,14 +173,15 @@ function ExcludedDirsTable() {
   const settings = useAtomValue(settingsAtom);
   const [rowSelection, setRowSelection] = useAtom(excludedDirsRowSelectionAtom);
   const [sorting, setSorting] = useAtom(excludedDirsRowSortingAtom);
-  const data: TableData[] = settings.excludedDirectories.map((path) => {
+  const data: DirsData[] = settings.excludedDirectories.map((path) => {
     return {
       path,
       field: 'excludedDirectories',
+      rawData: {},
     };
   });
 
-  const columns = createColumns<TableData>(
+  const columns = createColumns<DirsData>(
     [
       {
         accessorKey: 'path',
@@ -195,7 +198,7 @@ function ExcludedDirsTable() {
         cell: DirsRemoveButton,
       },
     ],
-    { withOutActions: true, customSortableColumnHeader: true },
+    { customActions: true, customSortableColumnHeader: true },
   );
 
   return (
@@ -227,8 +230,8 @@ function DirsRemoveButton({
   row,
   table,
 }: {
-  row: Row<TableData>;
-  table: Table<TableData>;
+  row: Row<DirsData>;
+  table: Table<DirsData>;
 }) {
   const { path, field } = row.original;
   const setSettings = useSetAtom(settingsAtom);
@@ -261,8 +264,8 @@ function DirsRemoveButton({
 
 interface DirsActionsProps {
   field: DirsType;
-  rowSelection: RowSelection;
-  onRowSelectionChange: (v: RowSelection) => void;
+  rowSelection: RowSelectionState;
+  onRowSelectionChange: (v: RowSelectionState) => void;
 }
 
 function DirsActions({

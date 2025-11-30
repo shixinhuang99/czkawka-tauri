@@ -1,4 +1,4 @@
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { TextCursorInputIcon } from 'lucide-react';
 import { Trans } from 'react-i18next';
 import { logsAtom } from '~/atom/primitive';
@@ -7,7 +7,8 @@ import { OperationButton } from '~/components';
 import { AlertDialog } from '~/components/alert-dialog';
 import { useBoolean, useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
-import { getRowSelectionKeys } from '~/utils/common';
+import type { BadFileEntry } from '~/types';
+import { getRowSelectionKeys } from '~/utils/table-helper';
 
 interface RenameExtProps {
   disabled: boolean;
@@ -24,7 +25,8 @@ export function RenameExt(props: RenameExtProps) {
   const open = useBoolean();
   const loading = useBoolean();
   const setLogs = useSetAtom(logsAtom);
-  const [currentToolData, setCurrentToolData] = useAtom(currentToolDataAtom);
+  const currentToolData = useAtomValue(currentToolDataAtom) as BadFileEntry[];
+  const setCurrentToolData = useSetAtom(currentToolDataAtom);
   const [currentToolRowSelection, setCurrentToolRowSelection] = useAtom(
     currentToolRowSelectionAtom,
   );

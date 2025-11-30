@@ -1,18 +1,16 @@
 import { useAtom, useAtomValue } from 'jotai';
 import {
-  temporaryFilesAtom,
-  temporaryFilesRowSelectionAtom,
-} from '~/atom/primitive';
-import { currentToolSortingAtom } from '~/atom/tools';
+  currentToolDataAtom,
+  currentToolRowSelectionAtom,
+  currentToolSortingAtom,
+} from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { TemporaryFileEntry } from '~/types';
 
 export function TemporaryFiles() {
-  const data = useAtomValue(temporaryFilesAtom);
-  const [rowSelection, setRowSelection] = useAtom(
-    temporaryFilesRowSelectionAtom,
-  );
+  const data = useAtomValue(currentToolDataAtom) as TemporaryFileEntry[];
+  const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 

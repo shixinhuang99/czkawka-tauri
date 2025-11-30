@@ -1,18 +1,16 @@
 import { useAtom, useAtomValue } from 'jotai';
 import {
-  invalidSymlinksAtom,
-  invalidSymlinksRowSelectionAtom,
-} from '~/atom/primitive';
-import { currentToolSortingAtom } from '~/atom/tools';
+  currentToolDataAtom,
+  currentToolRowSelectionAtom,
+  currentToolSortingAtom,
+} from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { SymlinksFileEntry } from '~/types';
 
 export function InvalidSymlinks() {
-  const data = useAtomValue(invalidSymlinksAtom);
-  const [rowSelection, setRowSelection] = useAtom(
-    invalidSymlinksRowSelectionAtom,
-  );
+  const data = useAtomValue(currentToolDataAtom) as SymlinksFileEntry[];
+  const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 
@@ -49,7 +47,7 @@ export function InvalidSymlinks() {
         minSize: 120,
       },
     ],
-    { withOutActions: true },
+    { customActions: true },
   );
 
   return (

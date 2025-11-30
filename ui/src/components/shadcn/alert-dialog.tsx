@@ -1,7 +1,6 @@
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import * as React from 'react';
 import { cn } from '~/utils/cn';
-import { eventPreventDefault } from '~/utils/event';
 import { buttonVariants } from './button';
 
 const AlertDialog = AlertDialogPrimitive.Root;
@@ -34,7 +33,7 @@ const AlertDialogContent = React.forwardRef<
         'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg sm:rounded-lg',
         className,
       )}
-      onCloseAutoFocus={eventPreventDefault}
+      onCloseAutoFocus={(e) => e.preventDefault()}
       {...props}
     />
   </AlertDialogPortal>

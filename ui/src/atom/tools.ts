@@ -1,131 +1,74 @@
-import { atom, type PrimitiveAtom } from 'jotai';
+import { atom } from 'jotai';
 import type {
-  RowSelection,
+  RowSelectionUpdater,
   SortingStateUpdater,
 } from '~/components/data-table';
-import { Tools } from '~/consts';
-import type { ToolsValues } from '~/types';
 import {
-  badExtensionsAtom,
-  badExtensionsRowSelectionAtom,
-  bigFilesAtom,
-  bigFilesRowSelectionAtom,
-  brokenFilesAtom,
-  brokenFilesRowSelectionAtom,
   currentToolAtom,
-  duplicateFilesAtom,
-  duplicateFilesRowSelectionAtom,
-  emptyFilesAtom,
-  emptyFilesRowSelectionAtom,
-  emptyFoldersAtom,
-  emptyFoldersRowSelectionAtom,
-  invalidSymlinksAtom,
-  invalidSymlinksRowSelectionAtom,
-  musicDuplicatesAtom,
-  musicDuplicatesRowSelectionAtom,
   progressAtom,
-  similarImagesAtom,
-  similarImagesRowSelectionAtom,
-  similarVideosAtom,
-  similarVideosRowSelectionAtom,
+  rowSelectionAtom,
   sortingAtom,
-  temporaryFilesAtom,
-  temporaryFilesRowSelectionAtom,
+  toolDataAtom,
 } from './primitive';
-
-const dataAtomMap: Record<ToolsValues, PrimitiveAtom<any[]>> = {
-  [Tools.DuplicateFiles]: duplicateFilesAtom,
-  [Tools.EmptyFolders]: emptyFoldersAtom,
-  [Tools.BigFiles]: bigFilesAtom,
-  [Tools.EmptyFiles]: emptyFilesAtom,
-  [Tools.TemporaryFiles]: temporaryFilesAtom,
-  [Tools.SimilarImages]: similarImagesAtom,
-  [Tools.SimilarVideos]: similarVideosAtom,
-  [Tools.MusicDuplicates]: musicDuplicatesAtom,
-  [Tools.InvalidSymlinks]: invalidSymlinksAtom,
-  [Tools.BrokenFiles]: brokenFilesAtom,
-  [Tools.BadExtensions]: badExtensionsAtom,
-};
-
-const rowSelectionAtomMap: Record<ToolsValues, PrimitiveAtom<RowSelection>> = {
-  [Tools.DuplicateFiles]: duplicateFilesRowSelectionAtom,
-  [Tools.EmptyFolders]: emptyFoldersRowSelectionAtom,
-  [Tools.BigFiles]: bigFilesRowSelectionAtom,
-  [Tools.EmptyFiles]: emptyFilesRowSelectionAtom,
-  [Tools.TemporaryFiles]: temporaryFilesRowSelectionAtom,
-  [Tools.SimilarImages]: similarImagesRowSelectionAtom,
-  [Tools.SimilarVideos]: similarVideosRowSelectionAtom,
-  [Tools.MusicDuplicates]: musicDuplicatesRowSelectionAtom,
-  [Tools.InvalidSymlinks]: invalidSymlinksRowSelectionAtom,
-  [Tools.BrokenFiles]: brokenFilesRowSelectionAtom,
-  [Tools.BadExtensions]: badExtensionsRowSelectionAtom,
-};
 
 export const currentToolDataAtom = atom(
   (get) => {
     const currentTool = get(currentToolAtom);
-    const targetAtom = dataAtomMap[currentTool];
-    return get(targetAtom);
+    const toolData = get(toolDataAtom);
+    return toolData[currentTool];
   },
-  (get, set, v: any[]) => {
+  (get, set, data: any[]) => {
     const currentTool = get(currentToolAtom);
-    const targetAtom = dataAtomMap[currentTool];
-    set(targetAtom, v);
+    const toolData = get(toolDataAtom);
+    set(toolDataAtom, {
+      ...toolData,
+      [currentTool]: data,
+    });
   },
 );
 
-type Updater = RowSelection | ((v: RowSelection) => RowSelection);
+export const setToolInProgressDataAtom = atom(null, (get, set, data: any[]) => {
+  const progress = get(progressAtom);
+  if (!progress.tool) {
+    return;
+  }
+  const toolData = get(toolDataAtom);
+  set(toolDataAtom, {
+    ...toolData,
+    [progress.tool]: data,
+  });
+});
 
 export const currentToolRowSelectionAtom = atom(
   (get) => {
     const currentTool = get(currentToolAtom);
-    const targetAtom = rowSelectionAtomMap[currentTool];
-    return get(targetAtom);
+    const rowSelection = get(rowSelectionAtom);
+    return rowSelection[currentTool];
   },
-  (get, set, updater: Updater) => {
+  (get, set, updater: RowSelectionUpdater) => {
     const currentTool = get(currentToolAtom);
-    const targetAtom = rowSelectionAtomMap[currentTool];
-    set(targetAtom, updater);
+    const rowSelection = get(rowSelectionAtom);
+    set(rowSelectionAtom, {
+      ...rowSelection,
+      [currentTool]:
+        typeof updater === 'function'
+          ? updater(rowSelection[currentTool])
+          : updater,
+    });
   },
 );
 
-export const toolInProgressDataAtom = atom(
-  (get) => {
-    const progress = get(progressAtom);
-    if (!progress.tool) {
-      return null;
-    }
-    const targetAtom = dataAtomMap[progress.tool];
-    return get(targetAtom);
-  },
-  (get, set, v: any[]) => {
-    const progress = get(progressAtom);
-    if (!progress.tool) {
-      return;
-    }
-    const targetAtom = dataAtomMap[progress.tool];
-    set(targetAtom, v);
-  },
-);
-
-export const toolInProgressRowSelectionAtom = atom(
-  (get) => {
-    const progress = get(progressAtom);
-    if (!progress.tool) {
-      return null;
-    }
-    const targetAtom = rowSelectionAtomMap[progress.tool];
-    return get(targetAtom);
-  },
-  (get, set, updater: Updater) => {
-    const progress = get(progressAtom);
-    if (!progress.tool) {
-      return;
-    }
-    const targetAtom = rowSelectionAtomMap[progress.tool];
-    set(targetAtom, updater);
-  },
-);
+export const clearToolInProgressRowSelectionAtom = atom(null, (get, set) => {
+  const progress = get(progressAtom);
+  if (!progress.tool) {
+    return;
+  }
+  const rowSelection = get(rowSelectionAtom);
+  set(rowSelectionAtom, {
+    ...rowSelection,
+    [progress.tool]: {},
+  });
+});
 
 export const currentToolSortingAtom = atom(
   (get) => {

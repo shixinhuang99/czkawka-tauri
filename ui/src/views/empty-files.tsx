@@ -1,13 +1,16 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { emptyFilesAtom, emptyFilesRowSelectionAtom } from '~/atom/primitive';
-import { currentToolSortingAtom } from '~/atom/tools';
+import {
+  currentToolDataAtom,
+  currentToolRowSelectionAtom,
+  currentToolSortingAtom,
+} from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { FileEntry } from '~/types';
 
 export function EmptyFiles() {
-  const data = useAtomValue(emptyFilesAtom);
-  const [rowSelection, setRowSelection] = useAtom(emptyFilesRowSelectionAtom);
+  const data = useAtomValue(currentToolDataAtom) as FileEntry[];
+  const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 

@@ -1,21 +1,19 @@
 import type { Row } from '@tanstack/react-table';
 import { useAtom, useAtomValue } from 'jotai';
-import {
-  similarImagesAtom,
-  similarImagesRowSelectionAtom,
-} from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
-import { currentToolSortingAtom } from '~/atom/tools';
+import {
+  currentToolDataAtom,
+  currentToolRowSelectionAtom,
+  currentToolSortingAtom,
+} from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { ImagesEntry } from '~/types';
 import { ImagePreview } from './image-preview';
 
 export function SimilarImages() {
-  const data = useAtomValue(similarImagesAtom);
-  const [rowSelection, setRowSelection] = useAtom(
-    similarImagesRowSelectionAtom,
-  );
+  const data = useAtomValue(currentToolDataAtom) as ImagesEntry[];
+  const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 

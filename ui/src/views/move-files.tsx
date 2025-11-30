@@ -10,7 +10,7 @@ import { AlertDialog } from '~/components/alert-dialog';
 import { Form, FormItem } from '~/components/form';
 import { useBoolean, useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
-import { getRowSelectionKeys } from '~/utils/common';
+import { getRowSelectionKeys } from '~/utils/table-helper';
 
 interface MoveFilesProps {
   disabled: boolean;

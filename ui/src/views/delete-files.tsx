@@ -9,7 +9,7 @@ import { AlertDialog } from '~/components/alert-dialog';
 import { Tools } from '~/consts';
 import { useBoolean, useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
-import { getRowSelectionKeys } from '~/utils/common';
+import { getRowSelectionKeys } from '~/utils/table-helper';
 
 interface DeleteFilesProps {
   disabled: boolean;

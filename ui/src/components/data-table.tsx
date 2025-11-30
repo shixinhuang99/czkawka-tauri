@@ -23,7 +23,7 @@ import {
 import { useRef } from 'react';
 import { useT } from '~/hooks';
 import { scrollBar } from '~/styles';
-import type { BaseEntry, RefEntry } from '~/types';
+import type { BaseEntry } from '~/types';
 import { cn } from '~/utils/cn';
 import { Button } from './shadcn/button';
 import { Checkbox } from './shadcn/checkbox';
@@ -59,11 +59,7 @@ interface DataTableProps<T> {
   manualSorting?: boolean;
 }
 
-export type RowSelection = RowSelectionState;
-
-export function DataTable<
-  T extends BaseEntry & Partial<RefEntry> & { rawData: Record<string, any> },
->({
+export function DataTable<T extends BaseEntry>({
   data,
   columns,
   className,
@@ -275,11 +271,7 @@ function TableRowSelectionHeader<T>({ table }: { table: TTable<T> }) {
   );
 }
 
-function TableRowSelectionCell<T extends Partial<RefEntry>>({
-  row,
-}: {
-  row: Row<T>;
-}) {
+function TableRowSelectionCell<T extends BaseEntry>({ row }: { row: Row<T> }) {
   'use no memo';
 
   if (typeof row.original.isRef === 'boolean' && row.original.isRef) {
@@ -296,12 +288,12 @@ function TableRowSelectionCell<T extends Partial<RefEntry>>({
   );
 }
 
-export function createColumns<T extends BaseEntry & Partial<RefEntry>>(
+export function createColumns<T extends BaseEntry>(
   columns: ColumnDef<T>[],
   options?: {
-    withOutActions?: boolean;
     enableSortingKeys?: string[];
     disableSortingKeys?: string[];
+    customActions?: boolean;
     customSortableColumnHeader?: boolean;
   },
 ): ColumnDef<T>[] {
@@ -350,7 +342,7 @@ export function createColumns<T extends BaseEntry & Partial<RefEntry>>(
       cell: TableRowSelectionCell,
     },
     ...processedColumns,
-    ...(options?.withOutActions
+    ...(options?.customActions
       ? []
       : [
           {
@@ -363,7 +355,7 @@ export function createColumns<T extends BaseEntry & Partial<RefEntry>>(
   ];
 }
 
-function TableActions<T extends BaseEntry & Partial<RefEntry>>({
+function TableActions<T extends BaseEntry>({
   cell,
 }: {
   cell: Cell<T, unknown>;

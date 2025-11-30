@@ -1,7 +1,6 @@
-import type { SortingState } from '@tanstack/react-table';
+import type { RowSelectionState, SortingState } from '@tanstack/react-table';
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import type { RowSelection } from '~/components/data-table';
 import {
   CURRENT_TOOL_KEY,
   getDefaultPlatformSettings,
@@ -15,20 +14,11 @@ import {
   Tools,
 } from '~/consts';
 import type {
-  BadFileEntry,
-  BrokenEntry,
-  DuplicateEntry,
-  FileEntry,
-  FolderEntry,
-  ImagesEntry,
-  MusicEntry,
+  BaseEntry,
   PlatformSettings,
   Preset,
   Progress,
-  SymlinksFileEntry,
-  TemporaryFileEntry,
   ToolsValues,
-  VideosEntry,
 } from '~/types';
 
 export const themeAtom = atomWithStorage<string>(
@@ -63,58 +53,43 @@ export const currentToolAtom = atomWithStorage<ToolsValues>(
   { getOnInit: true },
 );
 
-export const includedDirsRowSelectionAtom = atom<RowSelection>({});
+export const includedDirsRowSelectionAtom = atom<RowSelectionState>({});
 export const includedDirsRowSortingAtom = atom<SortingState>([]);
 
-export const excludedDirsRowSelectionAtom = atom<RowSelection>({});
+export const excludedDirsRowSelectionAtom = atom<RowSelectionState>({});
 export const excludedDirsRowSortingAtom = atom<SortingState>([]);
 
 export const logsAtom = atom<string>('');
 
 export const progressAtom = atom<Progress>(getDefaultProgress());
 
-export const duplicateFilesAtom = atom<DuplicateEntry[]>([]);
+export const toolDataAtom = atom<Record<ToolsValues, BaseEntry[]>>({
+  [Tools.DuplicateFiles]: [],
+  [Tools.EmptyFolders]: [],
+  [Tools.BigFiles]: [],
+  [Tools.EmptyFiles]: [],
+  [Tools.TemporaryFiles]: [],
+  [Tools.SimilarImages]: [],
+  [Tools.SimilarVideos]: [],
+  [Tools.MusicDuplicates]: [],
+  [Tools.InvalidSymlinks]: [],
+  [Tools.BrokenFiles]: [],
+  [Tools.BadExtensions]: [],
+});
 
-export const duplicateFilesRowSelectionAtom = atom<RowSelection>({});
-
-export const emptyFoldersAtom = atom<FolderEntry[]>([]);
-
-export const emptyFoldersRowSelectionAtom = atom<RowSelection>({});
-
-export const bigFilesAtom = atom<FileEntry[]>([]);
-export const bigFilesRowSelectionAtom = atom<RowSelection>({});
-
-export const emptyFilesAtom = atom<FileEntry[]>([]);
-
-export const emptyFilesRowSelectionAtom = atom<RowSelection>({});
-
-export const temporaryFilesAtom = atom<TemporaryFileEntry[]>([]);
-
-export const temporaryFilesRowSelectionAtom = atom<RowSelection>({});
-
-export const similarImagesAtom = atom<ImagesEntry[]>([]);
-
-export const similarImagesRowSelectionAtom = atom<RowSelection>({});
-
-export const similarVideosAtom = atom<VideosEntry[]>([]);
-
-export const similarVideosRowSelectionAtom = atom<RowSelection>({});
-
-export const musicDuplicatesAtom = atom<MusicEntry[]>([]);
-
-export const musicDuplicatesRowSelectionAtom = atom<RowSelection>({});
-
-export const invalidSymlinksAtom = atom<SymlinksFileEntry[]>([]);
-
-export const invalidSymlinksRowSelectionAtom = atom<RowSelection>({});
-
-export const brokenFilesAtom = atom<BrokenEntry[]>([]);
-
-export const brokenFilesRowSelectionAtom = atom<RowSelection>({});
-
-export const badExtensionsAtom = atom<BadFileEntry[]>([]);
-
-export const badExtensionsRowSelectionAtom = atom<RowSelection>({});
+export const rowSelectionAtom = atom<Record<ToolsValues, RowSelectionState>>({
+  [Tools.DuplicateFiles]: {},
+  [Tools.EmptyFolders]: {},
+  [Tools.BigFiles]: {},
+  [Tools.EmptyFiles]: {},
+  [Tools.TemporaryFiles]: {},
+  [Tools.SimilarImages]: {},
+  [Tools.SimilarVideos]: {},
+  [Tools.MusicDuplicates]: {},
+  [Tools.InvalidSymlinks]: {},
+  [Tools.BrokenFiles]: {},
+  [Tools.BadExtensions]: {},
+});
 
 export const sortingAtom = atom<Record<ToolsValues, SortingState>>({
   [Tools.DuplicateFiles]: [],

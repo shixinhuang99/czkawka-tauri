@@ -51,7 +51,6 @@ import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
 import { DARK_MODE_MEDIA, Languages, MAXIMUM_FILE_SIZE, Theme } from '~/consts';
 import { useOnceEffect, useT } from '~/hooks';
 import { cn } from '~/utils/cn';
-import { eventPreventDefault } from '~/utils/event';
 import { PresetSelect } from './preset-select';
 
 const SettingsTab = {
@@ -296,7 +295,7 @@ function ScanerSettings({ onPreventDialogCloseChange }: ScannerSettingsProps) {
                   {t('threadNumber')}
                   <TooltipButton
                     tooltip={t('threadNumberTip')}
-                    onClick={eventPreventDefault}
+                    onClick={(e) => e.preventDefault()}
                     className="cursor-default"
                   >
                     <CircleHelpIcon />

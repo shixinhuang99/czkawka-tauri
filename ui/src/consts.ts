@@ -167,3 +167,5 @@ export function getDefaultProgress(): Progress {
     },
   };
 }
+
+export const HIDDEN_ROW_PREFIX = '__hidden__';

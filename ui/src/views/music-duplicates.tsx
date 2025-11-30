@@ -1,18 +1,16 @@
 import { useAtom, useAtomValue } from 'jotai';
 import {
-  musicDuplicatesAtom,
-  musicDuplicatesRowSelectionAtom,
-} from '~/atom/primitive';
-import { currentToolSortingAtom } from '~/atom/tools';
+  currentToolDataAtom,
+  currentToolRowSelectionAtom,
+  currentToolSortingAtom,
+} from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { MusicEntry } from '~/types';
 
 export function MusicDuplicates() {
-  const data = useAtomValue(musicDuplicatesAtom);
-  const [rowSelection, setRowSelection] = useAtom(
-    musicDuplicatesRowSelectionAtom,
-  );
+  const data = useAtomValue(currentToolDataAtom) as MusicEntry[];
+  const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 
