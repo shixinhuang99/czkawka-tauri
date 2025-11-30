@@ -1,11 +1,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { bigFilesAtom, bigFilesRowSelectionAtom } from '~/atom/primitive';
 import { currentToolSortingAtom } from '~/atom/tools';
-import {
-  createColumns,
-  createSortingFnByRawData,
-  DataTable,
-} from '~/components/data-table';
+import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { FileEntry } from '~/types';
 
@@ -21,7 +17,7 @@ export function BigFiles() {
       header: t('size'),
       size: 110,
       minSize: 50,
-      sortingFn: createSortingFnByRawData('size', 'number'),
+      sortingFn: 'sortByRawDataNumber',
     },
     {
       accessorKey: 'fileName',
@@ -40,7 +36,8 @@ export function BigFiles() {
       header: t('modifiedDate'),
       size: 160,
       minSize: 120,
-      sortingFn: createSortingFnByRawData('modified_date', 'number'),
+      id: 'modified_date',
+      sortingFn: 'sortByRawDataNumber',
     },
   ]);
 

@@ -3,6 +3,7 @@ import {
   musicDuplicatesAtom,
   musicDuplicatesRowSelectionAtom,
 } from '~/atom/primitive';
+import { currentToolSortingAtom } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { MusicEntry } from '~/types';
@@ -12,6 +13,7 @@ export function MusicDuplicates() {
   const [rowSelection, setRowSelection] = useAtom(
     musicDuplicatesRowSelectionAtom,
   );
+  const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 
   const columns = createColumns<MusicEntry>([
@@ -84,6 +86,8 @@ export function MusicDuplicates() {
       columns={columns}
       rowSelection={rowSelection}
       onRowSelectionChange={setRowSelection}
+      sorting={sorting}
+      onSortingChange={setSorting}
     />
   );
 }

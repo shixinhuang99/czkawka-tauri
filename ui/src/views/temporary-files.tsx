@@ -3,6 +3,7 @@ import {
   temporaryFilesAtom,
   temporaryFilesRowSelectionAtom,
 } from '~/atom/primitive';
+import { currentToolSortingAtom } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { TemporaryFileEntry } from '~/types';
@@ -12,6 +13,7 @@ export function TemporaryFiles() {
   const [rowSelection, setRowSelection] = useAtom(
     temporaryFilesRowSelectionAtom,
   );
+  const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 
   const columns = createColumns<TemporaryFileEntry>([
@@ -42,6 +44,8 @@ export function TemporaryFiles() {
       columns={columns}
       rowSelection={rowSelection}
       onRowSelectionChange={setRowSelection}
+      sorting={sorting}
+      onSortingChange={setSorting}
     />
   );
 }

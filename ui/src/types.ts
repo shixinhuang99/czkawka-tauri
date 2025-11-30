@@ -146,7 +146,7 @@ export interface DuplicateEntry extends BaseEntry, RefEntry {
   modifiedDate: string;
   hash: string;
   isImage: boolean;
-  raw: RawDuplicateEntry;
+  rawData: RawDuplicateEntry;
 }
 
 export interface RawFolderOrTemporaryFileEntry {

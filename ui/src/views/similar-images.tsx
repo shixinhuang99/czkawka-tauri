@@ -5,6 +5,7 @@ import {
   similarImagesRowSelectionAtom,
 } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
+import { currentToolSortingAtom } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { ImagesEntry } from '~/types';
@@ -15,6 +16,7 @@ export function SimilarImages() {
   const [rowSelection, setRowSelection] = useAtom(
     similarImagesRowSelectionAtom,
   );
+  const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 
   const columns = createColumns<ImagesEntry>([
@@ -72,6 +74,8 @@ export function SimilarImages() {
       columns={columns}
       rowSelection={rowSelection}
       onRowSelectionChange={setRowSelection}
+      sorting={sorting}
+      onSortingChange={setSorting}
     />
   );
 }

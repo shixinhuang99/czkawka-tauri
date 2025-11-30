@@ -127,7 +127,7 @@ function convertDuplicateEntry(
     isRef,
     hidden: false,
     isImage: isImage(item.path),
-    raw: item,
+    rawData: item,
     groupId,
   };
 }
@@ -155,7 +155,7 @@ export function convertDuplicateEntries(
         isRef: true,
         hidden: true,
         isImage: false,
-        raw: {
+        rawData: {
           path: '',
           modified_date: 0,
           size: 0,

@@ -3,6 +3,7 @@ import {
   emptyFoldersAtom,
   emptyFoldersRowSelectionAtom,
 } from '~/atom/primitive';
+import { currentToolSortingAtom } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { FolderEntry } from '~/types';
@@ -10,6 +11,7 @@ import type { FolderEntry } from '~/types';
 export function EmptyFolders() {
   const data = useAtomValue(emptyFoldersAtom);
   const [rowSelection, setRowSelection] = useAtom(emptyFoldersRowSelectionAtom);
+  const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 
   const columns = createColumns<FolderEntry>([
@@ -40,6 +42,8 @@ export function EmptyFolders() {
       columns={columns}
       rowSelection={rowSelection}
       onRowSelectionChange={setRowSelection}
+      sorting={sorting}
+      onSortingChange={setSorting}
     />
   );
 }

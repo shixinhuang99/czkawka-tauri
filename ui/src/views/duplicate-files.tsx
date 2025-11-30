@@ -5,6 +5,7 @@ import {
   duplicateFilesRowSelectionAtom,
 } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
+import { currentToolSortingAtom } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { DuplicateEntry } from '~/types';
@@ -15,6 +16,7 @@ export function DuplicateFiles() {
   const [rowSelection, setRowSelection] = useAtom(
     duplicateFilesRowSelectionAtom,
   );
+  const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 
   const columns = createColumns<DuplicateEntry>([
@@ -58,6 +60,8 @@ export function DuplicateFiles() {
       columns={columns}
       rowSelection={rowSelection}
       onRowSelectionChange={setRowSelection}
+      sorting={sorting}
+      onSortingChange={setSorting}
     />
   );
 }

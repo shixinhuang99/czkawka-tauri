@@ -3,6 +3,7 @@ import {
   invalidSymlinksAtom,
   invalidSymlinksRowSelectionAtom,
 } from '~/atom/primitive';
+import { currentToolSortingAtom } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { SymlinksFileEntry } from '~/types';
@@ -12,6 +13,7 @@ export function InvalidSymlinks() {
   const [rowSelection, setRowSelection] = useAtom(
     invalidSymlinksRowSelectionAtom,
   );
+  const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 
   const columns = createColumns<SymlinksFileEntry>(
@@ -57,6 +59,8 @@ export function InvalidSymlinks() {
       columns={columns}
       rowSelection={rowSelection}
       onRowSelectionChange={setRowSelection}
+      sorting={sorting}
+      onSortingChange={setSorting}
     />
   );
 }

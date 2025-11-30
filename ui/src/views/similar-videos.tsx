@@ -3,6 +3,7 @@ import {
   similarVideosAtom,
   similarVideosRowSelectionAtom,
 } from '~/atom/primitive';
+import { currentToolSortingAtom } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
 import { useT } from '~/hooks';
 import type { VideosEntry } from '~/types';
@@ -12,6 +13,7 @@ export function SimilarVideos() {
   const [rowSelection, setRowSelection] = useAtom(
     similarVideosRowSelectionAtom,
   );
+  const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 
   const columns = createColumns<VideosEntry>([
@@ -54,6 +56,8 @@ export function SimilarVideos() {
       columns={columns}
       rowSelection={rowSelection}
       onRowSelectionChange={setRowSelection}
+      sorting={sorting}
+      onSortingChange={setSorting}
     />
   );
 }

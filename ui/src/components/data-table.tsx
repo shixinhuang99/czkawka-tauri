@@ -23,7 +23,7 @@ import {
 import { useRef } from 'react';
 import { useT } from '~/hooks';
 import { scrollBar } from '~/styles';
-import type { BaseEntry } from '~/types';
+import type { BaseEntry, RefEntry } from '~/types';
 import { cn } from '~/utils/cn';
 import { Button } from './shadcn/button';
 import { Checkbox } from './shadcn/checkbox';
@@ -56,11 +56,14 @@ interface DataTableProps<T> {
   onRowSelectionChange: (updater: RowSelectionUpdater) => void;
   sorting: SortingState;
   onSortingChange: (updater: SortingStateUpdater) => void;
+  manualSorting?: boolean;
 }
 
 export type RowSelection = RowSelectionState;
 
-export function DataTable<T extends BaseEntry>({
+export function DataTable<
+  T extends BaseEntry & Partial<RefEntry> & { rawData: Record<string, any> },
+>({
   data,
   columns,
   className,
@@ -70,6 +73,7 @@ export function DataTable<T extends BaseEntry>({
   onRowSelectionChange,
   sorting,
   onSortingChange,
+  manualSorting,
 }: DataTableProps<T>) {
   const table = useReactTable({
     data,
@@ -84,13 +88,20 @@ export function DataTable<T extends BaseEntry>({
     },
     onRowSelectionChange,
     enableRowSelection: (row) => {
-      const original = row.original as { isRef?: boolean; hidden?: boolean };
-      if (original.isRef || original.hidden) {
+      if (row.original.isRef || row.original.hidden) {
         return false;
       }
       return true;
     },
     onSortingChange,
+    sortingFns: {
+      sortByRawDataNumber: (rowA: Row<T>, rowB: Row<T>, columnId) => {
+        const fieldA = rowA.original.rawData[columnId];
+        const fieldB = rowB.original.rawData[columnId];
+        return fieldA - fieldB;
+      },
+    },
+    manualSorting,
   });
   const t = useT();
 
@@ -167,8 +178,7 @@ interface TableBodyProps<T> {
   layout?: 'grid' | 'resizeable';
 }
 
-function DataTableBody<T>(props: TableBodyProps<T>) {
-  const { table, emptyTip, layout } = props;
+function DataTableBody<T>({ table, emptyTip, layout }: TableBodyProps<T>) {
   const { rows = [] } = table.getRowModel();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -176,7 +186,6 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
     count: rows.length,
     estimateSize: () => 40,
     getScrollElement: () => containerRef.current,
-    measureElement: (element) => element?.getBoundingClientRect().height,
     overscan: 5,
   });
   const t = useT();
@@ -218,7 +227,7 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
                     <TableCell
                       key={cell.id}
                       className="truncate"
-                      title={cell.getValue<any>()}
+                      title={cell.getValue<string>()}
                       style={{
                         gridColumn:
                           isGrid && span
@@ -251,7 +260,7 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
   );
 }
 
-export function TableRowSelectionHeader<T>({ table }: { table: TTable<T> }) {
+function TableRowSelectionHeader<T>({ table }: { table: TTable<T> }) {
   'use no memo';
 
   return (
@@ -266,7 +275,7 @@ export function TableRowSelectionHeader<T>({ table }: { table: TTable<T> }) {
   );
 }
 
-export function TableRowSelectionCell<T extends { isRef?: boolean }>({
+function TableRowSelectionCell<T extends Partial<RefEntry>>({
   row,
 }: {
   row: Row<T>;
@@ -287,7 +296,7 @@ export function TableRowSelectionCell<T extends { isRef?: boolean }>({
   );
 }
 
-export function createColumns<T extends BaseEntry & { isRef?: boolean }>(
+export function createColumns<T extends BaseEntry & Partial<RefEntry>>(
   columns: ColumnDef<T>[],
   options?: {
     withOutActions?: boolean;
@@ -354,7 +363,7 @@ export function createColumns<T extends BaseEntry & { isRef?: boolean }>(
   ];
 }
 
-function TableActions<T extends BaseEntry & { isRef?: boolean }>({
+function TableActions<T extends BaseEntry & Partial<RefEntry>>({
   cell,
 }: {
   cell: Cell<T, unknown>;
@@ -389,20 +398,10 @@ export function createSortableColumnHeader(title: string, className?: string) {
   return function SortableColumnHeader({ column }: { column: Column<any> }) {
     const direction = column.getIsSorted();
 
-    const handleClick = () => {
-      if (direction === false) {
-        column.toggleSorting(true);
-      } else if (direction === 'desc') {
-        column.toggleSorting(false);
-      } else {
-        column.clearSorting();
-      }
-    };
-
     return (
       <Button
         variant="ghost"
-        onClick={handleClick}
+        onClick={column.getToggleSortingHandler()}
         className={cn('gap-2', className)}
       >
         {title}
@@ -411,22 +410,5 @@ export function createSortableColumnHeader(title: string, className?: string) {
         {direction === false && <ArrowUpDownIcon />}
       </Button>
     );
-  };
-}
-
-export function createSortingFnByRawData<
-  T extends { rawData: Record<string, any> },
->(field: string, type: 'string' | 'number') {
-  if (type === 'number') {
-    return (rowA: Row<T>, rowB: Row<T>) => {
-      const fieldA = rowA.original.rawData[field];
-      const fieldB = rowB.original.rawData[field];
-      return fieldA - fieldB;
-    };
-  }
-  return (rowA: Row<T>, rowB: Row<T>) => {
-    const fieldA = rowA.original.rawData[field];
-    const fieldB = rowB.original.rawData[field];
-    return fieldA.localeCompare(fieldB);
   };
 }
