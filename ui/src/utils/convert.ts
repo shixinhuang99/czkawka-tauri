@@ -91,37 +91,18 @@ function convertDuplicateEntry(
 
 export function convertDuplicateEntries(
   list: TupleWithRefItem<RawDuplicateEntry>[],
-): DuplicateEntry[] {
+): DuplicateEntry[][] {
   sortTupleWithRefItemList(list);
-  let id = 1;
-  return list.flatMap((tuple, idx) => {
+  let groupId = 1;
+  return list.map((tuple) => {
     const [ref, items] = tuple;
     const convertedItems = items.map((item) => {
-      return convertDuplicateEntry(item, false, id);
+      return convertDuplicateEntry(item, false, groupId);
     });
     if (ref) {
       convertedItems.unshift(convertDuplicateEntry(ref, true));
     }
-    if (idx !== list.length - 1) {
-      const hiddenRow: DuplicateEntry = {
-        size: '',
-        fileName: '',
-        path: `${HIDDEN_ROW_PREFIX}${id}`,
-        modifiedDate: '',
-        hash: '',
-        isRef: true,
-        hidden: true,
-        isImage: false,
-        rawData: {
-          path: '',
-          modified_date: 0,
-          size: 0,
-          hash: '',
-        },
-      };
-      convertedItems.push(hiddenRow);
-      id += 1;
-    }
+    groupId += 1;
     return convertedItems;
   });
 }

@@ -63,7 +63,9 @@ export const logsAtom = atom<string>('');
 
 export const progressAtom = atom<Progress>(getDefaultProgress());
 
-export const toolDataAtom = atom<Record<ToolsValues, BaseEntry[]>>({
+export const toolDataAtom = atom<
+  Record<ToolsValues, BaseEntry[] | BaseEntry[][]>
+>({
   [Tools.DuplicateFiles]: [],
   [Tools.EmptyFolders]: [],
   [Tools.BigFiles]: [],

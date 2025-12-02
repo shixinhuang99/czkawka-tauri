@@ -1,8 +1,8 @@
 import type { Row } from '@tanstack/react-table';
 import { useAtom, useAtomValue } from 'jotai';
+import { DuplicateFilesDataAtom } from '~/atom/duplicate-files';
 import { settingsAtom } from '~/atom/settings';
 import {
-  currentToolDataAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
 } from '~/atom/tools';
@@ -12,7 +12,7 @@ import type { DuplicateEntry } from '~/types';
 import { ImagePreview } from './image-preview';
 
 export function DuplicateFiles() {
-  const data = useAtomValue(currentToolDataAtom) as DuplicateEntry[];
+  const data = useAtomValue(DuplicateFilesDataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
@@ -36,18 +36,14 @@ export function DuplicateFiles() {
       header: t('path'),
       size: 320,
       minSize: 100,
-      cell: ({ row }) => {
-        if (row.original.hidden) {
-          return null;
-        }
-        return row.original.path;
-      },
+      cell: Path,
     },
     {
       accessorKey: 'modifiedDate',
       header: t('modifiedDate'),
       size: 160,
       minSize: 120,
+      id: 'modified_date',
     },
   ]);
 
@@ -60,8 +56,19 @@ export function DuplicateFiles() {
       onRowSelectionChange={setRowSelection}
       sorting={sorting}
       onSortingChange={setSorting}
+      manualSorting
     />
   );
+}
+
+function Path({ row }: { row: Row<DuplicateEntry> }) {
+  const { hidden, path } = row.original;
+
+  if (hidden) {
+    return null;
+  }
+
+  return path;
 }
 
 function FileName({ row }: { row: Row<DuplicateEntry> }) {
