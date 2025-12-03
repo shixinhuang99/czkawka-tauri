@@ -1,4 +1,8 @@
-import type { RowSelectionState } from '@tanstack/react-table';
+import type {
+  ColumnSort,
+  RowSelectionState,
+  SortingState,
+} from '@tanstack/react-table';
 import { HIDDEN_ROW_PREFIX } from '~/consts';
 import type { BaseEntry } from '~/types';
 
@@ -21,4 +25,52 @@ export function getPathsFromEntries<T extends BaseEntry>(list: T[]): string[] {
     paths.push(item.path);
   }
   return paths;
+}
+
+export type CompareFn<T> = (a: T, b: T, columnSort: ColumnSort) => number;
+export type CreateHiddenRowFn<T> = (fakePath: string) => T;
+
+export function sortItems<T extends BaseEntry>(
+  items: T[],
+  sorting: SortingState,
+  compareFn: CompareFn<T>,
+): void {
+  if (!sorting.length) {
+    return;
+  }
+  items.sort((a, b) => compareFn(a, b, sorting[0]));
+}
+
+export function sortGroups<T extends BaseEntry>(
+  groups: T[][],
+  sorting: SortingState,
+  compareFn: CompareFn<T>,
+): void {
+  if (!sorting.length) {
+    return;
+  }
+  groups.sort((aGroup, bGroup) => {
+    return compareFn(aGroup[0], bGroup[0], sorting[0]);
+  });
+}
+
+export function insertHiddenRows<T extends BaseEntry>(
+  groups: T[][],
+  createHiddenRow: CreateHiddenRowFn<T>,
+): T[] {
+  const result: T[] = [];
+
+  for (let i = 0; i < groups.length; i++) {
+    const group = groups[i];
+    result.push(...group);
+
+    if (i !== groups.length - 1) {
+      const groupId = group[0].groupId;
+      if (groupId !== undefined) {
+        result.push(createHiddenRow(`${HIDDEN_ROW_PREFIX}${groupId}`));
+      }
+    }
+  }
+
+  return result;
 }

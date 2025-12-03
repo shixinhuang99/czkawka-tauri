@@ -3,6 +3,14 @@ import type {
   RowSelectionUpdater,
   SortingStateUpdater,
 } from '~/components/data-table';
+import type { BaseEntry } from '~/types';
+import {
+  type CompareFn,
+  type CreateHiddenRowFn,
+  insertHiddenRows,
+  sortGroups,
+  sortItems,
+} from '~/utils/table-helper';
 import {
   currentToolAtom,
   progressAtom,
@@ -86,3 +94,18 @@ export const currentToolSortingAtom = atom(
     });
   },
 );
+
+export function createSortedAndGroupedDataAtom<T extends BaseEntry>(
+  compareFn: CompareFn<T>,
+  createHiddenRow: CreateHiddenRowFn<T>,
+) {
+  return atom((get) => {
+    const data = get(currentToolDataAtom) as T[][];
+    const sorting = get(currentToolSortingAtom);
+    for (const group of data) {
+      sortItems(group, sorting, compareFn);
+    }
+    sortGroups(data, sorting, compareFn);
+    return insertHiddenRows(data, createHiddenRow);
+  });
+}

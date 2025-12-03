@@ -19,7 +19,7 @@ export function EmptyFolders() {
       accessorKey: 'folderName',
       header: t('folderName'),
       size: 180,
-      minSize: 100,
+      minSize: 140,
     },
     {
       accessorKey: 'path',
@@ -31,7 +31,9 @@ export function EmptyFolders() {
       accessorKey: 'modifiedDate',
       header: t('modifiedDate'),
       size: 160,
-      minSize: 120,
+      minSize: 160,
+      id: 'modified_date',
+      sortingFn: 'sortByRawDataNumber',
     },
   ]);
 

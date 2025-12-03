@@ -14,3 +14,7 @@ const toolSet = new Set<string>(Object.values(Tools));
 export function isValidTool(s: string): s is ToolsValues {
   return toolSet.has(s);
 }
+
+export function is2DArray<T>(value: unknown): value is T[][] {
+  return Array.isArray(value) && value.length > 0 && Array.isArray(value[0]);
+}

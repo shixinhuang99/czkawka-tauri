@@ -1,8 +1,8 @@
 import type { Row } from '@tanstack/react-table';
 import { useAtom, useAtomValue } from 'jotai';
-import { DuplicateFilesDataAtom } from '~/atom/duplicate-files';
 import { settingsAtom } from '~/atom/settings';
 import {
+  createSortedAndGroupedDataAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
 } from '~/atom/tools';
@@ -11,8 +11,43 @@ import { useT } from '~/hooks';
 import type { DuplicateEntry } from '~/types';
 import { ImagePreview } from './image-preview';
 
+const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<DuplicateEntry>(
+  (a, b, columnSort) => {
+    const { id, desc } = columnSort;
+    if (id === 'size' || id === 'modified_date') {
+      const comparison = a.rawData[id] - b.rawData[id];
+      return desc ? -comparison : comparison;
+    }
+
+    if (id === 'path' || id === 'fileName') {
+      const comparison = a[id].localeCompare(b[id]);
+      return desc ? -comparison : comparison;
+    }
+
+    return 0;
+  },
+  (fakePath) => {
+    return {
+      size: '',
+      fileName: '',
+      path: fakePath,
+      modifiedDate: '',
+      hash: '',
+      isRef: true,
+      hidden: true,
+      isImage: false,
+      rawData: {
+        path: '',
+        modified_date: 0,
+        size: 0,
+        hash: '',
+      },
+    };
+  },
+);
+
 export function DuplicateFiles() {
-  const data = useAtomValue(DuplicateFilesDataAtom);
+  const data = useAtomValue(sortedAndGroupedDataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
@@ -22,13 +57,13 @@ export function DuplicateFiles() {
       accessorKey: 'size',
       header: t('size'),
       size: 110,
-      minSize: 50,
+      minSize: 100,
     },
     {
       accessorKey: 'fileName',
       header: t('fileName'),
       size: 180,
-      minSize: 100,
+      minSize: 120,
       cell: FileName,
     },
     {
@@ -42,7 +77,7 @@ export function DuplicateFiles() {
       accessorKey: 'modifiedDate',
       header: t('modifiedDate'),
       size: 160,
-      minSize: 120,
+      minSize: 160,
       id: 'modified_date',
     },
   ]);
