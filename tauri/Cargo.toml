@@ -1,6 +1,6 @@
 [package]
 name = "czkawka-tauri"
-version = "1.0.4"
+version = "1.0.5"
 edition = "2024"
 authors = ["shixinhuang99 <shixinhuang99@gmail.com>"]
 description = "A Tauri-based frontend for Czkawka on macOS and Windows"
