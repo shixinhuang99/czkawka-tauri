@@ -88,7 +88,7 @@ export function FormItem(
       },
       select: {
         value: value[name],
-        onChange: (v: string) => {
+        onValueChange: (v: string) => {
           onChange({ [name]: v });
         },
       },
