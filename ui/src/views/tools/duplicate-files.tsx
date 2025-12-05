@@ -7,9 +7,10 @@ import {
   currentToolSortingAtom,
 } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
+import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { DuplicateEntry } from '~/types';
-import { ImagePreview } from './image-preview';
+import { ImagePreview } from '../image-preview';
 
 const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<DuplicateEntry>(
   (a, b, columnSort) => {
@@ -57,27 +58,27 @@ export function DuplicateFiles() {
       accessorKey: 'size',
       header: t('size'),
       size: 110,
-      minSize: 100,
+      minSize: COLUMN_MIN_SIZES.size,
     },
     {
       accessorKey: 'fileName',
       header: t('fileName'),
       size: 180,
-      minSize: 120,
+      minSize: COLUMN_MIN_SIZES.fileName,
       cell: FileName,
     },
     {
       accessorKey: 'path',
       header: t('path'),
       size: 320,
-      minSize: 100,
+      minSize: COLUMN_MIN_SIZES.path,
       cell: Path,
     },
     {
       accessorKey: 'modifiedDate',
       header: t('modifiedDate'),
-      size: 160,
-      minSize: 160,
+      size: COLUMN_MIN_SIZES.modifiedDate,
+      minSize: COLUMN_MIN_SIZES.modifiedDate,
       id: 'modified_date',
     },
   ]);

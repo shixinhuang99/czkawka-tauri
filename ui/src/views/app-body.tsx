@@ -3,17 +3,17 @@ import { currentToolAtom, progressAtom } from '~/atom/primitive';
 import { Progress } from '~/components';
 import { Tools } from '~/consts';
 import { useT } from '~/hooks';
-import { BadExtensions } from './bad-extensions';
-import { BigFiles } from './big-files';
-import { BrokenFiles } from './broken-files';
-import { DuplicateFiles } from './duplicate-files';
-import { EmptyFiles } from './empty-files';
-import { EmptyFolders } from './empty-folders';
-import { InvalidSymlinks } from './invalid-symlinks';
-import { MusicDuplicates } from './music-duplicates';
-import { SimilarImages } from './similar-images';
-import { SimilarVideos } from './similar-videos';
-import { TemporaryFiles } from './temporary-files';
+import { BadExtensions } from './tools/bad-extensions';
+import { BigFiles } from './tools/big-files';
+import { BrokenFiles } from './tools/broken-files';
+import { DuplicateFiles } from './tools/duplicate-files';
+import { EmptyFiles } from './tools/empty-files';
+import { EmptyFolders } from './tools/empty-folders';
+import { InvalidSymlinks } from './tools/invalid-symlinks';
+import { MusicDuplicates } from './tools/music-duplicates';
+import { SimilarImages } from './tools/similar-images';
+import { SimilarVideos } from './tools/similar-videos';
+import { TemporaryFiles } from './tools/temporary-files';
 
 const tableMap: Record<string, () => React.JSX.Element> = {
   [Tools.DuplicateFiles]: DuplicateFiles,

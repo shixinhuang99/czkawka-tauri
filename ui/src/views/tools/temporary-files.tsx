@@ -5,33 +5,34 @@ import {
   currentToolSortingAtom,
 } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
+import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
-import type { FileEntry } from '~/types';
+import type { TemporaryFileEntry } from '~/types';
 
-export function EmptyFiles() {
-  const data = useAtomValue(currentToolDataAtom) as FileEntry[];
+export function TemporaryFiles() {
+  const data = useAtomValue(currentToolDataAtom) as TemporaryFileEntry[];
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 
-  const columns = createColumns<FileEntry>([
+  const columns = createColumns<TemporaryFileEntry>([
     {
       accessorKey: 'fileName',
       header: t('fileName'),
       size: 180,
-      minSize: 100,
+      minSize: COLUMN_MIN_SIZES.fileName,
     },
     {
       accessorKey: 'path',
       header: t('path'),
       size: 430,
-      minSize: 100,
+      minSize: COLUMN_MIN_SIZES.path,
     },
     {
       accessorKey: 'modifiedDate',
       header: t('modifiedDate'),
-      size: 160,
-      minSize: 120,
+      size: COLUMN_MIN_SIZES.modifiedDate,
+      minSize: COLUMN_MIN_SIZES.modifiedDate,
     },
   ]);
 

@@ -5,6 +5,7 @@ import {
   currentToolSortingAtom,
 } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
+import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { BrokenEntry } from '~/types';
 
@@ -19,31 +20,31 @@ export function BrokenFiles() {
       accessorKey: 'fileName',
       header: t('fileName'),
       size: 180,
-      minSize: 100,
+      minSize: COLUMN_MIN_SIZES.fileName,
     },
     {
       accessorKey: 'path',
       header: t('path'),
-      size: 200,
-      minSize: 100,
+      size: 190,
+      minSize: COLUMN_MIN_SIZES.path,
     },
     {
       accessorKey: 'errorString',
       header: t('typeOfError'),
-      size: 150,
-      minSize: 110,
+      size: COLUMN_MIN_SIZES.typeOfError,
+      minSize: COLUMN_MIN_SIZES.typeOfError,
     },
     {
       accessorKey: 'size',
       header: t('size'),
-      size: 110,
-      minSize: 50,
+      size: COLUMN_MIN_SIZES.size,
+      minSize: COLUMN_MIN_SIZES.size,
     },
     {
       accessorKey: 'modifiedDate',
       header: t('modifiedDate'),
-      size: 160,
-      minSize: 120,
+      size: COLUMN_MIN_SIZES.modifiedDate,
+      minSize: COLUMN_MIN_SIZES.modifiedDate,
     },
   ]);
 

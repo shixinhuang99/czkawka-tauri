@@ -5,6 +5,7 @@ import {
   currentToolSortingAtom,
 } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
+import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { MusicEntry } from '~/types';
 
@@ -18,50 +19,50 @@ export function MusicDuplicates() {
     {
       accessorKey: 'size',
       header: t('size'),
-      size: 110,
-      minSize: 50,
+      size: COLUMN_MIN_SIZES.size,
+      minSize: COLUMN_MIN_SIZES.size,
     },
     {
       accessorKey: 'fileName',
       header: t('fileName'),
-      size: 180,
-      minSize: 100,
+      size: 200,
+      minSize: COLUMN_MIN_SIZES.fileName,
     },
     {
       accessorKey: 'trackTitle',
       header: t('title'),
-      size: 100,
-      minSize: 60,
+      size: COLUMN_MIN_SIZES.title,
+      minSize: COLUMN_MIN_SIZES.title,
     },
     {
       accessorKey: 'trackArtist',
       header: t('artist'),
-      size: 100,
-      minSize: 60,
+      size: COLUMN_MIN_SIZES.artist,
+      minSize: COLUMN_MIN_SIZES.artist,
     },
     {
       accessorKey: 'year',
       header: t('year'),
-      size: 100,
-      minSize: 60,
+      size: COLUMN_MIN_SIZES.year,
+      minSize: COLUMN_MIN_SIZES.year,
     },
     {
       accessorKey: 'bitrate',
       header: t('bitrate'),
-      size: 100,
-      minSize: 70,
+      size: COLUMN_MIN_SIZES.bitrate,
+      minSize: COLUMN_MIN_SIZES.bitrate,
     },
     {
       accessorKey: 'length',
       header: t('length'),
-      size: 100,
-      minSize: 70,
+      size: COLUMN_MIN_SIZES.length,
+      minSize: COLUMN_MIN_SIZES.length,
     },
     {
       accessorKey: 'path',
       header: t('path'),
-      size: 220,
-      minSize: 100,
+      size: 300,
+      minSize: COLUMN_MIN_SIZES.path,
       cell: ({ row }) => {
         if (row.original.hidden) {
           return null;
@@ -72,8 +73,8 @@ export function MusicDuplicates() {
     {
       accessorKey: 'modifiedDate',
       header: t('modifiedDate'),
-      size: 160,
-      minSize: 120,
+      size: COLUMN_MIN_SIZES.modifiedDate,
+      minSize: COLUMN_MIN_SIZES.modifiedDate,
     },
   ]);
 

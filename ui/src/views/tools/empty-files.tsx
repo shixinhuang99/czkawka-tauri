@@ -5,40 +5,34 @@ import {
   currentToolSortingAtom,
 } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
+import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { FileEntry } from '~/types';
 
-export function BigFiles() {
-  const t = useT();
+export function EmptyFiles() {
   const data = useAtomValue(currentToolDataAtom) as FileEntry[];
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
+  const t = useT();
 
   const columns = createColumns<FileEntry>([
-    {
-      accessorKey: 'size',
-      header: t('size'),
-      size: 110,
-      minSize: 100,
-      sortingFn: 'sortByRawDataNumber',
-    },
     {
       accessorKey: 'fileName',
       header: t('fileName'),
       size: 180,
-      minSize: 120,
+      minSize: COLUMN_MIN_SIZES.fileName,
     },
     {
       accessorKey: 'path',
       header: t('path'),
-      size: 320,
-      minSize: 100,
+      size: 430,
+      minSize: COLUMN_MIN_SIZES.path,
     },
     {
       accessorKey: 'modifiedDate',
       header: t('modifiedDate'),
-      size: 160,
-      minSize: 160,
+      size: COLUMN_MIN_SIZES.modifiedDate,
+      minSize: COLUMN_MIN_SIZES.modifiedDate,
       id: 'modified_date',
       sortingFn: 'sortByRawDataNumber',
     },

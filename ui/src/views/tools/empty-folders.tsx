@@ -5,45 +5,36 @@ import {
   currentToolSortingAtom,
 } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
+import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
-import type { BadFileEntry } from '~/types';
+import type { FolderEntry } from '~/types';
 
-export function BadExtensions() {
-  const data = useAtomValue(currentToolDataAtom) as BadFileEntry[];
+export function EmptyFolders() {
+  const data = useAtomValue(currentToolDataAtom) as FolderEntry[];
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 
-  const columns = createColumns<BadFileEntry>([
+  const columns = createColumns<FolderEntry>([
     {
-      accessorKey: 'fileName',
-      header: t('fileName'),
-      size: 170,
-      minSize: 100,
+      accessorKey: 'folderName',
+      header: t('folderName'),
+      size: 180,
+      minSize: COLUMN_MIN_SIZES.folderName,
     },
     {
       accessorKey: 'path',
       header: t('path'),
-      size: 200,
-      minSize: 100,
-    },
-    {
-      accessorKey: 'currentExtension',
-      header: t('currentExtension'),
-      size: 140,
-      minSize: 140,
-    },
-    {
-      accessorKey: 'properExtensionsGroup',
-      header: t('properExtension'),
-      size: 140,
-      minSize: 140,
+      size: 430,
+      minSize: COLUMN_MIN_SIZES.path,
     },
     {
       accessorKey: 'modifiedDate',
       header: t('modifiedDate'),
-      size: 160,
-      minSize: 120,
+      size: COLUMN_MIN_SIZES.modifiedDate,
+      minSize: COLUMN_MIN_SIZES.modifiedDate,
+      id: 'modified_date',
+      sortingFn: 'sortByRawDataNumber',
     },
   ]);
 

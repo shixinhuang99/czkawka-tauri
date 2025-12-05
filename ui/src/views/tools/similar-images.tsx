@@ -7,9 +7,10 @@ import {
   currentToolSortingAtom,
 } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
+import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { ImagesEntry } from '~/types';
-import { ImagePreview } from './image-preview';
+import { ImagePreview } from '../image-preview';
 
 export function SimilarImages() {
   const data = useAtomValue(currentToolDataAtom) as ImagesEntry[];
@@ -21,26 +22,26 @@ export function SimilarImages() {
     {
       accessorKey: 'similarity',
       header: t('similarity'),
-      size: 100,
-      minSize: 80,
+      size: COLUMN_MIN_SIZES.similarity,
+      minSize: COLUMN_MIN_SIZES.similarity,
     },
     {
       accessorKey: 'size',
       header: t('size'),
-      size: 100,
-      minSize: 50,
+      size: COLUMN_MIN_SIZES.size,
+      minSize: COLUMN_MIN_SIZES.size,
     },
     {
       accessorKey: 'dimensions',
       header: t('dimensions'),
-      size: 100,
-      minSize: 100,
+      size: COLUMN_MIN_SIZES.dimensions,
+      minSize: COLUMN_MIN_SIZES.dimensions,
     },
     {
       accessorKey: 'fileName',
       header: t('fileName'),
-      size: 150,
-      minSize: 100,
+      size: 200,
+      minSize: COLUMN_MIN_SIZES.fileName,
       cell: ({ row }) => {
         return <FileName row={row} />;
       },
@@ -48,8 +49,8 @@ export function SimilarImages() {
     {
       accessorKey: 'path',
       header: t('path'),
-      size: 160,
-      minSize: 100,
+      size: 300,
+      minSize: COLUMN_MIN_SIZES.path,
       cell: ({ row }) => {
         if (row.original.hidden) {
           return null;
@@ -60,8 +61,8 @@ export function SimilarImages() {
     {
       accessorKey: 'modifiedDate',
       header: t('modifiedDate'),
-      size: 160,
-      minSize: 120,
+      size: COLUMN_MIN_SIZES.modifiedDate,
+      minSize: COLUMN_MIN_SIZES.modifiedDate,
     },
   ]);
 

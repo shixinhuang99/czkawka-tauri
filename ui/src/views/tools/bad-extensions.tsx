@@ -5,33 +5,46 @@ import {
   currentToolSortingAtom,
 } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
+import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
-import type { TemporaryFileEntry } from '~/types';
+import type { BadFileEntry } from '~/types';
 
-export function TemporaryFiles() {
-  const data = useAtomValue(currentToolDataAtom) as TemporaryFileEntry[];
+export function BadExtensions() {
+  const data = useAtomValue(currentToolDataAtom) as BadFileEntry[];
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 
-  const columns = createColumns<TemporaryFileEntry>([
+  const columns = createColumns<BadFileEntry>([
     {
       accessorKey: 'fileName',
       header: t('fileName'),
       size: 180,
-      minSize: 100,
+      minSize: COLUMN_MIN_SIZES.fileName,
     },
     {
       accessorKey: 'path',
       header: t('path'),
-      size: 430,
-      minSize: 100,
+      size: 220,
+      minSize: COLUMN_MIN_SIZES.path,
+    },
+    {
+      accessorKey: 'currentExtension',
+      header: t('currentExtension'),
+      size: COLUMN_MIN_SIZES.currentExtension,
+      minSize: COLUMN_MIN_SIZES.currentExtension,
+    },
+    {
+      accessorKey: 'properExtensionsGroup',
+      header: t('properExtension'),
+      size: COLUMN_MIN_SIZES.properExtension,
+      minSize: COLUMN_MIN_SIZES.properExtension,
     },
     {
       accessorKey: 'modifiedDate',
       header: t('modifiedDate'),
-      size: 160,
-      minSize: 120,
+      size: COLUMN_MIN_SIZES.modifiedDate,
+      minSize: COLUMN_MIN_SIZES.modifiedDate,
     },
   ]);
 

@@ -5,35 +5,46 @@ import {
   currentToolSortingAtom,
 } from '~/atom/tools';
 import { createColumns, DataTable } from '~/components/data-table';
+import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
-import type { FolderEntry } from '~/types';
+import type { VideosEntry } from '~/types';
 
-export function EmptyFolders() {
-  const data = useAtomValue(currentToolDataAtom) as FolderEntry[];
+export function SimilarVideos() {
+  const data = useAtomValue(currentToolDataAtom) as VideosEntry[];
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
 
-  const columns = createColumns<FolderEntry>([
+  const columns = createColumns<VideosEntry>([
     {
-      accessorKey: 'folderName',
-      header: t('folderName'),
+      accessorKey: 'size',
+      header: t('size'),
+      size: 110,
+      minSize: COLUMN_MIN_SIZES.size,
+    },
+    {
+      accessorKey: 'fileName',
+      header: t('fileName'),
       size: 180,
-      minSize: 140,
+      minSize: COLUMN_MIN_SIZES.fileName,
     },
     {
       accessorKey: 'path',
       header: t('path'),
-      size: 430,
-      minSize: 100,
+      size: 320,
+      minSize: COLUMN_MIN_SIZES.path,
+      cell: ({ row }) => {
+        if (row.original.hidden) {
+          return null;
+        }
+        return row.original.path;
+      },
     },
     {
       accessorKey: 'modifiedDate',
       header: t('modifiedDate'),
-      size: 160,
-      minSize: 160,
-      id: 'modified_date',
-      sortingFn: 'sortByRawDataNumber',
+      size: COLUMN_MIN_SIZES.modifiedDate,
+      minSize: COLUMN_MIN_SIZES.modifiedDate,
     },
   ]);
 
