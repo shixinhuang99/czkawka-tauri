@@ -2,7 +2,7 @@ import type { Row } from '@tanstack/react-table';
 import { useAtom, useAtomValue } from 'jotai';
 import { settingsAtom } from '~/atom/settings';
 import {
-  currentToolDataAtom,
+  createSortedAndGroupedDataAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
 } from '~/atom/tools';
@@ -12,8 +12,47 @@ import { useT } from '~/hooks';
 import type { ImagesEntry } from '~/types';
 import { ImagePreview } from '../image-preview';
 
+const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<ImagesEntry>(
+  (a, b, columnSort) => {
+    const { id, desc } = columnSort;
+    let comparison = 0;
+
+    if (id === 'size' || id === 'modified_date') {
+      comparison = a.rawData[id] - b.rawData[id];
+    } else if (id === 'path' || id === 'fileName' || id === 'similarity') {
+      comparison = a[id].localeCompare(b[id]);
+    } else if (id === 'dimensions') {
+      const dimensionsA = a.rawData.width * a.rawData.height;
+      const dimensionsB = b.rawData.width * b.rawData.height;
+      comparison = dimensionsA - dimensionsB;
+    }
+
+    return desc ? -comparison : comparison;
+  },
+  (fakePath) => {
+    return {
+      size: '',
+      fileName: '',
+      path: fakePath,
+      modifiedDate: '',
+      similarity: '',
+      dimensions: '',
+      isRef: true,
+      hidden: true,
+      rawData: {
+        path: '',
+        size: 0,
+        width: 0,
+        height: 0,
+        modified_date: 0,
+        similarity: '',
+      },
+    };
+  },
+);
+
 export function SimilarImages() {
-  const data = useAtomValue(currentToolDataAtom) as ImagesEntry[];
+  const data = useAtomValue(sortedAndGroupedDataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const t = useT();
@@ -63,6 +102,7 @@ export function SimilarImages() {
       header: t('modifiedDate'),
       size: COLUMN_MIN_SIZES.modifiedDate,
       minSize: COLUMN_MIN_SIZES.modifiedDate,
+      id: 'modified_date',
     },
   ]);
 
@@ -75,6 +115,7 @@ export function SimilarImages() {
       onRowSelectionChange={setRowSelection}
       sorting={sorting}
       onSortingChange={setSorting}
+      manualSorting
     />
   );
 }

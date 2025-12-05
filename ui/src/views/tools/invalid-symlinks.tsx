@@ -46,6 +46,8 @@ export function InvalidSymlinks() {
         header: t('modifiedDate'),
         size: COLUMN_MIN_SIZES.modifiedDate,
         minSize: COLUMN_MIN_SIZES.modifiedDate,
+        id: 'modified_date',
+        sortingFn: 'sortByRawDataNumber',
       },
     ],
     { customActions: true },

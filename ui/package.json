@@ -51,6 +51,7 @@
     "react-error-boundary": "^6.0.0",
     "react-i18next": "^15.4.1",
     "react-resizable-panels": "^2.1.7",
+    "sec": "^2.0.0",
     "sonner": "^1.7.1",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7"

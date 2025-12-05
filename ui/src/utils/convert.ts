@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { filesize } from 'filesize';
-import { HIDDEN_ROW_PREFIX } from '~/consts';
+
 import type {
   BadFileEntry,
   BrokenEntry,
@@ -166,39 +166,18 @@ function convertImagesEntry(
 
 export function convertImagesEntries(
   list: TupleWithRefItem<RawImagesEntry>[],
-): ImagesEntry[] {
+): ImagesEntry[][] {
   sortTupleWithRefItemList(list);
-  let id = 1;
-  return list.flatMap((tuple, idx) => {
+  let groupId = 1;
+  return list.map((tuple) => {
     const [ref, items] = tuple;
     const convertedFiles = items.map((item) =>
-      convertImagesEntry(item, false, id),
+      convertImagesEntry(item, false, groupId),
     );
     if (ref) {
       convertedFiles.unshift(convertImagesEntry(ref, true));
     }
-    if (idx !== list.length - 1) {
-      const hiddenRow: ImagesEntry = {
-        size: '',
-        fileName: '',
-        path: `${HIDDEN_ROW_PREFIX}${id}`,
-        modifiedDate: '',
-        similarity: '',
-        dimensions: '',
-        isRef: true,
-        hidden: true,
-        rawData: {
-          path: '',
-          size: 0,
-          width: 0,
-          height: 0,
-          modified_date: 0,
-          similarity: '',
-        },
-      };
-      convertedFiles.push(hiddenRow);
-      id += 1;
-    }
+    groupId += 1;
     return convertedFiles;
   });
 }
@@ -222,34 +201,18 @@ function convertVideosEntry(
 
 export function convertVideosEntries(
   list: TupleWithRefItem<RawVideosEntry>[],
-): VideosEntry[] {
+): VideosEntry[][] {
   sortTupleWithRefItemList(list);
-  let id = 1;
-  return list.flatMap((tuple, idx) => {
+  let groupId = 1;
+  return list.map((tuple) => {
     const [ref, items] = tuple;
     const convertedFiles = items.map((item) =>
-      convertVideosEntry(item, false, id),
+      convertVideosEntry(item, false, groupId),
     );
     if (ref) {
       convertedFiles.unshift(convertVideosEntry(ref, true));
     }
-    if (idx !== list.length - 1) {
-      const hiddenRow: VideosEntry = {
-        size: '',
-        fileName: '',
-        path: `${HIDDEN_ROW_PREFIX}${id}`,
-        modifiedDate: '',
-        isRef: true,
-        hidden: true,
-        rawData: {
-          path: '',
-          size: 0,
-          modified_date: 0,
-        },
-      };
-      convertedFiles.push(hiddenRow);
-      id += 1;
-    }
+    groupId += 1;
     return convertedFiles;
   });
 }
@@ -279,46 +242,18 @@ function convertMusicEntry(
 
 export function convertMusicEntries(
   list: TupleWithRefItem<RawMusicEntry>[],
-): MusicEntry[] {
+): MusicEntry[][] {
   sortTupleWithRefItemList(list);
-  let id = 1;
-  return list.flatMap((tuple, idx) => {
+  let groupId = 1;
+  return list.map((tuple) => {
     const [ref, items] = tuple;
     const convertedFiles = items.map((item) =>
-      convertMusicEntry(item, false, id),
+      convertMusicEntry(item, false, groupId),
     );
     if (ref) {
       convertedFiles.unshift(convertMusicEntry(ref, true));
     }
-    if (idx !== list.length - 1) {
-      const hiddenRow: MusicEntry = {
-        size: '',
-        fileName: '',
-        path: `${HIDDEN_ROW_PREFIX}${id}`,
-        modifiedDate: '',
-        trackTitle: '',
-        trackArtist: '',
-        year: '',
-        length: '',
-        genre: '',
-        bitrate: '',
-        isRef: true,
-        hidden: true,
-        rawData: {
-          path: '',
-          size: 0,
-          modified_date: 0,
-          track_title: '',
-          track_artist: '',
-          year: '',
-          length: '',
-          genre: '',
-          bitrate: 0,
-        },
-      };
-      convertedFiles.push(hiddenRow);
-      id += 1;
-    }
+    groupId += 1;
     return convertedFiles;
   });
 }

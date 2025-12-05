@@ -39,12 +39,15 @@ export function BrokenFiles() {
       header: t('size'),
       size: COLUMN_MIN_SIZES.size,
       minSize: COLUMN_MIN_SIZES.size,
+      sortingFn: 'sortByRawDataNumber',
     },
     {
       accessorKey: 'modifiedDate',
       header: t('modifiedDate'),
       size: COLUMN_MIN_SIZES.modifiedDate,
       minSize: COLUMN_MIN_SIZES.modifiedDate,
+      id: 'modified_date',
+      sortingFn: 'sortByRawDataNumber',
     },
   ]);
 

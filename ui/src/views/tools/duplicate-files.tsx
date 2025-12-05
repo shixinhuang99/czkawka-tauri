@@ -15,17 +15,15 @@ import { ImagePreview } from '../image-preview';
 const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<DuplicateEntry>(
   (a, b, columnSort) => {
     const { id, desc } = columnSort;
+    let comparison = 0;
+
     if (id === 'size' || id === 'modified_date') {
-      const comparison = a.rawData[id] - b.rawData[id];
-      return desc ? -comparison : comparison;
+      comparison = a.rawData[id] - b.rawData[id];
+    } else if (id === 'path' || id === 'fileName') {
+      comparison = a[id].localeCompare(b[id]);
     }
 
-    if (id === 'path' || id === 'fileName') {
-      const comparison = a[id].localeCompare(b[id]);
-      return desc ? -comparison : comparison;
-    }
-
-    return 0;
+    return desc ? -comparison : comparison;
   },
   (fakePath) => {
     return {
