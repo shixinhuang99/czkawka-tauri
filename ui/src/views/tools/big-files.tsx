@@ -9,7 +9,7 @@ import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { FileEntry } from '~/types';
 
-export function BigFiles() {
+export function BigFiles({ className }: { className?: string }) {
   const t = useT();
   const data = useAtomValue(currentToolDataAtom) as FileEntry[];
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
@@ -47,7 +47,7 @@ export function BigFiles() {
 
   return (
     <DataTable
-      className="flex-1 rounded-none border-none grow"
+      className={className}
       data={data}
       columns={columns}
       rowSelection={rowSelection}

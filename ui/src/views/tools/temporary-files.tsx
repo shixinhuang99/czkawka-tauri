@@ -9,7 +9,7 @@ import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { TemporaryFileEntry } from '~/types';
 
-export function TemporaryFiles() {
+export function TemporaryFiles({ className }: { className?: string }) {
   const data = useAtomValue(currentToolDataAtom) as TemporaryFileEntry[];
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
@@ -40,7 +40,7 @@ export function TemporaryFiles() {
 
   return (
     <DataTable
-      className="flex-1 rounded-none border-none grow"
+      className={className}
       data={data}
       columns={columns}
       rowSelection={rowSelection}

@@ -9,7 +9,7 @@ import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { SymlinksFileEntry } from '~/types';
 
-export function InvalidSymlinks() {
+export function InvalidSymlinks({ className }: { className?: string }) {
   const data = useAtomValue(currentToolDataAtom) as SymlinksFileEntry[];
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
@@ -55,7 +55,7 @@ export function InvalidSymlinks() {
 
   return (
     <DataTable
-      className="flex-1 rounded-none border-none grow"
+      className={className}
       data={data}
       columns={columns}
       rowSelection={rowSelection}

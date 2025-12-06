@@ -79,9 +79,9 @@ export default function App() {
             </div>
           </ResizablePanel>
           <ResizableHandle
-            withHandle
             onDoubleClick={handleResetPanelSize}
             title={t('resetOnDoubleClick')}
+            hitAreaMargins={{ coarse: 3, fine: 3 }}
           />
           <ResizablePanel
             ref={bottomPanelRef}

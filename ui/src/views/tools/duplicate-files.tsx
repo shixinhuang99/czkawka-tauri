@@ -6,7 +6,7 @@ import {
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
 } from '~/atom/tools';
-import { createColumns, DataTable } from '~/components/data-table';
+import { createColumns, DataTable, PathCell } from '~/components/data-table';
 import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { DuplicateEntry } from '~/types';
@@ -45,7 +45,7 @@ const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<DuplicateEntry>(
   },
 );
 
-export function DuplicateFiles() {
+export function DuplicateFiles({ className }: { className?: string }) {
   const data = useAtomValue(sortedAndGroupedDataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
@@ -63,14 +63,14 @@ export function DuplicateFiles() {
       header: t('fileName'),
       size: 180,
       minSize: COLUMN_MIN_SIZES.fileName,
-      cell: FileName,
+      cell: FileNameCell,
     },
     {
       accessorKey: 'path',
       header: t('path'),
       size: 320,
       minSize: COLUMN_MIN_SIZES.path,
-      cell: Path,
+      cell: PathCell,
     },
     {
       accessorKey: 'modifiedDate',
@@ -83,7 +83,7 @@ export function DuplicateFiles() {
 
   return (
     <DataTable
-      className="flex-1 rounded-none border-none grow"
+      className={className}
       data={data}
       columns={columns}
       rowSelection={rowSelection}
@@ -95,17 +95,7 @@ export function DuplicateFiles() {
   );
 }
 
-function Path({ row }: { row: Row<DuplicateEntry> }) {
-  const { hidden, path } = row.original;
-
-  if (hidden) {
-    return null;
-  }
-
-  return path;
-}
-
-function FileName({ row }: { row: Row<DuplicateEntry> }) {
+function FileNameCell({ row }: { row: Row<DuplicateEntry> }) {
   const { hidden, path, fileName, isImage } = row.original;
 
   const settings = useAtomValue(settingsAtom);

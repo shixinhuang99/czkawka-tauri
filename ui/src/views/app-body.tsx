@@ -15,7 +15,10 @@ import { SimilarImages } from './tools/similar-images';
 import { SimilarVideos } from './tools/similar-videos';
 import { TemporaryFiles } from './tools/temporary-files';
 
-const tableMap: Record<string, () => React.JSX.Element> = {
+const tableMap: Record<
+  string,
+  (props: { className?: string }) => React.JSX.Element
+> = {
   [Tools.DuplicateFiles]: DuplicateFiles,
   [Tools.EmptyFolders]: EmptyFolders,
   [Tools.BigFiles]: BigFiles,
@@ -37,8 +40,8 @@ export function AppBody() {
   const Table = tableMap[currentTool] || Fallback;
 
   return (
-    <div className="flex-1 flex flex-col w-full h-px">
-      <Table />
+    <div className="flex-1 flex flex-col w-full h-px pb-[3px]">
+      <Table className="flex-1 rounded-none border-none grow" />
       {progress.tool === currentTool && (
         <div className="h-20 border-t px-3">
           {progress.stopping ? (

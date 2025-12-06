@@ -9,7 +9,7 @@ import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { FolderEntry } from '~/types';
 
-export function EmptyFolders() {
+export function EmptyFolders({ className }: { className?: string }) {
   const data = useAtomValue(currentToolDataAtom) as FolderEntry[];
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
@@ -40,7 +40,7 @@ export function EmptyFolders() {
 
   return (
     <DataTable
-      className="flex-1 rounded-none border-none grow"
+      className={className}
       data={data}
       columns={columns}
       rowSelection={rowSelection}

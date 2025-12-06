@@ -404,3 +404,11 @@ export function createSortableColumnHeader(title: string, className?: string) {
     );
   };
 }
+
+export function PathCell<T extends BaseEntry>({ row }: { row: Row<T> }) {
+  if (row.original.hidden) {
+    return null;
+  }
+
+  return row.original.path;
+}

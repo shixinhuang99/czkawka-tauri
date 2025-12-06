@@ -63,14 +63,16 @@ export function ToolTabs() {
         PLATFORM === 'darwin' && 'pt-5',
       )}
     >
-      <div className="flex items-end gap-1 p-3">
-        <img className="size-8" src="/icon.ico" alt="czkawka icon" />
-        <span className="font-serif tracking-wider">{PKG_NAME}</span>
-        <span className="font-extralight text-xs pl-1 pb-[3px]">
-          {PKG_VERSION}
-        </span>
+      <div className="flex h-16 items-center gap-1 p-3 border-b mt-px">
+        <div className="flex items-end">
+          <img className="size-8" src="/icon.ico" alt="czkawka icon" />
+          <span className="font-serif tracking-wider">{PKG_NAME}</span>
+          <span className="font-extralight text-xs pl-1 pb-[3px]">
+            {PKG_VERSION}
+          </span>
+        </div>
       </div>
-      <ScrollArea className="px-3 pb-1 flex-1">
+      <ScrollArea className="px-3 pb-1 flex-1 shadow-inner">
         {Object.values(Tools).map((name) => {
           const Icon = toolIcons[name];
           return (

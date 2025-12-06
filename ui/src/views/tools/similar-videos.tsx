@@ -4,7 +4,7 @@ import {
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
 } from '~/atom/tools';
-import { createColumns, DataTable } from '~/components/data-table';
+import { createColumns, DataTable, PathCell } from '~/components/data-table';
 import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { VideosEntry } from '~/types';
@@ -39,7 +39,7 @@ const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<VideosEntry>(
   },
 );
 
-export function SimilarVideos() {
+export function SimilarVideos({ className }: { className?: string }) {
   const data = useAtomValue(sortedAndGroupedDataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
@@ -63,12 +63,7 @@ export function SimilarVideos() {
       header: t('path'),
       size: 320,
       minSize: COLUMN_MIN_SIZES.path,
-      cell: ({ row }) => {
-        if (row.original.hidden) {
-          return null;
-        }
-        return row.original.path;
-      },
+      cell: PathCell,
     },
     {
       accessorKey: 'modifiedDate',
@@ -81,7 +76,7 @@ export function SimilarVideos() {
 
   return (
     <DataTable
-      className="flex-1 rounded-none border-none grow"
+      className={className}
       data={data}
       columns={columns}
       rowSelection={rowSelection}
