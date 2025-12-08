@@ -72,15 +72,15 @@ export function BottomBar({ headerRef }: BottomBarProps) {
             <TabsList>
               <TabsTrigger value={DisplayType.Dirs}>
                 <FolderIcon />
-                <span className="ml-2">{t('directories')}</span>
+                <span className="ml-2 select-none">{t('directories')}</span>
               </TabsTrigger>
               <TabsTrigger value={DisplayType.ToolSettings}>
                 <Settings2Icon />
-                <span className="ml-2">{t('toolSettings')}</span>
+                <span className="ml-2 select-none">{t('toolSettings')}</span>
               </TabsTrigger>
               <TabsTrigger value={DisplayType.Logs}>
                 <ScrollTextIcon />
-                <span className="ml-2">{t('logs')}</span>
+                <span className="ml-2 select-none">{t('logs')}</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>

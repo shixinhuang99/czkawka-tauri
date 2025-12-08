@@ -5,6 +5,7 @@ import type {
 } from '@tanstack/react-table';
 import { HIDDEN_ROW_PREFIX } from '~/consts';
 import type { BaseEntry } from '~/types';
+import { is2DArray } from '~/utils/common';
 
 export function getRowSelectionKeys(rowSelection: RowSelectionState): string[] {
   const keys: string[] = [];
@@ -16,13 +17,26 @@ export function getRowSelectionKeys(rowSelection: RowSelectionState): string[] {
   return keys;
 }
 
-export function getPathsFromEntries<T extends BaseEntry>(list: T[]): string[] {
+export function getPathsFromEntries<T extends BaseEntry>(
+  list: T[] | T[][],
+): string[] {
   const paths: string[] = [];
-  for (const item of list) {
-    if (item.isRef || item.hidden) {
-      continue;
+  if (is2DArray(list)) {
+    for (const sublist of list) {
+      for (const item of sublist) {
+        if (item.isRef || item.hidden) {
+          continue;
+        }
+        paths.push(item.path);
+      }
     }
-    paths.push(item.path);
+  } else {
+    for (const item of list) {
+      if (item.isRef || item.hidden) {
+        continue;
+      }
+      paths.push(item.path);
+    }
   }
   return paths;
 }

@@ -8,8 +8,9 @@ import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
 import { OperationButton, Switch } from '~/components';
 import { AlertDialog } from '~/components/alert-dialog';
 import { Form, FormItem } from '~/components/form';
-import { useBoolean, useListenEffect, useT } from '~/hooks';
+import { useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
+import { is2DArray } from '~/utils/common';
 import { getRowSelectionKeys } from '~/utils/table-helper';
 
 interface MoveFilesProps {
@@ -27,22 +28,20 @@ interface MoveFilesResult {
   errors: string[];
 }
 
-const getDefaultOptions = (): Options => {
+function getDefaultOptions(): Options {
   return {
     copyMode: false,
     preserveStructure: false,
     overrideMode: false,
   };
-};
+}
 
-export function MoveFiles(props: MoveFilesProps) {
-  const { disabled } = props;
-
+export function MoveFiles({ disabled }: MoveFilesProps) {
   const [destination, setDestination] = useState('');
-  const [options, setOptions] = useState<Options>(getDefaultOptions());
-  const open = useBoolean();
-  const loading = useBoolean();
-  const openFileDialogLoading = useBoolean();
+  const [options, setOptions] = useState<Options>(getDefaultOptions);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [openFileDialogLoading, setOpenFileDialogLoading] = useState(false);
   const setLogs = useSetAtom(logsAtom);
   const [currentToolData, setCurrentToolData] = useAtom(currentToolDataAtom);
   const [currentToolRowSelection, setCurrentToolRowSelection] = useAtom(
@@ -51,8 +50,8 @@ export function MoveFiles(props: MoveFilesProps) {
   const t = useT();
 
   useListenEffect('move-files-result', (result: MoveFilesResult) => {
-    loading.off();
-    open.off();
+    setLoading(false);
+    setOpen(false);
     setOptions(getDefaultOptions());
     const { successPaths, errors } = result;
     setLogs(
@@ -63,7 +62,11 @@ export function MoveFiles(props: MoveFilesProps) {
     );
     if (!options.copyMode) {
       const set = new Set(successPaths);
-      const newData = currentToolData.filter((v) => !set.has(v.path));
+      const newData = is2DArray(currentToolData)
+        ? currentToolData.map((item) => {
+            return item.filter((v) => !set.has(v.path));
+          })
+        : currentToolData.filter((v) => !set.has(v.path));
       setCurrentToolData(newData);
     }
     setCurrentToolRowSelection({});
@@ -72,29 +75,29 @@ export function MoveFiles(props: MoveFilesProps) {
   const paths = getRowSelectionKeys(currentToolRowSelection);
 
   const handleOpenChange = (v: boolean) => {
-    if (loading.value) {
+    if (loading) {
       return;
     }
     setOptions(getDefaultOptions());
-    open.set(v);
+    setOpen(v);
   };
 
   const handleChooseDestination = async () => {
-    openFileDialogLoading.on();
+    setOpenFileDialogLoading(true);
     const dir = await openFileDialog({ multiple: false, directory: true });
-    openFileDialogLoading.off();
+    setOpenFileDialogLoading(false);
     if (!dir) {
       return;
     }
     setDestination(dir);
-    open.on();
+    setOpen(true);
   };
 
   const handleOk = () => {
-    if (loading.value) {
+    if (loading) {
       return;
     }
-    loading.on();
+    setLoading(true);
     ipc.moveFiles({ paths, destination, ...options });
   };
 
@@ -104,7 +107,7 @@ export function MoveFiles(props: MoveFilesProps) {
         disabled={disabled || !paths.length}
         onClick={handleChooseDestination}
       >
-        {openFileDialogLoading.value ? (
+        {openFileDialogLoading ? (
           <LoaderCircleIcon className="animate-spin" />
         ) : (
           <FolderSymlinkIcon />
@@ -112,10 +115,10 @@ export function MoveFiles(props: MoveFilesProps) {
         {t('move')}
       </OperationButton>
       <AlertDialog
-        open={open.value}
+        open={open}
         onOpenChange={handleOpenChange}
         title={t('movingFiles')}
-        okLoading={loading.value}
+        okLoading={loading}
         description={
           <span>
             <Trans

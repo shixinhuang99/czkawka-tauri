@@ -5,7 +5,7 @@ import { Tools } from '~/consts';
 import { DeleteFiles } from './delete-files';
 import { MoveFiles } from './move-files';
 import { RenameExt } from './rename-ext';
-import { RowSelectionMenu } from './row-selection-menu';
+import { SelectionMenu } from './row-selection-menu';
 import { SaveResult } from './save-result';
 import { ScanButton } from './scan-button';
 
@@ -19,7 +19,7 @@ export function Operations() {
   return (
     <div className="flex gap-1">
       <ScanButton />
-      <RowSelectionMenu disabled={disabled} />
+      <SelectionMenu disabled={disabled} />
       <MoveFiles disabled={disabled} />
       <DeleteFiles disabled={disabled} />
       <SaveResult disabled={disabled} />

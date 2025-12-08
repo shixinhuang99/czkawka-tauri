@@ -113,6 +113,8 @@ export const en = {
   selectTheNewest: 'Select the newest',
   selectTheOldest: 'Select the oldest',
   invertSelection: 'Invert selection',
+  selectAll: 'Select all',
+  clearSelection: 'Clear selection',
   move: 'Move',
   movingFiles: 'Moving files',
   moveConfirm:

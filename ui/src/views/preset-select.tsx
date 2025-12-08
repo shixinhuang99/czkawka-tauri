@@ -5,6 +5,7 @@ import {
   TimerResetIcon,
   Trash2Icon,
 } from 'lucide-react';
+import { useState } from 'react';
 import { currentPresetAtom } from '~/atom/preset';
 import {
   excludedDirsRowSelectionAtom,
@@ -14,22 +15,22 @@ import {
 } from '~/atom/primitive';
 import { EditInput, Label, Select, TooltipButton } from '~/components';
 import { getDefaultSettings } from '~/consts';
-import { useBoolean, useT } from '~/hooks';
+import { useT } from '~/hooks';
 
 interface PresetSelectProps {
   onPreventDialogCloseChange: (open: boolean) => void;
 }
 
-export function PresetSelect(props: PresetSelectProps) {
-  const { onPreventDialogCloseChange } = props;
-
+export function PresetSelect({
+  onPreventDialogCloseChange,
+}: PresetSelectProps) {
   const [presets, setPresets] = useAtom(presetsAtom);
   const platformSettings = useAtomValue(platformSettingsAtom);
   const [currentPreset, setCurrentPreset] = useAtom(currentPresetAtom);
   const setIncludedDirsRowSelection = useSetAtom(includedDirsRowSelectionAtom);
   const setExcludedDirsRowSelection = useSetAtom(excludedDirsRowSelectionAtom);
-  const newPresetInputVisible = useBoolean();
-  const editPresetInputVisible = useBoolean();
+  const [newPresetInputVisible, setNewPresetInputVisible] = useState(false);
+  const [editPresetInputVisible, setEditPresetInputVisible] = useState(false);
   const t = useT();
 
   const handlePresetSelect = (name: string) => {
@@ -44,8 +45,8 @@ export function PresetSelect(props: PresetSelectProps) {
   };
 
   const handleAddOrEditPresetCancel = () => {
-    newPresetInputVisible.off();
-    editPresetInputVisible.off();
+    setNewPresetInputVisible(false);
+    setEditPresetInputVisible(false);
     onPreventDialogCloseChange(false);
   };
 
@@ -101,7 +102,7 @@ export function PresetSelect(props: PresetSelectProps) {
   return (
     <div className="flex items-center gap-1 pb-2 border-b">
       <Label>{t('currentPreset')}:</Label>
-      {!(newPresetInputVisible.value || editPresetInputVisible.value) && (
+      {!(newPresetInputVisible || editPresetInputVisible) && (
         <Select
           className="flex-1"
           name="presetSelect"
@@ -113,7 +114,7 @@ export function PresetSelect(props: PresetSelectProps) {
           })}
         />
       )}
-      {newPresetInputVisible.value && (
+      {newPresetInputVisible && (
         <EditInput
           className="flex-1"
           placeholder={t('newPresetName')}
@@ -123,7 +124,7 @@ export function PresetSelect(props: PresetSelectProps) {
           onCancel={handleAddOrEditPresetCancel}
         />
       )}
-      {editPresetInputVisible.value && (
+      {editPresetInputVisible && (
         <EditInput
           className="flex-1"
           placeholder={currentPreset.name}
@@ -139,20 +140,20 @@ export function PresetSelect(props: PresetSelectProps) {
         <TooltipButton
           tooltip={t('addPreset')}
           onClick={() => {
-            newPresetInputVisible.on();
+            setNewPresetInputVisible(true);
             onPreventDialogCloseChange(true);
           }}
-          disabled={editPresetInputVisible.value}
+          disabled={editPresetInputVisible}
         >
           <FilePlusIcon />
         </TooltipButton>
         <TooltipButton
           tooltip={t('editName')}
           onClick={() => {
-            editPresetInputVisible.on();
+            setEditPresetInputVisible(true);
             onPreventDialogCloseChange(true);
           }}
-          disabled={newPresetInputVisible.value}
+          disabled={newPresetInputVisible}
         >
           <FilePenLineIcon />
         </TooltipButton>
@@ -161,8 +162,8 @@ export function PresetSelect(props: PresetSelectProps) {
           onClick={handlePresetRemove}
           disabled={
             presets.length === 1 ||
-            newPresetInputVisible.value ||
-            editPresetInputVisible.value
+            newPresetInputVisible ||
+            editPresetInputVisible
           }
         >
           <Trash2Icon />

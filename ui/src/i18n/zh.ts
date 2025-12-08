@@ -115,6 +115,8 @@ export const zh: Record<TranslationKeys, string> = {
   selectTheNewest: '选择最新的',
   selectTheOldest: '选择最旧的',
   invertSelection: '反向选择',
+  selectAll: '全选',
+  clearSelection: '取消全选',
   move: '移动',
   movingFiles: '移动文件',
   moveConfirm:

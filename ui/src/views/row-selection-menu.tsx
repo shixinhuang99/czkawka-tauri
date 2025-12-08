@@ -13,32 +13,44 @@ import {
 import { Tools } from '~/consts';
 import { useT } from '~/hooks';
 import type { BaseEntry } from '~/types';
+import { is2DArray } from '~/utils/common';
 import { getPathsFromEntries, getRowSelectionKeys } from '~/utils/table-helper';
 
-const toolsWithSizeAndDateSelect = new Set<string>([
+const toolsWithExtraSelection = new Set<string>([
   Tools.DuplicateFiles,
   Tools.SimilarImages,
   Tools.SimilarVideos,
   Tools.MusicDuplicates,
 ]);
 
-export function RowSelectionMenu(props: { disabled: boolean }) {
-  const { disabled } = props;
-
+export function SelectionMenu({ disabled }: { disabled: boolean }) {
   const currentTool = useAtomValue(currentToolAtom);
-  const currentToolData = useAtomValue(currentToolDataAtom) as BaseEntry[];
+  const currentToolData = useAtomValue(currentToolDataAtom);
   const setCurrentToolRowSelection = useSetAtom(currentToolRowSelectionAtom);
   const t = useT();
 
   const handleInvertSelection = () => {
-    invertSelection(currentToolData, setCurrentToolRowSelection);
+    const paths = getPathsFromEntries(currentToolData);
+    setCurrentToolRowSelection((old) => invertRowSelection(old, paths));
   };
 
-  const handleSelectXXX = (
+  const handleSelectAll = () => {
+    const paths = getPathsFromEntries(currentToolData);
+    setCurrentToolRowSelection(pathsToRowSelection(paths));
+  };
+
+  const handleClearSelection = () => {
+    setCurrentToolRowSelection({});
+  };
+
+  const handleExtraSelecttion = (
     type: 'size' | 'date' | 'resolution',
     dir: 'asc' | 'desc',
   ) => {
-    if (!toolsWithSizeAndDateSelect.has(currentTool)) {
+    if (
+      !toolsWithExtraSelection.has(currentTool) ||
+      !is2DArray(currentToolData)
+    ) {
       return;
     }
     setCurrentToolRowSelection(selectItem(currentToolData, type, dir));
@@ -56,29 +68,37 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
         {currentTool === Tools.SimilarImages && (
           <>
             <DropdownMenuItem
-              onClick={() => handleSelectXXX('resolution', 'asc')}
+              onClick={() => handleExtraSelecttion('resolution', 'asc')}
             >
               {t('selectTheHighestResolution')}
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => handleSelectXXX('resolution', 'desc')}
+              onClick={() => handleExtraSelecttion('resolution', 'desc')}
             >
               {t('selectTheLowestResolution')}
             </DropdownMenuItem>
           </>
         )}
-        {toolsWithSizeAndDateSelect.has(currentTool) && (
+        {toolsWithExtraSelection.has(currentTool) && (
           <>
-            <DropdownMenuItem onClick={() => handleSelectXXX('size', 'asc')}>
+            <DropdownMenuItem
+              onClick={() => handleExtraSelecttion('size', 'asc')}
+            >
               {t('selectTheBiggestSize')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSelectXXX('size', 'desc')}>
+            <DropdownMenuItem
+              onClick={() => handleExtraSelecttion('size', 'desc')}
+            >
               {t('selectTheSmallestSize')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSelectXXX('date', 'asc')}>
+            <DropdownMenuItem
+              onClick={() => handleExtraSelecttion('date', 'asc')}
+            >
               {t('selectTheNewest')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSelectXXX('date', 'desc')}>
+            <DropdownMenuItem
+              onClick={() => handleExtraSelecttion('date', 'desc')}
+            >
               {t('selectTheOldest')}
             </DropdownMenuItem>
           </>
@@ -86,58 +106,36 @@ export function RowSelectionMenu(props: { disabled: boolean }) {
         <DropdownMenuItem onClick={handleInvertSelection}>
           {t('invertSelection')}
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSelectAll}>
+          {t('selectAll')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleClearSelection}>
+          {t('clearSelection')}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
 
-function invertSelection<T extends BaseEntry>(
-  data: T[],
-  setFn: (updater: (v: RowSelectionState) => RowSelectionState) => void,
-) {
-  const paths = getPathsFromEntries(data);
-  setFn((old) => convertRowSelection(old, paths));
-}
-
-function convertRowSelection(
+function invertRowSelection(
   old: RowSelectionState,
   paths: string[],
 ): RowSelectionState {
   const selected = new Set(getRowSelectionKeys(old));
   const unselected = paths.filter((v) => !selected.has(v));
-  const result = pathsToRowSelection(unselected);
-  return result;
+  return pathsToRowSelection(unselected);
 }
 
 function pathsToRowSelection(paths: string[]): RowSelectionState {
-  const obj = Object.fromEntries(
+  return Object.fromEntries(
     paths.map((v) => {
       return [v, true];
     }),
   );
-  return obj;
-}
-
-function groupBy<T extends BaseEntry>(list: T[]): T[][] {
-  const map: Map<number, T[]> = new Map();
-
-  for (const item of list) {
-    if (!item.groupId) {
-      continue;
-    }
-    const v = map.get(item.groupId);
-    if (v) {
-      v.push(item);
-    } else {
-      map.set(item.groupId, [item]);
-    }
-  }
-
-  return Array.from(map.values());
 }
 
 function selectItem<T extends BaseEntry>(
-  data: T[],
+  data: T[][],
   type: 'size' | 'date' | 'resolution',
   dir: 'asc' | 'desc',
 ): RowSelectionState {
@@ -159,8 +157,7 @@ function selectItem<T extends BaseEntry>(
   if (!compareFn) {
     return {};
   }
-  const groups = groupBy(data);
-  for (const group of groups) {
+  for (const group of data) {
     if (!group.length) {
       continue;
     }

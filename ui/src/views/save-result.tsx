@@ -1,67 +1,66 @@
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { FileJsonIcon } from 'lucide-react';
+import { useState } from 'react';
 import { currentToolAtom, logsAtom } from '~/atom/primitive';
 import { currentToolDataAtom } from '~/atom/tools';
 import { OperationButton } from '~/components';
 import { AlertDialog } from '~/components/alert-dialog';
-import { useBoolean, useListenEffect, useT } from '~/hooks';
+import { useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
 
 interface SaveResultProps {
   disabled: boolean;
 }
 
-export function SaveResult(props: SaveResultProps) {
-  const { disabled } = props;
-
-  const open = useBoolean();
-  const loading = useBoolean();
+export function SaveResult({ disabled }: SaveResultProps) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const currentTool = useAtomValue(currentToolAtom);
   const currentToolData = useAtomValue(currentToolDataAtom);
   const setLogs = useSetAtom(logsAtom);
   const t = useT();
 
   useListenEffect('save-result-done', (v: string) => {
-    loading.off();
-    open.off();
+    setLoading(false);
+    setOpen(false);
     setLogs(v);
   });
 
   const handleOpenChange = (v: boolean) => {
-    if (loading.value) {
+    if (loading) {
       return;
     }
-    open.set(v);
+    setOpen(v);
   };
 
   const handleOk = async () => {
-    if (loading.value) {
+    if (loading) {
       return;
     }
     const dir = await openFileDialog({ multiple: false, directory: true });
     if (!dir) {
-      open.off();
+      setOpen(false);
       return;
     }
     ipc.saveResult({ currentTool, destination: dir });
-    loading.on();
+    setLoading(true);
   };
 
   return (
     <>
       <OperationButton
         disabled={disabled || !currentToolData.length}
-        onClick={open.on}
+        onClick={() => setOpen(true)}
       >
         <FileJsonIcon />
         {t('save')}
       </OperationButton>
       <AlertDialog
-        open={open.value}
+        open={open}
         onOpenChange={handleOpenChange}
         title={t('savingResults')}
-        okLoading={loading.value}
+        okLoading={loading}
         description={<span>{t('saveConfirm')}</span>}
         onOk={handleOk}
       />

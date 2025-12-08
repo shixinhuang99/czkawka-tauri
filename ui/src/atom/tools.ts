@@ -25,7 +25,7 @@ export const currentToolDataAtom = atom(
     const toolData = get(toolDataAtom);
     return toolData[currentTool];
   },
-  (get, set, data: any[]) => {
+  (get, set, data: any[] | any[][]) => {
     const currentTool = get(currentToolAtom);
     const toolData = get(toolDataAtom);
     set(toolDataAtom, {
@@ -35,17 +35,20 @@ export const currentToolDataAtom = atom(
   },
 );
 
-export const setToolInProgressDataAtom = atom(null, (get, set, data: any[]) => {
-  const progress = get(progressAtom);
-  if (!progress.tool) {
-    return;
-  }
-  const toolData = get(toolDataAtom);
-  set(toolDataAtom, {
-    ...toolData,
-    [progress.tool]: data,
-  });
-});
+export const setToolInProgressDataAtom = atom(
+  null,
+  (get, set, data: any[] | any[][]) => {
+    const progress = get(progressAtom);
+    if (!progress.tool) {
+      return;
+    }
+    const toolData = get(toolDataAtom);
+    set(toolDataAtom, {
+      ...toolData,
+      [progress.tool]: data,
+    });
+  },
+);
 
 export const currentToolRowSelectionAtom = atom(
   (get) => {

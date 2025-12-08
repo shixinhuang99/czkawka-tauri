@@ -1,5 +1,6 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Trash2Icon } from 'lucide-react';
+import { useState } from 'react';
 import { Trans } from 'react-i18next';
 import { currentToolAtom, logsAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
@@ -7,8 +8,9 @@ import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
 import { OperationButton } from '~/components';
 import { AlertDialog } from '~/components/alert-dialog';
 import { Tools } from '~/consts';
-import { useBoolean, useListenEffect, useT } from '~/hooks';
+import { useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
+import { is2DArray } from '~/utils/common';
 import { getRowSelectionKeys } from '~/utils/table-helper';
 
 interface DeleteFilesProps {
@@ -20,11 +22,9 @@ interface DeleteFilesResult {
   errors: string[];
 }
 
-export function DeleteFiles(props: DeleteFilesProps) {
-  const { disabled } = props;
-
-  const open = useBoolean();
-  const loading = useBoolean();
+export function DeleteFiles({ disabled }: DeleteFilesProps) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const setLogs = useSetAtom(logsAtom);
   const settings = useAtomValue(settingsAtom);
   const currentTool = useAtomValue(currentToolAtom);
@@ -35,8 +35,8 @@ export function DeleteFiles(props: DeleteFilesProps) {
   const t = useT();
 
   useListenEffect('delete-files-result', (result: DeleteFilesResult) => {
-    loading.off();
-    open.off();
+    setLoading(false);
+    setOpen(false);
     const { successPaths, errors } = result;
     setLogs(
       [`Successfully deleted ${successPaths.length} files`, ...errors].join(
@@ -44,7 +44,11 @@ export function DeleteFiles(props: DeleteFilesProps) {
       ),
     );
     const set = new Set(successPaths);
-    const newData = currentToolData.filter((v) => !set.has(v.path));
+    const newData = is2DArray(currentToolData)
+      ? currentToolData.map((item) => {
+          return item.filter((v) => !set.has(v.path));
+        })
+      : currentToolData.filter((v) => !set.has(v.path));
     setCurrentToolData(newData);
     setCurrentToolRowSelection({});
   });
@@ -52,17 +56,17 @@ export function DeleteFiles(props: DeleteFilesProps) {
   const paths = getRowSelectionKeys(currentToolRowSelection);
 
   const handleOpenChange = (v: boolean) => {
-    if (loading.value) {
+    if (loading) {
       return;
     }
-    open.set(v);
+    setOpen(v);
   };
 
   const handleOk = () => {
-    if (loading.value) {
+    if (loading) {
       return;
     }
-    loading.on();
+    setLoading(true);
     ipc.deleteFiles({
       paths,
       moveDeletedFilesToTrash: settings.moveDeletedFilesToTrash,
@@ -72,15 +76,18 @@ export function DeleteFiles(props: DeleteFilesProps) {
 
   return (
     <>
-      <OperationButton disabled={disabled || !paths.length} onClick={open.on}>
+      <OperationButton
+        disabled={disabled || !paths.length}
+        onClick={() => setOpen(true)}
+      >
         <Trash2Icon />
         {t('delete')}
       </OperationButton>
       <AlertDialog
-        open={open.value}
+        open={open}
         onOpenChange={handleOpenChange}
         title={t('deleteItems')}
-        okLoading={loading.value}
+        okLoading={loading}
         description={
           <span>
             <Trans i18nKey="deleteComfirm" values={{ length: paths.length }}>

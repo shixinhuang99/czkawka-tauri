@@ -10,7 +10,7 @@ export const OperationButton = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         variant="secondary"
         className={cn(
-          'border-transparent',
+          'border-transparent select-none',
           blueBgBorderVariants({ variant: 'hoverOnly' }),
           className,
         )}
