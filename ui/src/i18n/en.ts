@@ -158,6 +158,7 @@ export const en = {
   system: 'System',
   version: 'Version',
   resetOnDoubleClick: 'Double-click to reset',
+  search: 'Search',
 };
 
 export type TranslationKeys = keyof typeof en;

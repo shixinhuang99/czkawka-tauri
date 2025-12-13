@@ -158,4 +158,5 @@ export const zh: Record<TranslationKeys, string> = {
   system: '系统',
   version: '版本',
   resetOnDoubleClick: '双击复原',
+  search: '搜索',
 };

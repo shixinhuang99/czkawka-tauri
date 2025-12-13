@@ -1,4 +1,4 @@
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   ClockIcon,
   FileQuestionIcon,
@@ -14,6 +14,7 @@ import {
   VideoIcon,
 } from 'lucide-react';
 import { currentToolAtom, progressAtom } from '~/atom/primitive';
+import { restoreFilterAtom } from '~/atom/tools';
 import { Button, ScrollArea } from '~/components';
 import { Tools } from '~/consts';
 import { useT } from '~/hooks';
@@ -48,12 +49,14 @@ export function ToolTabs() {
   const [currentTool, setCurrentTool] = useAtom(currentToolAtom);
   const progress = useAtomValue(progressAtom);
   const t = useT();
+  const restoreFilter = useSetAtom(restoreFilterAtom);
 
   const handleClick = (name: string) => {
     if (!isValidTool(name)) {
       return;
     }
     setCurrentTool(name);
+    restoreFilter();
   };
 
   return (
@@ -63,7 +66,10 @@ export function ToolTabs() {
         PLATFORM === 'darwin' && 'pt-5',
       )}
     >
-      <div className="flex h-16 items-center gap-1 p-3 border-b mt-px">
+      <div
+        className="flex h-16 items-center gap-1 p-3 border-b mt-px"
+        data-tauri-drag-region={PLATFORM === 'darwin' ? true : undefined}
+      >
         <div className="flex items-end">
           <img className="size-8" src="/icon.ico" alt="czkawka icon" />
           <span className="font-serif tracking-wider">{PKG_NAME}</span>

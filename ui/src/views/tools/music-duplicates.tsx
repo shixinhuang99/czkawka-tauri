@@ -1,7 +1,8 @@
 import { useAtom, useAtomValue } from 'jotai';
 import toSeconds from 'sec';
 import {
-  createSortedAndGroupedDataAtom,
+  createProcessedDataAtom,
+  currentToolFilterAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
 } from '~/atom/tools';
@@ -10,7 +11,7 @@ import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { MusicEntry } from '~/types';
 
-const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<MusicEntry>(
+const processedDataAtom = createProcessedDataAtom<MusicEntry>(
   (a, b, columnSort) => {
     const { id, desc } = columnSort;
     let comparison = 0;
@@ -58,12 +59,24 @@ const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<MusicEntry>(
       },
     };
   },
+  [
+    'size',
+    'fileName',
+    'trackTitle',
+    'trackArtist',
+    'year',
+    'bitrate',
+    'length',
+    'path',
+    'modifiedDate',
+  ],
 );
 
 export function MusicDuplicates({ className }: { className?: string }) {
-  const data = useAtomValue(sortedAndGroupedDataAtom);
+  const data = useAtomValue(processedDataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
+  const [filter, setFilter] = useAtom(currentToolFilterAtom);
   const t = useT();
 
   const columns = createColumns<MusicEntry>([
@@ -134,7 +147,10 @@ export function MusicDuplicates({ className }: { className?: string }) {
       onRowSelectionChange={setRowSelection}
       sorting={sorting}
       onSortingChange={setSorting}
+      globalFilter={filter}
+      onGlobalFilterChange={setFilter}
       manualSorting
+      manualFiltering
     />
   );
 }

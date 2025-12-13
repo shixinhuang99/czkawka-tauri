@@ -2,7 +2,8 @@ import type { Row } from '@tanstack/react-table';
 import { useAtom, useAtomValue } from 'jotai';
 import { settingsAtom } from '~/atom/settings';
 import {
-  createSortedAndGroupedDataAtom,
+  createProcessedDataAtom,
+  currentToolFilterAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
 } from '~/atom/tools';
@@ -12,7 +13,7 @@ import { useT } from '~/hooks';
 import type { DuplicateEntry } from '~/types';
 import { ImagePreview } from '../image-preview';
 
-const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<DuplicateEntry>(
+const processedDataAtom = createProcessedDataAtom<DuplicateEntry>(
   (a, b, columnSort) => {
     const { id, desc } = columnSort;
     let comparison = 0;
@@ -43,12 +44,14 @@ const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<DuplicateEntry>(
       },
     };
   },
+  ['size', 'fileName', 'path', 'modifiedDate'],
 );
 
 export function DuplicateFiles({ className }: { className?: string }) {
-  const data = useAtomValue(sortedAndGroupedDataAtom);
+  const data = useAtomValue(processedDataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
+  const [filter, setFilter] = useAtom(currentToolFilterAtom);
   const t = useT();
 
   const columns = createColumns<DuplicateEntry>([
@@ -91,6 +94,9 @@ export function DuplicateFiles({ className }: { className?: string }) {
       sorting={sorting}
       onSortingChange={setSorting}
       manualSorting
+      globalFilter={filter}
+      onGlobalFilterChange={setFilter}
+      manualFiltering
     />
   );
 }

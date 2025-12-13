@@ -1,6 +1,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 import {
   currentToolDataAtom,
+  currentToolFilterAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
 } from '~/atom/tools';
@@ -13,6 +14,7 @@ export function EmptyFolders({ className }: { className?: string }) {
   const data = useAtomValue(currentToolDataAtom) as FolderEntry[];
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
+  const [filter, setFilter] = useAtom(currentToolFilterAtom);
   const t = useT();
 
   const columns = createColumns<FolderEntry>([
@@ -47,6 +49,8 @@ export function EmptyFolders({ className }: { className?: string }) {
       onRowSelectionChange={setRowSelection}
       sorting={sorting}
       onSortingChange={setSorting}
+      globalFilter={filter}
+      onGlobalFilterChange={setFilter}
     />
   );
 }

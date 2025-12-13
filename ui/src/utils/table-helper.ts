@@ -7,6 +7,34 @@ import { HIDDEN_ROW_PREFIX } from '~/consts';
 import type { BaseEntry } from '~/types';
 import { is2DArray } from '~/utils/common';
 
+export function filterGroups<T extends BaseEntry>(
+  groups: T[][],
+  filter: string,
+  filterKeys: (keyof T)[],
+): T[][] {
+  if (!filter) {
+    return groups;
+  }
+
+  const filtered = groups
+    .map((group) => {
+      return group.filter((item) => {
+        for (const key of filterKeys) {
+          if (typeof item[key] !== 'string') {
+            continue;
+          }
+          if (item[key].includes(filter)) {
+            return true;
+          }
+        }
+        return false;
+      });
+    })
+    .filter((group) => group.length > 0);
+
+  return filtered;
+}
+
 export function getRowSelectionKeys(rowSelection: RowSelectionState): string[] {
   const keys: string[] = [];
   for (const kv of Object.entries(rowSelection)) {

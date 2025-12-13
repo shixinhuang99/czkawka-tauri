@@ -5,10 +5,12 @@ import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   type Row,
   type RowSelectionState,
   type SortingState,
+  type TableOptions,
   type Table as TTable,
   useReactTable,
 } from '@tanstack/react-table';
@@ -46,17 +48,25 @@ export type SortingStateUpdater =
   | SortingState
   | ((v: SortingState) => SortingState);
 
-interface DataTableProps<T> {
-  data: T[];
-  columns: ColumnDef<T>[];
+export type FilterStateUpdater = string | ((v: string) => string);
+
+interface DataTableProps<T>
+  extends Pick<
+    TableOptions<T>,
+    | 'data'
+    | 'columns'
+    | 'onRowSelectionChange'
+    | 'onSortingChange'
+    | 'manualSorting'
+    | 'onGlobalFilterChange'
+    | 'manualFiltering'
+  > {
   className?: string;
   emptyTip?: React.ReactNode;
   layout?: 'grid' | 'resizeable';
   rowSelection: RowSelectionState;
-  onRowSelectionChange: (updater: RowSelectionUpdater) => void;
   sorting: SortingState;
-  onSortingChange: (updater: SortingStateUpdater) => void;
-  manualSorting?: boolean;
+  globalFilter?: string;
 }
 
 export function DataTable<T extends BaseEntry>({
@@ -70,17 +80,22 @@ export function DataTable<T extends BaseEntry>({
   sorting,
   onSortingChange,
   manualSorting,
+  globalFilter,
+  onGlobalFilterChange,
+  manualFiltering,
 }: DataTableProps<T>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     columnResizeMode: 'onChange',
     getRowId: (row) => row.path,
     state: {
       rowSelection,
       sorting,
+      globalFilter,
     },
     onRowSelectionChange,
     enableRowSelection: (row) => {
@@ -98,6 +113,9 @@ export function DataTable<T extends BaseEntry>({
       },
     },
     manualSorting,
+    onGlobalFilterChange,
+    manualFiltering,
+    globalFilterFn: 'includesStringSensitive',
   });
   const t = useT();
 
@@ -330,6 +348,7 @@ export function createColumns<T extends BaseEntry>(
       );
     }
   }
+
   return [
     {
       id: 'select',
@@ -340,6 +359,8 @@ export function createColumns<T extends BaseEntry>(
       minSize: 40,
       header: TableRowSelectionHeader,
       cell: TableRowSelectionCell,
+      enableSorting: false,
+      enableGlobalFilter: false,
     },
     ...processedColumns,
     ...(options?.customActions
@@ -350,6 +371,8 @@ export function createColumns<T extends BaseEntry>(
             size: 55,
             minSize: 55,
             cell: TableActions,
+            enableSorting: false,
+            enableGlobalFilter: false,
           },
         ]),
   ];

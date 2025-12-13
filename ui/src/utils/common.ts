@@ -18,3 +18,20 @@ export function isValidTool(s: string): s is ToolsValues {
 export function is2DArray<T>(value: unknown): value is T[][] {
   return Array.isArray(value) && value.length > 0 && Array.isArray(value[0]);
 }
+
+export function debounce<T extends (...args: any[]) => any>(
+  fn: T,
+  delay: number,
+): (...args: Parameters<T>) => void {
+  let timeoutId: NodeJS.Timeout | null = null;
+
+  return (...args: Parameters<T>) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      fn(...args);
+      timeoutId = null;
+    }, delay);
+  };
+}

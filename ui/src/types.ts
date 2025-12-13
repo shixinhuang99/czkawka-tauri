@@ -110,7 +110,7 @@ export interface ProgressData {
   stepName: string;
 }
 
-export interface BaseEntry<T = Record<string, any>> {
+export interface BaseEntry<T = { path: string; [key: string]: any }> {
   path: string;
   isRef?: boolean;
   hidden?: boolean;

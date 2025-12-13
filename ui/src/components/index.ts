@@ -3,6 +3,7 @@ export { EditInput } from './edit-input';
 export { InputNumber } from './input-number';
 export { LabelCheckbox } from './label-checkbox';
 export { OperationButton } from './operation-button';
+export { SearchInput } from './search-input';
 export { Select } from './select';
 export { Button } from './shadcn/button';
 export { Checkbox } from './shadcn/checkbox';

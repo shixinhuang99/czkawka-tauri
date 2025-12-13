@@ -1,6 +1,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 import {
-  createSortedAndGroupedDataAtom,
+  createProcessedDataAtom,
+  currentToolFilterAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
 } from '~/atom/tools';
@@ -9,7 +10,7 @@ import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { VideosEntry } from '~/types';
 
-const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<VideosEntry>(
+const processedDataAtom = createProcessedDataAtom<VideosEntry>(
   (a, b, columnSort) => {
     const { id, desc } = columnSort;
     let comparison = 0;
@@ -37,12 +38,14 @@ const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<VideosEntry>(
       },
     };
   },
+  ['size', 'fileName', 'path', 'modifiedDate'],
 );
 
 export function SimilarVideos({ className }: { className?: string }) {
-  const data = useAtomValue(sortedAndGroupedDataAtom);
+  const data = useAtomValue(processedDataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
+  const [filter, setFilter] = useAtom(currentToolFilterAtom);
   const t = useT();
 
   const columns = createColumns<VideosEntry>([
@@ -83,7 +86,10 @@ export function SimilarVideos({ className }: { className?: string }) {
       onRowSelectionChange={setRowSelection}
       sorting={sorting}
       onSortingChange={setSorting}
+      globalFilter={filter}
+      onGlobalFilterChange={setFilter}
       manualSorting
+      manualFiltering
     />
   );
 }

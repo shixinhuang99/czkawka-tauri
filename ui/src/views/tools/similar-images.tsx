@@ -2,7 +2,8 @@ import type { Row } from '@tanstack/react-table';
 import { useAtom, useAtomValue } from 'jotai';
 import { settingsAtom } from '~/atom/settings';
 import {
-  createSortedAndGroupedDataAtom,
+  createProcessedDataAtom,
+  currentToolFilterAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
 } from '~/atom/tools';
@@ -12,7 +13,7 @@ import { useT } from '~/hooks';
 import type { ImagesEntry } from '~/types';
 import { ImagePreview } from '../image-preview';
 
-const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<ImagesEntry>(
+const processedDataAtom = createProcessedDataAtom<ImagesEntry>(
   (a, b, columnSort) => {
     const { id, desc } = columnSort;
     let comparison = 0;
@@ -49,12 +50,14 @@ const sortedAndGroupedDataAtom = createSortedAndGroupedDataAtom<ImagesEntry>(
       },
     };
   },
+  ['similarity', 'size', 'dimensions', 'fileName', 'path', 'modifiedDate'],
 );
 
 export function SimilarImages({ className }: { className?: string }) {
-  const data = useAtomValue(sortedAndGroupedDataAtom);
+  const data = useAtomValue(processedDataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
+  const [filter, setFilter] = useAtom(currentToolFilterAtom);
   const t = useT();
 
   const columns = createColumns<ImagesEntry>([
@@ -108,7 +111,10 @@ export function SimilarImages({ className }: { className?: string }) {
       onRowSelectionChange={setRowSelection}
       sorting={sorting}
       onSortingChange={setSorting}
+      globalFilter={filter}
+      onGlobalFilterChange={setFilter}
       manualSorting
+      manualFiltering
     />
   );
 }

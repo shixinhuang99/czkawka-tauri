@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import type {
+  FilterStateUpdater,
   RowSelectionUpdater,
   SortingStateUpdater,
 } from '~/components/data-table';
@@ -7,14 +8,17 @@ import type { BaseEntry } from '~/types';
 import {
   type CompareFn,
   type CreateHiddenRowFn,
+  filterGroups,
   insertHiddenRows,
   sortGroups,
   sortItems,
 } from '~/utils/table-helper';
 import {
   currentToolAtom,
+  filterAtom,
   progressAtom,
   rowSelectionAtom,
+  searchInputValueAtom,
   sortingAtom,
   toolDataAtom,
 } from './primitive';
@@ -98,13 +102,40 @@ export const currentToolSortingAtom = atom(
   },
 );
 
-export function createSortedAndGroupedDataAtom<T extends BaseEntry>(
+export const currentToolFilterAtom = atom(
+  (get) => {
+    const currentTool = get(currentToolAtom);
+    const filter = get(filterAtom);
+    return filter[currentTool];
+  },
+  (get, set, updater: FilterStateUpdater) => {
+    const currentTool = get(currentToolAtom);
+    const filter = get(filterAtom);
+    set(filterAtom, {
+      ...filter,
+      [currentTool]:
+        typeof updater === 'function' ? updater(filter[currentTool]) : updater,
+    });
+  },
+);
+
+export const restoreFilterAtom = atom(null, (get, set) => {
+  const filter = get(currentToolFilterAtom);
+  set(searchInputValueAtom, filter);
+});
+
+export function createProcessedDataAtom<T extends BaseEntry>(
   compareFn: CompareFn<T>,
   createHiddenRow: CreateHiddenRowFn<T>,
+  filterKeys: (keyof T)[],
 ) {
   return atom((get) => {
-    const data = get(currentToolDataAtom) as T[][];
+    let data = get(currentToolDataAtom) as T[][];
     const sorting = get(currentToolSortingAtom);
+    const filter = get(currentToolFilterAtom);
+
+    data = filterGroups(data, filter, filterKeys);
+
     for (const group of data) {
       sortItems(group, sorting, compareFn);
     }
