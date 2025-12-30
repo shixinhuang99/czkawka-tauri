@@ -1,5 +1,5 @@
 use czkawka_core::{
-	common::split_path_compare, common_tool::CommonData,
+	common::{split_path_compare, tool_data::CommonData, traits::Search},
 	tools::empty_folder::EmptyFolder,
 };
 use rayon::prelude::*;
@@ -33,7 +33,7 @@ pub fn scan_empty_folders(app: AppHandle, settings: Settings) {
 
 		set_scaner_common_settings(&mut scaner, settings);
 
-		scaner.find_empty_folders(Some(&stop_flag), Some(&progress_tx));
+		scaner.search(&stop_flag, Some(&progress_tx));
 
 		let mut raw_list = scaner
 			.get_empty_folder_list()

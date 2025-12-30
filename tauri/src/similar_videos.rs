@@ -1,6 +1,5 @@
 use czkawka_core::{
-	common::split_path_compare,
-	common_tool::CommonData,
+	common::{split_path_compare, tool_data::CommonData, traits::Search},
 	tools::similar_videos::{
 		SimilarVideos, SimilarVideosParameters, VideosEntry,
 	},
@@ -8,6 +7,7 @@ use czkawka_core::{
 use rayon::prelude::*;
 use serde::Serialize;
 use tauri::{AppHandle, Emitter};
+use vid_dup_finder_lib::Cropdetect;
 
 use crate::{
 	scaner::{set_scaner_common_settings, spawn_scaner_thread},
@@ -37,6 +37,9 @@ pub fn scan_similar_videos(app: AppHandle, settins: Settings) {
 			settins.similar_videos_sub_similarity,
 			settins.similar_videos_sub_ignore_same_size,
 			settins.similar_videos_hide_hard_links,
+			15,                    // DEFAULT_SKIP_FORWARD_AMOUNT
+			10,                    // DEFAULT_VID_HASH_DURATION
+			Cropdetect::Letterbox, // DEFAULT_CROP_DETECT
 		));
 
 		scaner.set_delete_outdated_cache(
@@ -44,7 +47,7 @@ pub fn scan_similar_videos(app: AppHandle, settins: Settings) {
 		);
 		set_scaner_common_settings(&mut scaner, settins);
 
-		scaner.find_similar_videos(Some(&stop_flag), Some(&progress_tx));
+		scaner.search(&stop_flag, Some(&progress_tx));
 
 		let mut message = scaner.get_text_messages().create_messages_text();
 		let mut raw_list: Vec<_> = if scaner.get_use_reference() {

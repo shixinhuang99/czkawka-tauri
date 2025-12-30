@@ -26,7 +26,8 @@ mod utils;
 use std::sync::Mutex;
 
 use czkawka_core::common::{
-	get_number_of_threads, set_config_cache_path, set_number_of_threads,
+	config_cache_path::set_config_cache_path, get_number_of_threads,
+	set_number_of_threads,
 };
 use tauri::{AppHandle, Emitter, Manager, State};
 
