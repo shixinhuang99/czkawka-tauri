@@ -1,6 +1,5 @@
 use czkawka_core::{
-	common::split_path_compare,
-	common_tool::CommonData,
+	common::{split_path_compare, tool_data::CommonData, traits::Search},
 	tools::bad_extensions::{
 		BadExtensions, BadExtensionsParameters, BadFileEntry,
 	},
@@ -30,7 +29,7 @@ pub fn scan_bad_extensions(app: AppHandle, settings: Settings) {
 
 		set_scaner_common_settings(&mut scaner, settings);
 
-		scaner.find_bad_extensions_files(Some(&stop_flag), Some(&progress_tx));
+		scaner.search(&stop_flag, Some(&progress_tx));
 
 		let mut list = scaner.get_bad_extensions_files().clone();
 		let mut message = scaner.get_text_messages().create_messages_text();

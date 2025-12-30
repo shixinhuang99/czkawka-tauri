@@ -1,6 +1,5 @@
 use czkawka_core::{
-	common::split_path_compare,
-	common_tool::CommonData,
+	common::{split_path_compare, tool_data::CommonData, traits::Search},
 	tools::invalid_symlinks::{InvalidSymlinks, SymlinksFileEntry},
 };
 use rayon::prelude::*;
@@ -28,7 +27,7 @@ pub fn scan_invalid_symlinks(app: AppHandle, settings: Settings) {
 
 		set_scaner_common_settings(&mut scaner, settings);
 
-		scaner.find_invalid_links(Some(&stop_flag), Some(&progress_tx));
+		scaner.search(&stop_flag, Some(&progress_tx));
 
 		let mut list = scaner.get_invalid_symlinks().clone();
 		let mut message = scaner.get_text_messages().create_messages_text();
