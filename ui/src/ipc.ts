@@ -27,9 +27,32 @@ interface RenameExtOptions {
   }[];
 }
 
+export interface ConflictInfo {
+  included: string;
+  excluded: string;
+}
+
 export const ipc = {
   getPlatformSettings(): Promise<PlatformSettings> {
     return invoke('get_platform_settings');
+  },
+
+  validateScanDirectories(settings: Settings): Promise<string[]> {
+    return invoke('validate_scan_directories', { settings });
+  },
+
+  checkDirectoryConflict(
+    pathToAdd: string,
+    targetField: string,
+    currentIncluded: string[],
+    currentExcluded: string[],
+  ): Promise<ConflictInfo | null> {
+    return invoke('check_directory_conflict', {
+      pathToAdd,
+      targetField,
+      currentIncluded,
+      currentExcluded,
+    });
   },
 
   setupNumberOfThreads(numberOfThreads: number): Promise<number> {

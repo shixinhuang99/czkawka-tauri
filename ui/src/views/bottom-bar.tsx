@@ -11,6 +11,7 @@ import {
   Trash2Icon,
 } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   excludedDirsRowSelectionAtom,
   excludedDirsRowSortingAtom,
@@ -37,11 +38,36 @@ import {
 } from '~/components/shadcn/dialog';
 import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
 import { useT } from '~/hooks';
+import { type ConflictInfo, ipc } from '~/ipc';
 import type { DirsType } from '~/types';
 import { splitStr } from '~/utils/common';
 import { getRowSelectionKeys } from '~/utils/table-helper';
 import { Operations } from './operations';
 import { ToolSettings } from './tool-settings';
+
+// Helper function to format conflict info for display
+function formatConflict(conflict: ConflictInfo): React.ReactNode {
+  return (
+    <>
+      <div>Included: {conflict.included}</div>
+      <div>Excluded: {conflict.excluded}</div>
+    </>
+  );
+}
+
+// Helper function to format multiple conflicts for display
+function formatConflicts(conflicts: ConflictInfo[]): React.ReactNode {
+  return (
+    <div>
+      {conflicts.map((conflict, index) => (
+        <div key={index} className={index > 0 ? 'mt-3' : ''}>
+          <div>Included: {conflict.included}</div>
+          <div>Excluded: {conflict.excluded}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 const DisplayType = {
   Dirs: 'dirs',
@@ -274,6 +300,7 @@ function DirsActions({
   onRowSelectionChange,
 }: DirsActionsProps) {
   const t = useT();
+  const settings = useAtomValue(settingsAtom);
   const setSettings = useSetAtom(settingsAtom);
   const [manualAddDialogOpen, setManualAddDialogOpen] = useState(false);
   const [manualAddPaths, setManualAddPaths] = useState('');
@@ -300,6 +327,26 @@ function DirsActions({
     if (!dir) {
       return;
     }
+
+    // Check for conflicts before adding
+    const conflict = await ipc.checkDirectoryConflict(
+      dir,
+      field,
+      settings.includedDirectories,
+      settings.excludedDirectories,
+    );
+
+    if (conflict) {
+      toast.error('Cannot add conflicting directory', {
+        description: formatConflict(conflict),
+        duration: 12000,
+        classNames: {
+          title: 'text-red-600 dark:text-red-500',
+        },
+      });
+      return;
+    }
+
     setSettings((settings) => {
       const dirs = settings[field];
       if (dirs.includes(dir)) {
@@ -312,8 +359,34 @@ function DirsActions({
     });
   };
 
-  const handleManualAddOk = () => {
+  const handleManualAddOk = async () => {
     const paths = splitStr(manualAddPaths);
+
+    // Check each path for conflicts
+    const conflicts: ConflictInfo[] = [];
+    for (const path of paths) {
+      const conflict = await ipc.checkDirectoryConflict(
+        path,
+        field,
+        settings.includedDirectories,
+        settings.excludedDirectories,
+      );
+      if (conflict) {
+        conflicts.push(conflict);
+      }
+    }
+
+    if (conflicts.length > 0) {
+      toast.error('Cannot add conflicting directories', {
+        description: formatConflicts(conflicts),
+        duration: 15000,
+        classNames: {
+          title: 'text-red-600 dark:text-red-500',
+        },
+      });
+      return;
+    }
+
     setSettings((settings) => {
       return {
         ...settings,

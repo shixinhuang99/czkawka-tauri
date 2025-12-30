@@ -34,6 +34,7 @@ use crate::{
 	ffmpeg::set_ffmpeg_path,
 	image::ImageInfo,
 	progress::process_progress_data,
+	scaner::{ConflictInfo, check_path_conflict, validate_directory_conflicts},
 	settings::{PlatformSettings, Settings},
 	state::AppState,
 	utils::setup_log,
@@ -57,6 +58,8 @@ fn main() {
 		})
 		.invoke_handler(tauri::generate_handler![
 			get_platform_settings,
+			validate_scan_directories,
+			check_directory_conflict,
 			setup_number_of_threads,
 			stop_scan,
 			listen_scan_progress,
@@ -94,6 +97,44 @@ fn main() {
 #[tauri::command]
 fn get_platform_settings() -> PlatformSettings {
 	PlatformSettings::default()
+}
+
+#[tauri::command]
+fn validate_scan_directories(settings: Settings) -> Vec<String> {
+	let mut conflicts = Vec::new();
+
+	// Check normal included directories
+	let warnings = validate_directory_conflicts(
+		&settings.included_directories,
+		&settings.excluded_directories,
+	);
+	conflicts.extend(warnings);
+
+	// Check reference directories
+	if !settings.included_directories_referenced.is_empty() {
+		let ref_warnings = validate_directory_conflicts(
+			&settings.included_directories_referenced,
+			&settings.excluded_directories,
+		);
+		conflicts.extend(ref_warnings);
+	}
+
+	conflicts
+}
+
+#[tauri::command]
+fn check_directory_conflict(
+	path_to_add: String,
+	target_field: String,
+	current_included: Vec<String>,
+	current_excluded: Vec<String>,
+) -> Option<ConflictInfo> {
+	check_path_conflict(
+		&path_to_add,
+		&target_field,
+		&current_included,
+		&current_excluded,
+	)
 }
 
 #[tauri::command]
