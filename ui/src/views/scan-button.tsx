@@ -1,6 +1,7 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { BanIcon, SearchIcon } from 'lucide-react';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 import { currentToolAtom, logsAtom, progressAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import {
@@ -84,10 +85,31 @@ export function ScanButton() {
     });
   });
 
-  const handleScan = () => {
+  const handleScan = async () => {
     if (progress.tool) {
       return;
     }
+
+    // Validate directories before scanning
+    try {
+      const conflicts = await ipc.validateScanDirectories(settings);
+      if (conflicts.length > 0) {
+        // Show error toast blocking the scan
+        toast.error('Scan cannot proceed', {
+          description: conflicts.map((c) => `Conflict: ${c}`).join('\n\n'),
+          duration: 15000,
+          classNames: {
+            title: 'text-red-600 dark:text-red-500',
+          },
+        });
+        // Don't start the scan
+        return;
+      }
+    } catch (error) {
+      console.error('Failed to validate directories:', error);
+      // Continue with scan even if validation fails
+    }
+
     setProgress({ ...progress, tool: currentTool });
     ipc.scan(scanCmdMap[currentTool], settings);
   };
