@@ -1,7 +1,8 @@
 use czkawka_core::{
-	common::split_path_compare,
-	common_dir_traversal::CheckingMethod,
-	common_tool::CommonData,
+	common::{
+		model::CheckingMethod, split_path_compare, tool_data::CommonData,
+		traits::Search,
+	},
 	tools::same_music::{
 		MusicEntry, MusicSimilarity, SameMusic, SameMusicParameters,
 	},
@@ -85,7 +86,7 @@ pub fn scan_music_duplicates(app: AppHandle, settins: Settings) {
 
 		set_scaner_common_settings(&mut scaner, settins);
 
-		scaner.find_same_music(Some(&stop_flag), Some(&progress_tx));
+		scaner.search(&stop_flag, Some(&progress_tx));
 
 		let mut message = scaner.get_text_messages().create_messages_text();
 		let mut raw_list: Vec<_> = if scaner.get_use_reference() {

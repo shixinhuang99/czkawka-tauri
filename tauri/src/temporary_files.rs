@@ -1,6 +1,5 @@
 use czkawka_core::{
-	common::split_path_compare,
-	common_tool::CommonData,
+	common::{split_path_compare, tool_data::CommonData, traits::Search},
 	tools::temporary::{Temporary, TemporaryFileEntry},
 };
 use rayon::prelude::*;
@@ -28,7 +27,7 @@ pub fn scan_temporary_files(app: AppHandle, settings: Settings) {
 
 		set_scaner_common_settings(&mut scaner, settings);
 
-		scaner.find_temporary_files(Some(&stop_flag), Some(&progress_tx));
+		scaner.search(&stop_flag, Some(&progress_tx));
 
 		let mut list = scaner.get_temporary_files().clone();
 		let mut message = scaner.get_text_messages().create_messages_text();

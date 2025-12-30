@@ -1,5 +1,5 @@
-use czkawka_core::{
-	common_dir_traversal::ToolType,
+use czkawka_core::common::{
+	model::ToolType,
 	progress_data::{CurrentStage, ProgressData},
 };
 use humansize::{DECIMAL, format_size};

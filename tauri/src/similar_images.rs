@@ -1,8 +1,7 @@
 use czkawka_core::{
-	common_tool::CommonData,
+	common::{tool_data::CommonData, traits::Search},
 	tools::similar_images::{
 		ImagesEntry, SimilarImages, SimilarImagesParameters,
-		get_string_from_similarity,
 	},
 };
 use image_hasher::{FilterType, HashAlg};
@@ -71,7 +70,7 @@ pub fn scan_similar_images(app: AppHandle, settins: Settings) {
 		);
 		set_scaner_common_settings(&mut scaner, settins);
 
-		scaner.find_similar_images(Some(&stop_flag), Some(&progress_tx));
+		scaner.search(&stop_flag, Some(&progress_tx));
 
 		let mut message = scaner.get_text_messages().create_messages_text();
 		let mut raw_list: Vec<_> = if scaner.get_use_reference() {
@@ -128,7 +127,7 @@ pub fn scan_similar_images(app: AppHandle, settins: Settings) {
 
 fn images_entry_to_custom(
 	value: ImagesEntry,
-	hash_size: u8,
+	_hash_size: u8,
 ) -> CustomImagesEntry {
 	CustomImagesEntry {
 		path: value.path.to_string_lossy().to_string(),
@@ -136,7 +135,7 @@ fn images_entry_to_custom(
 		width: value.width,
 		height: value.height,
 		modified_date: value.modified_date,
-		similarity: get_string_from_similarity(&value.similarity, hash_size),
+		similarity: value.similarity.to_string(),
 	}
 }
 

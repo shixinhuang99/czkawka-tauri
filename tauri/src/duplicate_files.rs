@@ -1,9 +1,12 @@
 use czkawka_core::{
-	common::split_path_compare,
-	common_dir_traversal::CheckingMethod,
-	common_tool::CommonData,
+	common::{
+		model::{CheckingMethod, HashType},
+		split_path_compare,
+		tool_data::CommonData,
+		traits::Search,
+	},
 	tools::duplicate::{
-		DuplicateEntry, DuplicateFinder, DuplicateFinderParameters, HashType,
+		DuplicateEntry, DuplicateFinder, DuplicateFinderParameters,
 	},
 };
 use rayon::prelude::*;
@@ -54,7 +57,7 @@ pub fn scan_duplicate_files(app: AppHandle, settings: Settings) {
 		);
 		set_scaner_common_settings(&mut scaner, settings);
 
-		scaner.find_duplicates(Some(&stop_flag), Some(&progress_tx));
+		scaner.search(&stop_flag, Some(&progress_tx));
 
 		let mut message = scaner.get_text_messages().create_messages_text();
 		let mut list;

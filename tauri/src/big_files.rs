@@ -1,6 +1,5 @@
 use czkawka_core::{
-	common_dir_traversal::FileEntry,
-	common_tool::CommonData,
+	common::{model::FileEntry, tool_data::CommonData, traits::Search},
 	tools::big_file::{BigFile, BigFileParameters, SearchMode},
 };
 use rayon::prelude::*;
@@ -35,7 +34,7 @@ pub fn scan_big_files(app: AppHandle, settings: Settings) {
 
 		set_scaner_common_settings(&mut scaner, settings);
 
-		scaner.find_big_files(Some(&stop_flag), Some(&progress_tx));
+		scaner.search(&stop_flag, Some(&progress_tx));
 
 		let mut list = scaner.get_big_files().clone();
 		let mut message = scaner.get_text_messages().create_messages_text();

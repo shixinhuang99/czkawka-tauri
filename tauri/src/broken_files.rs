@@ -1,6 +1,5 @@
 use czkawka_core::{
-	common::split_path_compare,
-	common_tool::CommonData,
+	common::{split_path_compare, tool_data::CommonData, traits::Search},
 	tools::broken_files::{
 		BrokenEntry, BrokenFiles, BrokenFilesParameters, CheckedTypes,
 	},
@@ -48,7 +47,7 @@ pub fn scan_broken_files(app: AppHandle, settings: Settings) {
 
 		set_scaner_common_settings(&mut scaner, settings);
 
-		scaner.find_broken_files(Some(&stop_flag), Some(&progress_tx));
+		scaner.search(&stop_flag, Some(&progress_tx));
 
 		let mut list = scaner.get_broken_files().clone();
 		let mut message = scaner.get_text_messages().create_messages_text();

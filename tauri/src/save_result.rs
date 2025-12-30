@@ -1,6 +1,6 @@
 use std::sync::Mutex;
 
-use czkawka_core::common_traits::PrintResults;
+use czkawka_core::common::traits::PrintResults;
 use serde::Deserialize;
 use tauri::{AppHandle, Emitter, Manager};
 

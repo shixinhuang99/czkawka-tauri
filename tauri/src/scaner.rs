@@ -1,4 +1,6 @@
-use czkawka_core::{common::DEFAULT_THREAD_SIZE, common_tool::CommonData};
+use czkawka_core::common::{
+	consts::DEFAULT_THREAD_SIZE, tool_data::CommonData,
+};
 
 use crate::{
 	settings::Settings,
