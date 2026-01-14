@@ -63,9 +63,11 @@ export default function App() {
       event.preventDefault();
       toastError(t('unexpectedError'), event.reason);
     });
-    window.addEventListener('contextmenu', (event) => {
-      event.preventDefault();
-    });
+    if (import.meta.env.PROD) {
+      window.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+      });
+    }
   });
 
   return (
