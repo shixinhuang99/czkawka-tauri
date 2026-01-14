@@ -2,6 +2,7 @@ use czkawka_core::{
 	common::{tool_data::CommonData, traits::Search},
 	tools::similar_images::{
 		ImagesEntry, SimilarImages, SimilarImagesParameters,
+		core::get_string_from_similarity,
 	},
 };
 use image_hasher::{FilterType, HashAlg};
@@ -127,7 +128,7 @@ pub fn scan_similar_images(app: AppHandle, settins: Settings) {
 
 fn images_entry_to_custom(
 	value: ImagesEntry,
-	_hash_size: u8,
+	hash_size: u8,
 ) -> CustomImagesEntry {
 	CustomImagesEntry {
 		path: value.path.to_string_lossy().to_string(),
@@ -135,7 +136,7 @@ fn images_entry_to_custom(
 		width: value.width,
 		height: value.height,
 		modified_date: value.modified_date,
-		similarity: value.similarity.to_string(),
+		similarity: get_string_from_similarity(&value.similarity, hash_size),
 	}
 }
 
