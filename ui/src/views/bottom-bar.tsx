@@ -52,7 +52,8 @@ const DisplayType = {
 interface DirsData {
   path: string;
   field: DirsType;
-  rawData: Record<string, any>;
+  // useless just for type checking
+  rawData: { path: string; [key: string]: any };
 }
 
 interface BottomBarProps {
@@ -107,7 +108,9 @@ function IncludedDirsTable() {
     return {
       path,
       field: 'includedDirectories',
-      rawData: {},
+      rawData: {
+        path,
+      },
     };
   });
 
@@ -177,7 +180,9 @@ function ExcludedDirsTable() {
     return {
       path,
       field: 'excludedDirectories',
-      rawData: {},
+      rawData: {
+        path,
+      },
     };
   });
 

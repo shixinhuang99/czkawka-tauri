@@ -51,15 +51,16 @@ brew uninstall --cask czkawka-tauri-ffmpeg
 - **Directory Access**: Some system-controlled directories are excluded by default due to macOS permissions. If needed, click the Add button to open Finder, select the desired directory, and remove it from the excluded list. This allows the system to remember accessible directories.
   - Known issue: macOS may forget accessible directories after installing a new version. You may need to reset settings and repeat the above steps.
 
-- **FFmpeg Versions**: Releases with the `-ffmpeg` suffix include bundled FFmpeg binaries.
+- **FFmpeg Versions**: Releases with the `ffmpeg` suffix include bundled FFmpeg binaries.
 
 ### Development
 
 **Requirements**:
 
-- Rust (stable)
+- Rust(stable)
 - Node.js 22
 - pnpm
+- [just](https://github.com/casey/just)
 
 **Run the project**:
 
