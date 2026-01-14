@@ -159,6 +159,9 @@ export const en = {
   version: 'Version',
   resetOnDoubleClick: 'Double-click to reset',
   search: 'Search',
+  total: 'Total',
+  selected: 'Selected',
+  found: 'Found',
 };
 
 export type TranslationKeys = keyof typeof en;

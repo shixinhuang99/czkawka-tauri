@@ -4,13 +4,14 @@ import { searchInputValueAtom } from '~/atom/primitive';
 import { currentToolFilterAtom } from '~/atom/tools';
 import { SearchInput } from '~/components';
 import { useT } from '~/hooks';
+import { cn } from '~/utils/cn';
 import { SettingsButton } from './settings';
 
 export function AppHeader() {
-  const setFilter = useSetAtom(currentToolFilterAtom);
-  const [inputValue, setInputValue] = useAtom(searchInputValueAtom);
-  const debouncedSetFilter = useDebouncedCallback(setFilter, 300);
   const t = useT();
+  const setFilter = useSetAtom(currentToolFilterAtom);
+  const debouncedSetFilter = useDebouncedCallback(setFilter, 300);
+  const [inputValue, setInputValue] = useAtom(searchInputValueAtom);
 
   const handleInputChange = (v: string) => {
     setInputValue(v);
@@ -19,10 +20,10 @@ export function AppHeader() {
 
   return (
     <div
-      className="w-full h-11 flex justify-between items-center px-4 py-1 border-b border-border/50 dark:border-border"
+      className="w-full h-11 flex justify-between items-center gap-4 px-4 py-1 border-b border-border/50 dark:border-border"
       data-tauri-drag-region={PLATFORM === 'darwin' ? true : undefined}
     >
-      <div className="flex items-center gap-2 w-[70%]">
+      <div className="flex-1">
         <SearchInput
           placeholder={`${t('search')}...`}
           value={inputValue}
@@ -30,7 +31,39 @@ export function AppHeader() {
           className="w-full"
         />
       </div>
+      <div className="flex items-center gap-2 text-xs whitespace-nowrap">
+        <CountItem
+          label={t('total')}
+          count={12450}
+          className="text-blue-600 dark:text-blue-400"
+        />
+        <CountItem
+          label={t('selected')}
+          count={1200}
+          className="text-green-600 dark:text-green-400"
+        />
+        <CountItem
+          label={t('found')}
+          count={8900}
+          className="text-orange-600 dark:text-orange-400"
+        />
+      </div>
       <SettingsButton />
+    </div>
+  );
+}
+
+interface CountItemProps {
+  label: string;
+  count: number;
+  className?: string;
+}
+
+function CountItem({ label, count, className }: CountItemProps) {
+  return (
+    <div className="flex items-center gap-1">
+      <span className="text-muted-foreground">{label}:</span>
+      <span className={cn('font-semibold', className)}>{count}</span>
     </div>
   );
 }
