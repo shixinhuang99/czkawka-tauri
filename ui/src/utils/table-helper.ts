@@ -122,7 +122,7 @@ export function sortGroups<T extends BaseEntry>(
 export function insertHiddenRows<T extends BaseEntry>(groups: T[][]): T[] {
   const result: T[] = [];
 
-  for (let i = 0; i < groups.length; i++) {
+  for (let i = 0; i < groups.length; i += 1) {
     const group = groups[i];
     result.push(...group);
 

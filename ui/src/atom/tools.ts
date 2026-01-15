@@ -125,14 +125,16 @@ export const restoreFilterAtom = atom(null, (get, set) => {
 
 export function createGroupedDataAtom<T extends BaseEntry>() {
   return atom((get) => {
-    let data = get(currentToolDataAtom) as T[][];
+    let data = get(currentToolDataAtom).slice() as T[][];
     const sorting = get(currentToolSortingAtom);
     const filter = get(currentToolFilterAtom);
 
     data = filterGroups(data, filter);
-
-    for (const group of data) {
-      sortItems(group, sorting);
+    if (sorting.length) {
+      for (let group of data) {
+        group = [...group];
+        sortItems(group, sorting);
+      }
     }
     sortGroups(data, sorting);
     return insertHiddenRows(data);
@@ -141,7 +143,7 @@ export function createGroupedDataAtom<T extends BaseEntry>() {
 
 export function createFlatDataAtom<T extends BaseEntry>() {
   return atom((get) => {
-    let data = get(currentToolDataAtom) as T[];
+    let data = get(currentToolDataAtom).slice() as T[];
     const sorting = get(currentToolSortingAtom);
     const filter = get(currentToolFilterAtom);
 
@@ -150,6 +152,6 @@ export function createFlatDataAtom<T extends BaseEntry>() {
     }
 
     sortItems(data, sorting);
-    return [...data];
+    return data;
   });
 }
