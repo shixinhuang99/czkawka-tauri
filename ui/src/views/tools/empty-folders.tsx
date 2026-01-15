@@ -1,6 +1,6 @@
 import { useAtom, useAtomValue } from 'jotai';
 import {
-  currentToolDataAtom,
+  createFlatDataAtom,
   currentToolFilterAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
@@ -10,12 +10,14 @@ import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { FolderEntry } from '~/types';
 
+const dataAtom = createFlatDataAtom<FolderEntry>();
+
 export function EmptyFolders({ className }: { className?: string }) {
-  const data = useAtomValue(currentToolDataAtom) as FolderEntry[];
+  const t = useT();
+  const data = useAtomValue(dataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const [filter, setFilter] = useAtom(currentToolFilterAtom);
-  const t = useT();
 
   const columns = createColumns<FolderEntry>([
     {
@@ -36,7 +38,6 @@ export function EmptyFolders({ className }: { className?: string }) {
       size: COLUMN_MIN_SIZES.modifiedDate,
       minSize: COLUMN_MIN_SIZES.modifiedDate,
       id: 'modified_date',
-      sortingFn: 'sortByRawDataNumber',
     },
   ]);
 
@@ -49,8 +50,10 @@ export function EmptyFolders({ className }: { className?: string }) {
       onRowSelectionChange={setRowSelection}
       sorting={sorting}
       onSortingChange={setSorting}
+      manualSorting
       globalFilter={filter}
       onGlobalFilterChange={setFilter}
+      manualFiltering
     />
   );
 }

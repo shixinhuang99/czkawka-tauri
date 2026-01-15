@@ -3,14 +3,31 @@ import type {
   RowSelectionState,
   SortingState,
 } from '@tanstack/react-table';
+import toSeconds from 'sec';
 import { HIDDEN_ROW_PREFIX } from '~/consts';
 import type { BaseEntry } from '~/types';
 import { is2DArray } from '~/utils/common';
 
+const EXCLUDE_KEYS = ['rawData', 'hidden', 'isRef', 'groupId', 'isImage'];
+
+export function baseFilterFn(
+  item: Record<string, any>,
+  filter: string,
+): boolean {
+  for (const key in item) {
+    if (EXCLUDE_KEYS.includes(key) || typeof item[key] !== 'string') {
+      continue;
+    }
+    if (item[key].includes(filter)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function filterGroups<T extends BaseEntry>(
   groups: T[][],
   filter: string,
-  filterKeys: (keyof T)[],
 ): T[][] {
   if (!filter) {
     return groups;
@@ -18,17 +35,7 @@ export function filterGroups<T extends BaseEntry>(
 
   const filtered = groups
     .map((group) => {
-      return group.filter((item) => {
-        for (const key of filterKeys) {
-          if (typeof item[key] !== 'string') {
-            continue;
-          }
-          if (item[key].includes(filter)) {
-            return true;
-          }
-        }
-        return false;
-      });
+      return group.filter((item) => baseFilterFn(item, filter));
     })
     .filter((group) => group.length > 0);
 
@@ -69,37 +76,50 @@ export function getPathsFromEntries<T extends BaseEntry>(
   return paths;
 }
 
-export type CompareFn<T> = (a: T, b: T, columnSort: ColumnSort) => number;
-export type CreateHiddenRowFn<T> = (fakePath: string) => T;
+type CompareItem = { [key: string]: any; rawData: { [key: string]: any } };
+
+function baseCompareFn(a: CompareItem, b: CompareItem, columnSort: ColumnSort) {
+  const { id, desc } = columnSort;
+  let comparison = 0;
+
+  if (['size', 'modified_date', 'bitrate'].includes(id)) {
+    comparison = a.rawData[id] - b.rawData[id];
+  } else if (id === 'length') {
+    comparison = toSeconds(a[id]) - toSeconds(b[id]);
+  } else if (id === 'dimensions') {
+    const dimensionsA = a.rawData.width * a.rawData.height;
+    const dimensionsB = b.rawData.width * b.rawData.height;
+    comparison = dimensionsA - dimensionsB;
+  } else {
+    comparison = a[id].localeCompare(b[id]);
+  }
+
+  return desc ? -comparison : comparison;
+}
 
 export function sortItems<T extends BaseEntry>(
   items: T[],
   sorting: SortingState,
-  compareFn: CompareFn<T>,
 ): void {
   if (!sorting.length) {
     return;
   }
-  items.sort((a, b) => compareFn(a, b, sorting[0]));
+  items.sort((a, b) => baseCompareFn(a, b, sorting[0]));
 }
 
 export function sortGroups<T extends BaseEntry>(
   groups: T[][],
   sorting: SortingState,
-  compareFn: CompareFn<T>,
 ): void {
   if (!sorting.length) {
     return;
   }
   groups.sort((aGroup, bGroup) => {
-    return compareFn(aGroup[0], bGroup[0], sorting[0]);
+    return baseCompareFn(aGroup[0], bGroup[0], sorting[0]);
   });
 }
 
-export function insertHiddenRows<T extends BaseEntry>(
-  groups: T[][],
-  createHiddenRow: CreateHiddenRowFn<T>,
-): T[] {
+export function insertHiddenRows<T extends BaseEntry>(groups: T[][]): T[] {
   const result: T[] = [];
 
   for (let i = 0; i < groups.length; i++) {
@@ -108,8 +128,16 @@ export function insertHiddenRows<T extends BaseEntry>(
 
     if (i !== groups.length - 1) {
       const groupId = group[0].groupId;
-      if (groupId !== undefined) {
-        result.push(createHiddenRow(`${HIDDEN_ROW_PREFIX}${groupId}`));
+      if (group[0].groupId !== undefined) {
+        result.push({
+          path: `${HIDDEN_ROW_PREFIX}${groupId}`,
+          isRef: true,
+          hidden: true,
+          isImage: false,
+          rawData: {
+            path: `${HIDDEN_ROW_PREFIX}${groupId}`,
+          },
+        } as any);
       }
     }
   }

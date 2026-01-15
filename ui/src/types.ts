@@ -141,7 +141,6 @@ export interface DuplicateEntry extends BaseEntry<RawDuplicateEntry> {
   size: string;
   fileName: string;
   modifiedDate: string;
-  hash: string;
   isImage: boolean;
 }
 
@@ -210,7 +209,6 @@ export interface MusicEntry extends BaseEntry<RawMusicEntry> {
   trackArtist: string;
   year: string;
   length: string;
-  genre: string;
   bitrate: string;
 }
 
@@ -229,7 +227,6 @@ export interface SymlinksFileEntry extends BaseEntry<RawSymlinksFileEntry> {
   modifiedDate: string;
   destinationPath: string;
   typeOfError: string;
-  size: string;
 }
 
 export interface RawBrokenEntry {

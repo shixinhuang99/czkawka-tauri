@@ -80,7 +80,6 @@ function convertDuplicateEntry(
     fileName: pathBaseName(item.path),
     path: item.path,
     modifiedDate: fmtDate(item.modified_date),
-    hash: item.hash,
     isRef,
     hidden: false,
     isImage: isImage(item.path),
@@ -231,7 +230,6 @@ function convertMusicEntry(
     trackArtist: item.track_artist,
     year: item.year,
     length: item.length,
-    genre: item.genre,
     bitrate: item.bitrate.toString(),
     isRef,
     hidden: false,
@@ -278,7 +276,6 @@ export function convertSymlinksFileEntries(
       modifiedDate: fmtDate(item.modified_date),
       destinationPath: item.symlink_info.destination_path,
       typeOfError: displayTypeOfError(item.symlink_info.type_of_error),
-      size: fmtFileSize(item.size),
       rawData: item,
     };
   });

@@ -1,6 +1,6 @@
 import { useAtom, useAtomValue } from 'jotai';
 import {
-  currentToolDataAtom,
+  createFlatDataAtom,
   currentToolFilterAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
@@ -10,8 +10,10 @@ import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { BadFileEntry } from '~/types';
 
+const dataAtom = createFlatDataAtom<BadFileEntry>();
+
 export function BadExtensions({ className }: { className?: string }) {
-  const data = useAtomValue(currentToolDataAtom) as BadFileEntry[];
+  const data = useAtomValue(dataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const [filter, setFilter] = useAtom(currentToolFilterAtom);
@@ -48,7 +50,6 @@ export function BadExtensions({ className }: { className?: string }) {
       size: COLUMN_MIN_SIZES.modifiedDate,
       minSize: COLUMN_MIN_SIZES.modifiedDate,
       id: 'modified_date',
-      sortingFn: 'sortByRawDataNumber',
     },
   ]);
 
@@ -61,8 +62,10 @@ export function BadExtensions({ className }: { className?: string }) {
       onRowSelectionChange={setRowSelection}
       sorting={sorting}
       onSortingChange={setSorting}
+      manualSorting
       globalFilter={filter}
       onGlobalFilterChange={setFilter}
+      manualFiltering
     />
   );
 }

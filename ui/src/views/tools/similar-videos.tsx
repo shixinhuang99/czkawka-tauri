@@ -1,6 +1,6 @@
 import { useAtom, useAtomValue } from 'jotai';
 import {
-  createProcessedDataAtom,
+  createGroupedDataAtom,
   currentToolFilterAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
@@ -10,39 +10,10 @@ import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { VideosEntry } from '~/types';
 
-const processedDataAtom = createProcessedDataAtom<VideosEntry>(
-  (a, b, columnSort) => {
-    const { id, desc } = columnSort;
-    let comparison = 0;
-
-    if (id === 'size' || id === 'modified_date') {
-      comparison = a.rawData[id] - b.rawData[id];
-    } else if (id === 'path' || id === 'fileName') {
-      comparison = a[id].localeCompare(b[id]);
-    }
-
-    return desc ? -comparison : comparison;
-  },
-  (fakePath) => {
-    return {
-      size: '',
-      fileName: '',
-      path: fakePath,
-      modifiedDate: '',
-      isRef: true,
-      hidden: true,
-      rawData: {
-        path: '',
-        size: 0,
-        modified_date: 0,
-      },
-    };
-  },
-  ['size', 'fileName', 'path', 'modifiedDate'],
-);
+const dataAtom = createGroupedDataAtom<VideosEntry>();
 
 export function SimilarVideos({ className }: { className?: string }) {
-  const data = useAtomValue(processedDataAtom);
+  const data = useAtomValue(dataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const [filter, setFilter] = useAtom(currentToolFilterAtom);

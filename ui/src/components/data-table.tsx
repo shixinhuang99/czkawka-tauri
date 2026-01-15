@@ -193,7 +193,7 @@ interface TableBodyProps<T> {
 }
 
 function DataTableBody<T>({ table, emptyTip, layout }: TableBodyProps<T>) {
-  const { rows = [] } = table.getRowModel();
+  const rows = table.getRowModel().rows || [];
 
   const containerRef = useRef<HTMLDivElement>(null);
   const rowVirtualizer = useVirtualizer<HTMLDivElement, HTMLDivElement>({

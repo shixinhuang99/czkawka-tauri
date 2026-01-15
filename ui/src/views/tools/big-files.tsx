@@ -1,6 +1,6 @@
 import { useAtom, useAtomValue } from 'jotai';
 import {
-  currentToolDataAtom,
+  createFlatDataAtom,
   currentToolFilterAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
@@ -10,9 +10,11 @@ import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { FileEntry } from '~/types';
 
+const dataAtom = createFlatDataAtom<FileEntry>();
+
 export function BigFiles({ className }: { className?: string }) {
   const t = useT();
-  const data = useAtomValue(currentToolDataAtom) as FileEntry[];
+  const data = useAtomValue(dataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const [filter, setFilter] = useAtom(currentToolFilterAtom);
@@ -23,7 +25,6 @@ export function BigFiles({ className }: { className?: string }) {
       header: t('size'),
       size: 110,
       minSize: COLUMN_MIN_SIZES.size,
-      sortingFn: 'sortByRawDataNumber',
     },
     {
       accessorKey: 'fileName',
@@ -43,7 +44,6 @@ export function BigFiles({ className }: { className?: string }) {
       size: COLUMN_MIN_SIZES.modifiedDate,
       minSize: COLUMN_MIN_SIZES.modifiedDate,
       id: 'modified_date',
-      sortingFn: 'sortByRawDataNumber',
     },
   ]);
 
@@ -56,8 +56,10 @@ export function BigFiles({ className }: { className?: string }) {
       onRowSelectionChange={setRowSelection}
       sorting={sorting}
       onSortingChange={setSorting}
+      manualSorting
       globalFilter={filter}
       onGlobalFilterChange={setFilter}
+      manualFiltering
     />
   );
 }

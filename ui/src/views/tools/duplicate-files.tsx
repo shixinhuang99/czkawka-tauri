@@ -2,7 +2,7 @@ import type { Row } from '@tanstack/react-table';
 import { useAtom, useAtomValue } from 'jotai';
 import { settingsAtom } from '~/atom/settings';
 import {
-  createProcessedDataAtom,
+  createGroupedDataAtom,
   currentToolFilterAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
@@ -13,42 +13,10 @@ import { useT } from '~/hooks';
 import type { DuplicateEntry } from '~/types';
 import { ImagePreview } from '../image-preview';
 
-const processedDataAtom = createProcessedDataAtom<DuplicateEntry>(
-  (a, b, columnSort) => {
-    const { id, desc } = columnSort;
-    let comparison = 0;
-
-    if (id === 'size' || id === 'modified_date') {
-      comparison = a.rawData[id] - b.rawData[id];
-    } else if (id === 'path' || id === 'fileName') {
-      comparison = a[id].localeCompare(b[id]);
-    }
-
-    return desc ? -comparison : comparison;
-  },
-  (fakePath) => {
-    return {
-      size: '',
-      fileName: '',
-      path: fakePath,
-      modifiedDate: '',
-      hash: '',
-      isRef: true,
-      hidden: true,
-      isImage: false,
-      rawData: {
-        path: '',
-        modified_date: 0,
-        size: 0,
-        hash: '',
-      },
-    };
-  },
-  ['size', 'fileName', 'path', 'modifiedDate'],
-);
+const dataAtom = createGroupedDataAtom<DuplicateEntry>();
 
 export function DuplicateFiles({ className }: { className?: string }) {
-  const data = useAtomValue(processedDataAtom);
+  const data = useAtomValue(dataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const [filter, setFilter] = useAtom(currentToolFilterAtom);

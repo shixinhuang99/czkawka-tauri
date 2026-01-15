@@ -1,6 +1,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 import {
-  currentToolDataAtom,
+  createFlatDataAtom,
+  currentToolFilterAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
 } from '~/atom/tools';
@@ -9,11 +10,14 @@ import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { TemporaryFileEntry } from '~/types';
 
+const dataAtom = createFlatDataAtom<TemporaryFileEntry>();
+
 export function TemporaryFiles({ className }: { className?: string }) {
-  const data = useAtomValue(currentToolDataAtom) as TemporaryFileEntry[];
+  const t = useT();
+  const data = useAtomValue(dataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
-  const t = useT();
+  const [filter, setFilter] = useAtom(currentToolFilterAtom);
 
   const columns = createColumns<TemporaryFileEntry>([
     {
@@ -34,7 +38,6 @@ export function TemporaryFiles({ className }: { className?: string }) {
       size: COLUMN_MIN_SIZES.modifiedDate,
       minSize: COLUMN_MIN_SIZES.modifiedDate,
       id: 'modified_date',
-      sortingFn: 'sortByRawDataNumber',
     },
   ]);
 
@@ -47,6 +50,10 @@ export function TemporaryFiles({ className }: { className?: string }) {
       onRowSelectionChange={setRowSelection}
       sorting={sorting}
       onSortingChange={setSorting}
+      manualSorting
+      globalFilter={filter}
+      onGlobalFilterChange={setFilter}
+      manualFiltering
     />
   );
 }

@@ -1,7 +1,6 @@
 import { useAtom, useAtomValue } from 'jotai';
-import toSeconds from 'sec';
 import {
-  createProcessedDataAtom,
+  createGroupedDataAtom,
   currentToolFilterAtom,
   currentToolRowSelectionAtom,
   currentToolSortingAtom,
@@ -11,69 +10,10 @@ import { COLUMN_MIN_SIZES } from '~/consts';
 import { useT } from '~/hooks';
 import type { MusicEntry } from '~/types';
 
-const processedDataAtom = createProcessedDataAtom<MusicEntry>(
-  (a, b, columnSort) => {
-    const { id, desc } = columnSort;
-    let comparison = 0;
-
-    if (id === 'size' || id === 'modified_date' || id === 'bitrate') {
-      comparison = a.rawData[id] - b.rawData[id];
-    } else if (
-      id === 'path' ||
-      id === 'fileName' ||
-      id === 'trackTitle' ||
-      id === 'trackArtist' ||
-      id === 'year'
-    ) {
-      comparison = a[id].localeCompare(b[id]);
-    } else if (id === 'length') {
-      comparison = toSeconds(a[id]) - toSeconds(b[id]);
-    }
-
-    return desc ? -comparison : comparison;
-  },
-  (fakePath) => {
-    return {
-      size: '',
-      fileName: '',
-      path: fakePath,
-      modifiedDate: '',
-      trackTitle: '',
-      trackArtist: '',
-      year: '',
-      length: '',
-      genre: '',
-      bitrate: '',
-      isRef: true,
-      hidden: true,
-      rawData: {
-        path: '',
-        size: 0,
-        modified_date: 0,
-        track_title: '',
-        track_artist: '',
-        year: '',
-        length: '',
-        genre: '',
-        bitrate: 0,
-      },
-    };
-  },
-  [
-    'size',
-    'fileName',
-    'trackTitle',
-    'trackArtist',
-    'year',
-    'bitrate',
-    'length',
-    'path',
-    'modifiedDate',
-  ],
-);
+const dataAtom = createGroupedDataAtom<MusicEntry>();
 
 export function MusicDuplicates({ className }: { className?: string }) {
-  const data = useAtomValue(processedDataAtom);
+  const data = useAtomValue(dataAtom);
   const [rowSelection, setRowSelection] = useAtom(currentToolRowSelectionAtom);
   const [sorting, setSorting] = useAtom(currentToolSortingAtom);
   const [filter, setFilter] = useAtom(currentToolFilterAtom);

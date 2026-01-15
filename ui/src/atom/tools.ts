@@ -6,8 +6,7 @@ import type {
 } from '~/components/data-table';
 import type { BaseEntry } from '~/types';
 import {
-  type CompareFn,
-  type CreateHiddenRowFn,
+  baseFilterFn,
   filterGroups,
   insertHiddenRows,
   sortGroups,
@@ -124,22 +123,33 @@ export const restoreFilterAtom = atom(null, (get, set) => {
   set(searchInputValueAtom, filter);
 });
 
-export function createProcessedDataAtom<T extends BaseEntry>(
-  compareFn: CompareFn<T>,
-  createHiddenRow: CreateHiddenRowFn<T>,
-  filterKeys: (keyof T)[],
-) {
+export function createGroupedDataAtom<T extends BaseEntry>() {
   return atom((get) => {
     let data = get(currentToolDataAtom) as T[][];
     const sorting = get(currentToolSortingAtom);
     const filter = get(currentToolFilterAtom);
 
-    data = filterGroups(data, filter, filterKeys);
+    data = filterGroups(data, filter);
 
     for (const group of data) {
-      sortItems(group, sorting, compareFn);
+      sortItems(group, sorting);
     }
-    sortGroups(data, sorting, compareFn);
-    return insertHiddenRows(data, createHiddenRow);
+    sortGroups(data, sorting);
+    return insertHiddenRows(data);
+  });
+}
+
+export function createFlatDataAtom<T extends BaseEntry>() {
+  return atom((get) => {
+    let data = get(currentToolDataAtom) as T[];
+    const sorting = get(currentToolSortingAtom);
+    const filter = get(currentToolFilterAtom);
+
+    if (filter) {
+      data = data.filter((item) => baseFilterFn(item, filter));
+    }
+
+    sortItems(data, sorting);
+    return [...data];
   });
 }
