@@ -1,7 +1,11 @@
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useDebouncedCallback } from 'use-debounce';
 import { searchInputValueAtom } from '~/atom/primitive';
-import { currentToolFilterAtom } from '~/atom/tools';
+import {
+  currentToolFilterAtom,
+  selectedCountAtom,
+  totalCountAtom,
+} from '~/atom/tools';
 import { SearchInput } from '~/components';
 import { useT } from '~/hooks';
 import { cn } from '~/utils/cn';
@@ -12,6 +16,8 @@ export function AppHeader() {
   const setFilter = useSetAtom(currentToolFilterAtom);
   const debouncedSetFilter = useDebouncedCallback(setFilter, 300);
   const [inputValue, setInputValue] = useAtom(searchInputValueAtom);
+  const totalCount = useAtomValue(totalCountAtom);
+  const selectedCount = useAtomValue(selectedCountAtom);
 
   const handleInputChange = (v: string) => {
     setInputValue(v);
@@ -34,17 +40,17 @@ export function AppHeader() {
       <div className="flex items-center gap-2 text-xs whitespace-nowrap">
         <CountItem
           label={t('total')}
-          count={12450}
+          count={totalCount}
           className="text-blue-600 dark:text-blue-400"
         />
         <CountItem
           label={t('selected')}
-          count={1200}
+          count={selectedCount}
           className="text-green-600 dark:text-green-400"
         />
         <CountItem
           label={t('found')}
-          count={8900}
+          count={'--'}
           className="text-orange-600 dark:text-orange-400"
         />
       </div>
@@ -55,7 +61,7 @@ export function AppHeader() {
 
 interface CountItemProps {
   label: string;
-  count: number;
+  count: number | string;
   className?: string;
 }
 

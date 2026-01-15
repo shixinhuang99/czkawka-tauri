@@ -5,6 +5,7 @@ import type {
   SortingStateUpdater,
 } from '~/components/data-table';
 import type { BaseEntry } from '~/types';
+import { is2DArray } from '~/utils/common';
 import {
   baseFilterFn,
   filterGroups,
@@ -155,3 +156,16 @@ export function createFlatDataAtom<T extends BaseEntry>() {
     return data;
   });
 }
+
+export const totalCountAtom = atom((get) => {
+  const data = get(currentToolDataAtom);
+  if (is2DArray(data)) {
+    return data.reduce((acc, group) => acc + group.length, 0);
+  }
+  return data.length;
+});
+
+export const selectedCountAtom = atom((get) => {
+  const rowSelection = get(currentToolRowSelectionAtom);
+  return Object.keys(rowSelection).length;
+});
