@@ -2,7 +2,10 @@ import type { RowSelectionState } from '@tanstack/react-table';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { SquareMousePointerIcon } from 'lucide-react';
 import { currentToolAtom } from '~/atom/primitive';
-import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
+import {
+  currentFilteredOrAllTableDataAtom,
+  currentToolRowSelectionAtom,
+} from '~/atom/tools';
 import { OperationButton } from '~/components';
 import {
   DropdownMenu,
@@ -24,18 +27,18 @@ const toolsWithExtraSelection = new Set<string>([
 ]);
 
 export function SelectionMenu({ disabled }: { disabled: boolean }) {
-  const currentTool = useAtomValue(currentToolAtom);
-  const currentToolData = useAtomValue(currentToolDataAtom);
-  const setCurrentToolRowSelection = useSetAtom(currentToolRowSelectionAtom);
   const t = useT();
+  const currentTool = useAtomValue(currentToolAtom);
+  const currentToolTableData = useAtomValue(currentFilteredOrAllTableDataAtom);
+  const setCurrentToolRowSelection = useSetAtom(currentToolRowSelectionAtom);
 
   const handleInvertSelection = () => {
-    const paths = getPathsFromEntries(currentToolData);
+    const paths = getPathsFromEntries(currentToolTableData);
     setCurrentToolRowSelection((old) => invertRowSelection(old, paths));
   };
 
   const handleSelectAll = () => {
-    const paths = getPathsFromEntries(currentToolData);
+    const paths = getPathsFromEntries(currentToolTableData);
     setCurrentToolRowSelection(pathsToRowSelection(paths));
   };
 
@@ -49,11 +52,11 @@ export function SelectionMenu({ disabled }: { disabled: boolean }) {
   ) => {
     if (
       !toolsWithExtraSelection.has(currentTool) ||
-      !is2DArray(currentToolData)
+      !is2DArray(currentToolTableData)
     ) {
       return;
     }
-    setCurrentToolRowSelection(selectItem(currentToolData, type, dir));
+    setCurrentToolRowSelection(selectItem(currentToolTableData, type, dir));
   };
 
   return (

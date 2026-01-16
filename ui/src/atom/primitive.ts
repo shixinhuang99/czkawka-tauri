@@ -121,4 +121,20 @@ export const filterAtom = atom<Record<ToolsValues, string>>({
   [Tools.BadExtensions]: '',
 });
 
+export const filteredTableDataAtom = atom<
+  Record<ToolsValues, BaseEntry[] | BaseEntry[][]>
+>({
+  [Tools.DuplicateFiles]: [],
+  [Tools.EmptyFolders]: [],
+  [Tools.BigFiles]: [],
+  [Tools.EmptyFiles]: [],
+  [Tools.TemporaryFiles]: [],
+  [Tools.SimilarImages]: [],
+  [Tools.SimilarVideos]: [],
+  [Tools.MusicDuplicates]: [],
+  [Tools.InvalidSymlinks]: [],
+  [Tools.BrokenFiles]: [],
+  [Tools.BadExtensions]: [],
+});
+
 export const searchInputValueAtom = atom('');

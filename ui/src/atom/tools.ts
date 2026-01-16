@@ -7,15 +7,14 @@ import type {
 import type { BaseEntry } from '~/types';
 import { is2DArray } from '~/utils/common';
 import {
+  baseCompareFn,
   baseFilterFn,
-  filterGroups,
   insertHiddenRows,
-  sortGroups,
-  sortItems,
 } from '~/utils/table-helper';
 import {
   currentToolAtom,
   filterAtom,
+  filteredTableDataAtom,
   progressAtom,
   rowSelectionAtom,
   searchInputValueAtom,
@@ -111,10 +110,35 @@ export const currentToolFilterAtom = atom(
   (get, set, updater: FilterStateUpdater) => {
     const currentTool = get(currentToolAtom);
     const filter = get(filterAtom);
+    const newFilter =
+      typeof updater === 'function' ? updater(filter[currentTool]) : updater;
+
     set(filterAtom, {
       ...filter,
-      [currentTool]:
-        typeof updater === 'function' ? updater(filter[currentTool]) : updater,
+      [currentTool]: newFilter,
+    });
+
+    let filteredData: BaseEntry[] | BaseEntry[][] = [];
+    if (newFilter !== '') {
+      const currentToolData = get(currentToolDataAtom);
+
+      if (is2DArray(currentToolData)) {
+        filteredData = currentToolData
+          .map((group) => {
+            return group.filter((item) => baseFilterFn(item, newFilter));
+          })
+          .filter((group) => group.length > 0);
+      } else {
+        filteredData = currentToolData.filter((item) =>
+          baseFilterFn(item, newFilter),
+        );
+      }
+    }
+    set(filteredTableDataAtom, (old) => {
+      return {
+        ...old,
+        [currentTool]: filteredData,
+      };
     });
   },
 );
@@ -124,35 +148,45 @@ export const restoreFilterAtom = atom(null, (get, set) => {
   set(searchInputValueAtom, filter);
 });
 
+export const currentFilteredOrAllTableDataAtom = atom((get) => {
+  const currentTool = get(currentToolAtom);
+  const filter = get(currentToolFilterAtom);
+  if (filter) {
+    const filteredTableData = get(filteredTableDataAtom);
+    return filteredTableData[currentTool];
+  }
+  const toolData = get(toolDataAtom);
+  return toolData[currentTool];
+});
+
 export function createGroupedDataAtom<T extends BaseEntry>() {
   return atom((get) => {
-    let data = get(currentToolDataAtom).slice() as T[][];
-    const sorting = get(currentToolSortingAtom);
-    const filter = get(currentToolFilterAtom);
+    const data = get(currentFilteredOrAllTableDataAtom).slice() as T[][];
 
-    data = filterGroups(data, filter);
+    const sorting = get(currentToolSortingAtom);
     if (sorting.length) {
       for (let group of data) {
         group = [...group];
-        sortItems(group, sorting);
+        group.sort((a, b) => baseCompareFn(a, b, sorting[0]));
       }
+      data.sort((aGroup, bGroup) => {
+        return baseCompareFn(aGroup[0], bGroup[0], sorting[0]);
+      });
     }
-    sortGroups(data, sorting);
+
     return insertHiddenRows(data);
   });
 }
 
 export function createFlatDataAtom<T extends BaseEntry>() {
   return atom((get) => {
-    let data = get(currentToolDataAtom).slice() as T[];
-    const sorting = get(currentToolSortingAtom);
-    const filter = get(currentToolFilterAtom);
+    const data = get(currentFilteredOrAllTableDataAtom).slice() as T[];
 
-    if (filter) {
-      data = data.filter((item) => baseFilterFn(item, filter));
+    const sorting = get(currentToolSortingAtom);
+    if (sorting.length) {
+      data.sort((a, b) => baseCompareFn(a, b, sorting[0]));
     }
 
-    sortItems(data, sorting);
     return data;
   });
 }
@@ -168,4 +202,17 @@ export const totalCountAtom = atom((get) => {
 export const selectedCountAtom = atom((get) => {
   const rowSelection = get(currentToolRowSelectionAtom);
   return Object.keys(rowSelection).length;
+});
+
+export const foundCountAtom = atom((get) => {
+  const currentTool = get(currentToolAtom);
+  const filteredTableData = get(filteredTableDataAtom);
+  const currentFilteredTableData = filteredTableData[currentTool];
+  if (is2DArray(currentFilteredTableData)) {
+    return currentFilteredTableData.reduce(
+      (acc, group) => acc + group.length,
+      0,
+    );
+  }
+  return currentFilteredTableData.length;
 });

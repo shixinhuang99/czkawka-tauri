@@ -1,46 +1,8 @@
-import type {
-  ColumnSort,
-  RowSelectionState,
-  SortingState,
-} from '@tanstack/react-table';
+import type { ColumnSort, RowSelectionState } from '@tanstack/react-table';
 import toSeconds from 'sec';
 import { HIDDEN_ROW_PREFIX } from '~/consts';
 import type { BaseEntry } from '~/types';
 import { is2DArray } from '~/utils/common';
-
-const EXCLUDE_KEYS = ['rawData', 'hidden', 'isRef', 'groupId', 'isImage'];
-
-export function baseFilterFn(
-  item: Record<string, any>,
-  filter: string,
-): boolean {
-  for (const key in item) {
-    if (EXCLUDE_KEYS.includes(key) || typeof item[key] !== 'string') {
-      continue;
-    }
-    if (item[key].includes(filter)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-export function filterGroups<T extends BaseEntry>(
-  groups: T[][],
-  filter: string,
-): T[][] {
-  if (!filter) {
-    return groups;
-  }
-
-  const filtered = groups
-    .map((group) => {
-      return group.filter((item) => baseFilterFn(item, filter));
-    })
-    .filter((group) => group.length > 0);
-
-  return filtered;
-}
 
 export function getRowSelectionKeys(rowSelection: RowSelectionState): string[] {
   const keys: string[] = [];
@@ -76,9 +38,30 @@ export function getPathsFromEntries<T extends BaseEntry>(
   return paths;
 }
 
+const EXCLUDE_KEYS = ['rawData', 'hidden', 'isRef', 'groupId', 'isImage'];
+
+export function baseFilterFn(
+  item: Record<string, any>,
+  filter: string,
+): boolean {
+  for (const key in item) {
+    if (EXCLUDE_KEYS.includes(key) || typeof item[key] !== 'string') {
+      continue;
+    }
+    if (item[key].includes(filter)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 type CompareItem = { [key: string]: any; rawData: { [key: string]: any } };
 
-function baseCompareFn(a: CompareItem, b: CompareItem, columnSort: ColumnSort) {
+export function baseCompareFn(
+  a: CompareItem,
+  b: CompareItem,
+  columnSort: ColumnSort,
+) {
   const { id, desc } = columnSort;
   let comparison = 0;
 
@@ -95,28 +78,6 @@ function baseCompareFn(a: CompareItem, b: CompareItem, columnSort: ColumnSort) {
   }
 
   return desc ? -comparison : comparison;
-}
-
-export function sortItems<T extends BaseEntry>(
-  items: T[],
-  sorting: SortingState,
-): void {
-  if (!sorting.length) {
-    return;
-  }
-  items.sort((a, b) => baseCompareFn(a, b, sorting[0]));
-}
-
-export function sortGroups<T extends BaseEntry>(
-  groups: T[][],
-  sorting: SortingState,
-): void {
-  if (!sorting.length) {
-    return;
-  }
-  groups.sort((aGroup, bGroup) => {
-    return baseCompareFn(aGroup[0], bGroup[0], sorting[0]);
-  });
 }
 
 export function insertHiddenRows<T extends BaseEntry>(groups: T[][]): T[] {

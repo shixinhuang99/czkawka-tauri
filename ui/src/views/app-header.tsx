@@ -1,8 +1,9 @@
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { useDebouncedCallback } from 'use-debounce';
 import { searchInputValueAtom } from '~/atom/primitive';
 import {
   currentToolFilterAtom,
+  foundCountAtom,
   selectedCountAtom,
   totalCountAtom,
 } from '~/atom/tools';
@@ -13,11 +14,12 @@ import { SettingsButton } from './settings';
 
 export function AppHeader() {
   const t = useT();
-  const setFilter = useSetAtom(currentToolFilterAtom);
+  const [filter, setFilter] = useAtom(currentToolFilterAtom);
   const debouncedSetFilter = useDebouncedCallback(setFilter, 300);
   const [inputValue, setInputValue] = useAtom(searchInputValueAtom);
   const totalCount = useAtomValue(totalCountAtom);
   const selectedCount = useAtomValue(selectedCountAtom);
+  const foundCount = useAtomValue(foundCountAtom);
 
   const handleInputChange = (v: string) => {
     setInputValue(v);
@@ -50,7 +52,7 @@ export function AppHeader() {
         />
         <CountItem
           label={t('found')}
-          count={'--'}
+          count={filter ? foundCount : '--'}
           className="text-orange-600 dark:text-orange-400"
         />
       </div>
