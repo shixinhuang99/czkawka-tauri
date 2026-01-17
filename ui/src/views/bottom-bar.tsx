@@ -22,7 +22,6 @@ import { settingsAtom } from '~/atom/settings';
 import { Button, ScrollArea, Textarea, TooltipButton } from '~/components';
 import {
   createColumns,
-  createSortableColumnHeader,
   DataTable,
   type RowSelectionUpdater,
 } from '~/components/data-table';
@@ -118,7 +117,7 @@ function IncludedDirsTable() {
     [
       {
         accessorKey: 'path',
-        header: createSortableColumnHeader(t('path'), '-ml-4'),
+        header: 'path',
         meta: {
           span: 10,
         },
@@ -131,7 +130,7 @@ function IncludedDirsTable() {
         cell: DirsRemoveButton,
       },
     ],
-    { customActions: true, customSortableColumnHeader: true },
+    { customActions: true, headerClassName: '-ml-4' },
   );
 
   const handleRowSelectionChange = (updater: RowSelectionUpdater) => {
@@ -190,7 +189,7 @@ function ExcludedDirsTable() {
     [
       {
         accessorKey: 'path',
-        header: createSortableColumnHeader(t('path'), '-ml-4'),
+        header: 'path',
         meta: {
           span: 10,
         },
@@ -203,7 +202,7 @@ function ExcludedDirsTable() {
         cell: DirsRemoveButton,
       },
     ],
-    { customActions: true, customSortableColumnHeader: true },
+    { customActions: true, headerClassName: '-ml-4' },
   );
 
   return (

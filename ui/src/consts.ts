@@ -169,25 +169,3 @@ export function getDefaultProgress(): Progress {
 }
 
 export const HIDDEN_ROW_PREFIX = '__hidden__';
-
-// button width + padding(16px)
-export const COLUMN_MIN_SIZES = {
-  size: 100,
-  fileName: 135,
-  path: 102,
-  modifiedDate: 163,
-  folderName: 154,
-  similarity: 133,
-  dimensions: 149,
-  title: 101,
-  artist: 108,
-  year: 101,
-  bitrate: 116,
-  length: 118,
-  symlinkName: 164,
-  symlinkPath: 157,
-  destinationPath: 181,
-  typeOfError: 158,
-  currentExtension: 190,
-  properExtension: 184,
-} as const;

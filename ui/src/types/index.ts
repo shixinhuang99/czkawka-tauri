@@ -1,4 +1,4 @@
-import type { Tools } from './consts';
+import type { Tools } from '../consts';
 
 type ValueOf<T> = T[keyof T];
 

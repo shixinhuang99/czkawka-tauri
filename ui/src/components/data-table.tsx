@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { useRef } from 'react';
 import { useT } from '~/hooks';
-import { scrollBar } from '~/styles';
+import { scrollBarClassNames } from '~/styles';
 import type { BaseEntry } from '~/types';
 import { cn } from '~/utils/cn';
 import { Button } from './shadcn/button';
@@ -126,7 +126,7 @@ export function DataTable<T extends BaseEntry>({
     <div
       className={cn(
         'rounded-sm border overflow-x-auto overflow-y-hidden',
-        scrollBar(),
+        scrollBarClassNames(),
         className,
       )}
     >
@@ -210,7 +210,7 @@ function DataTableBody<T>({ table, emptyTip, layout }: TableBodyProps<T>) {
   return (
     <div
       ref={containerRef}
-      className={cn('overflow-auto', scrollBar())}
+      className={cn('overflow-auto', scrollBarClassNames())}
       style={{ height: 'calc(100% - 41px)' }}
     >
       <TableBody
@@ -309,46 +309,10 @@ function TableRowSelectionCell<T extends BaseEntry>({ row }: { row: Row<T> }) {
 export function createColumns<T extends BaseEntry>(
   columns: ColumnDef<T>[],
   options?: {
-    enableSortingKeys?: string[];
-    disableSortingKeys?: string[];
     customActions?: boolean;
-    customSortableColumnHeader?: boolean;
+    headerClassName?: string;
   },
 ): ColumnDef<T>[] {
-  let processedColumns = columns;
-
-  if (!options?.customSortableColumnHeader) {
-    const shouldEnableSorting = options?.enableSortingKeys;
-    const shouldDisableSorting =
-      !shouldEnableSorting && options?.disableSortingKeys;
-    const shouldEnableAll = !shouldEnableSorting && !shouldDisableSorting;
-
-    if (shouldEnableSorting || shouldDisableSorting || shouldEnableAll) {
-      processedColumns = (columns as AccessorKeyColumnDef<T>[]).map(
-        (column) => {
-          const shouldWrapHeader = shouldEnableAll
-            ? true
-            : shouldEnableSorting
-              ? options.enableSortingKeys?.includes(
-                  column.accessorKey as string,
-                )
-              : !options.disableSortingKeys?.includes(
-                  column.accessorKey as string,
-                );
-
-          if (shouldWrapHeader) {
-            return {
-              ...column,
-              header: createSortableColumnHeader(column.header as string),
-            };
-          }
-
-          return column;
-        },
-      );
-    }
-  }
-
   return [
     {
       id: 'select',
@@ -362,7 +326,18 @@ export function createColumns<T extends BaseEntry>(
       enableSorting: false,
       enableGlobalFilter: false,
     },
-    ...processedColumns,
+    ...(columns as AccessorKeyColumnDef<T>[]).map((column) => {
+      if (!column.accessorKey) {
+        return column;
+      }
+      return {
+        ...column,
+        header: createSortableColumnHeader(
+          column.header as string,
+          options?.headerClassName,
+        ),
+      };
+    }),
     ...(options?.customActions
       ? []
       : [
@@ -409,8 +384,12 @@ function TableActions<T extends BaseEntry>({
   );
 }
 
-export function createSortableColumnHeader(title: string, className?: string) {
+export function createSortableColumnHeader(
+  titleKey: string,
+  className?: string,
+) {
   return function SortableColumnHeader({ column }: { column: Column<any> }) {
+    const t = useT();
     const direction = column.getIsSorted();
 
     return (
@@ -419,7 +398,7 @@ export function createSortableColumnHeader(title: string, className?: string) {
         onClick={column.getToggleSortingHandler()}
         className={cn('gap-2', className)}
       >
-        {title}
+        {t(titleKey as any)}
         {direction === 'asc' && <ArrowUpIcon />}
         {direction === 'desc' && <ArrowDownIcon />}
         {direction === false && <ArrowUpDownIcon />}

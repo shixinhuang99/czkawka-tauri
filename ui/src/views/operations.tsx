@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import { currentToolAtom, progressAtom } from '~/atom/primitive';
-import { currentToolDataAtom } from '~/atom/tools';
+import { currentTableDataAtom } from '~/atom/table';
 import { Tools } from '~/consts';
 import { DeleteFiles } from './delete-files';
 import { MoveFiles } from './move-files';
@@ -11,10 +11,10 @@ import { ScanButton } from './scan-button';
 
 export function Operations() {
   const progress = useAtomValue(progressAtom);
-  const currentToolData = useAtomValue(currentToolDataAtom);
+  const tableData = useAtomValue(currentTableDataAtom);
   const currentTool = useAtomValue(currentToolAtom);
 
-  const disabled = !!progress.tool || !currentToolData.length;
+  const disabled = !!progress.tool || !tableData.length;
 
   return (
     <div className="flex gap-1">

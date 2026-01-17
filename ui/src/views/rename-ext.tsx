@@ -3,13 +3,16 @@ import { TextCursorInputIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Trans } from 'react-i18next';
 import { logsAtom } from '~/atom/primitive';
-import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
+import { currentRowSelectionAtom, currentTableDataAtom } from '~/atom/table';
 import { OperationButton } from '~/components';
 import { AlertDialog } from '~/components/alert-dialog';
 import { useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
 import { is2DArray } from '~/utils/common';
-import { getRowSelectionKeys } from '~/utils/table-helper';
+import {
+  getRowSelectionKeys,
+  removeTableDataItemsByPaths,
+} from '~/utils/table-helper';
 
 interface RenameExtProps {
   disabled: boolean;
@@ -24,10 +27,8 @@ export function RenameExt({ disabled }: RenameExtProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const setLogs = useSetAtom(logsAtom);
-  const [currentToolData, setCurrentToolData] = useAtom(currentToolDataAtom);
-  const [currentToolRowSelection, setCurrentToolRowSelection] = useAtom(
-    currentToolRowSelectionAtom,
-  );
+  const [tableData, setTableData] = useAtom(currentTableDataAtom);
+  const [rowSelection, setRowSelection] = useAtom(currentRowSelectionAtom);
   const t = useT();
 
   useListenEffect('rename-ext-result', (result: RenameExtResult) => {
@@ -39,17 +40,15 @@ export function RenameExt({ disabled }: RenameExtProps) {
         '\n',
       ),
     );
-    const set = new Set(successPaths);
-    const newData = is2DArray(currentToolData)
-      ? currentToolData.map((item) => {
-          return item.filter((v) => !set.has(v.path));
-        })
-      : currentToolData.filter((v) => !set.has(v.path));
-    setCurrentToolData(newData);
-    setCurrentToolRowSelection({});
+    if (successPaths.length) {
+      setTableData((oldTableData) =>
+        removeTableDataItemsByPaths(oldTableData, successPaths),
+      );
+    }
+    setRowSelection({});
   });
 
-  const paths = getRowSelectionKeys(currentToolRowSelection);
+  const paths = getRowSelectionKeys(rowSelection);
 
   const handleOpenChange = (v: boolean) => {
     if (loading) {
@@ -63,17 +62,18 @@ export function RenameExt({ disabled }: RenameExtProps) {
       return;
     }
     setLoading(true);
+    const pathsSet = new Set(paths);
+    const selectedItems = is2DArray(tableData)
+      ? tableData.flatMap((group) =>
+          group.filter((item) => pathsSet.has(item.path)),
+        )
+      : tableData.filter((item) => pathsSet.has(item.path));
+
     ipc.renameExt({
-      items: is2DArray(currentToolData)
-        ? currentToolData.flatMap((item) =>
-            item.map((v) => ({
-              path: v.path,
-              ext: v.rawData.proper_extension,
-            })),
-          )
-        : currentToolData.map((v) => {
-            return { path: v.path, ext: v.rawData.proper_extension };
-          }),
+      items: selectedItems.map((item) => ({
+        path: item.path,
+        ext: item.rawData.proper_extension,
+      })),
     });
   };
 

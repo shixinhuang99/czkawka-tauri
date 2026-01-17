@@ -105,3 +105,17 @@ export function insertHiddenRows<T extends BaseEntry>(groups: T[][]): T[] {
 
   return result;
 }
+
+export function removeTableDataItemsByPaths(
+  tableData: BaseEntry[] | BaseEntry[][],
+  paths: string[],
+): BaseEntry[] | BaseEntry[][] {
+  const pathsSet = new Set(paths);
+  return is2DArray(tableData)
+    ? tableData
+        .map((group) => {
+          return group.filter((item) => !pathsSet.has(item.path));
+        })
+        .filter((group) => group.length > 0)
+    : tableData.filter((item) => !pathsSet.has(item.path));
+}

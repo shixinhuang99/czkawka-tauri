@@ -2,11 +2,11 @@ import { useAtom, useAtomValue } from 'jotai';
 import { useDebouncedCallback } from 'use-debounce';
 import { searchInputValueAtom } from '~/atom/primitive';
 import {
-  currentToolFilterAtom,
+  currentFilterAtom,
   foundCountAtom,
   selectedCountAtom,
   totalCountAtom,
-} from '~/atom/tools';
+} from '~/atom/table';
 import { SearchInput } from '~/components';
 import { useT } from '~/hooks';
 import { cn } from '~/utils/cn';
@@ -14,7 +14,7 @@ import { SettingsButton } from './settings';
 
 export function AppHeader() {
   const t = useT();
-  const [filter, setFilter] = useAtom(currentToolFilterAtom);
+  const [filter, setFilter] = useAtom(currentFilterAtom);
   const debouncedSetFilter = useDebouncedCallback(setFilter, 300);
   const [inputValue, setInputValue] = useAtom(searchInputValueAtom);
   const totalCount = useAtomValue(totalCountAtom);

@@ -4,14 +4,16 @@ import { useState } from 'react';
 import { Trans } from 'react-i18next';
 import { currentToolAtom, logsAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
-import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
+import { currentRowSelectionAtom, currentTableDataAtom } from '~/atom/table';
 import { OperationButton } from '~/components';
 import { AlertDialog } from '~/components/alert-dialog';
 import { Tools } from '~/consts';
 import { useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
-import { is2DArray } from '~/utils/common';
-import { getRowSelectionKeys } from '~/utils/table-helper';
+import {
+  getRowSelectionKeys,
+  removeTableDataItemsByPaths,
+} from '~/utils/table-helper';
 
 interface DeleteFilesProps {
   disabled: boolean;
@@ -23,16 +25,14 @@ interface DeleteFilesResult {
 }
 
 export function DeleteFiles({ disabled }: DeleteFilesProps) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const setLogs = useSetAtom(logsAtom);
   const settings = useAtomValue(settingsAtom);
   const currentTool = useAtomValue(currentToolAtom);
-  const [currentToolData, setCurrentToolData] = useAtom(currentToolDataAtom);
-  const [currentToolRowSelection, setCurrentToolRowSelection] = useAtom(
-    currentToolRowSelectionAtom,
-  );
-  const t = useT();
+  const setTableData = useSetAtom(currentTableDataAtom);
+  const [rowSelection, setRowSelection] = useAtom(currentRowSelectionAtom);
 
   useListenEffect('delete-files-result', (result: DeleteFilesResult) => {
     setLoading(false);
@@ -43,17 +43,15 @@ export function DeleteFiles({ disabled }: DeleteFilesProps) {
         '\n',
       ),
     );
-    const set = new Set(successPaths);
-    const newData = is2DArray(currentToolData)
-      ? currentToolData.map((item) => {
-          return item.filter((v) => !set.has(v.path));
-        })
-      : currentToolData.filter((v) => !set.has(v.path));
-    setCurrentToolData(newData);
-    setCurrentToolRowSelection({});
+    if (successPaths.length) {
+      setTableData((oldTableData) =>
+        removeTableDataItemsByPaths(oldTableData, successPaths),
+      );
+    }
+    setRowSelection({});
   });
 
-  const paths = getRowSelectionKeys(currentToolRowSelection);
+  const paths = getRowSelectionKeys(rowSelection);
 
   const handleOpenChange = (v: boolean) => {
     if (loading) {

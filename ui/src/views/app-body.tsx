@@ -1,43 +1,13 @@
 import { useAtomValue } from 'jotai';
 import { currentToolAtom, progressAtom } from '~/atom/primitive';
 import { Progress } from '~/components';
-import { Tools } from '~/consts';
 import { useT } from '~/hooks';
-import { BadExtensions } from './tools/bad-extensions';
-import { BigFiles } from './tools/big-files';
-import { BrokenFiles } from './tools/broken-files';
-import { DuplicateFiles } from './tools/duplicate-files';
-import { EmptyFiles } from './tools/empty-files';
-import { EmptyFolders } from './tools/empty-folders';
-import { InvalidSymlinks } from './tools/invalid-symlinks';
-import { MusicDuplicates } from './tools/music-duplicates';
-import { SimilarImages } from './tools/similar-images';
-import { SimilarVideos } from './tools/similar-videos';
-import { TemporaryFiles } from './tools/temporary-files';
-
-const tableMap: Record<
-  string,
-  (props: { className?: string }) => React.JSX.Element
-> = {
-  [Tools.DuplicateFiles]: DuplicateFiles,
-  [Tools.EmptyFolders]: EmptyFolders,
-  [Tools.BigFiles]: BigFiles,
-  [Tools.EmptyFiles]: EmptyFiles,
-  [Tools.TemporaryFiles]: TemporaryFiles,
-  [Tools.SimilarImages]: SimilarImages,
-  [Tools.SimilarVideos]: SimilarVideos,
-  [Tools.MusicDuplicates]: MusicDuplicates,
-  [Tools.InvalidSymlinks]: InvalidSymlinks,
-  [Tools.BrokenFiles]: BrokenFiles,
-  [Tools.BadExtensions]: BadExtensions,
-};
+import { Table } from './table';
 
 export function AppBody() {
+  const t = useT();
   const progress = useAtomValue(progressAtom);
   const currentTool = useAtomValue(currentToolAtom);
-  const t = useT();
-
-  const Table = tableMap[currentTool] || Fallback;
 
   return (
     <div className="flex-1 flex flex-col w-full h-px pb-[3px]">
@@ -81,8 +51,4 @@ function ProgressWrap(props: { label: string; value: number }) {
       <div className="w-12 shrink-0 text-right">{value}%</div>
     </div>
   );
-}
-
-function Fallback() {
-  return <div>Something wrong</div>;
 }

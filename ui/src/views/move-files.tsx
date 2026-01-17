@@ -4,14 +4,16 @@ import { FolderSymlinkIcon, LoaderCircleIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Trans } from 'react-i18next';
 import { logsAtom } from '~/atom/primitive';
-import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
+import { currentRowSelectionAtom, currentTableDataAtom } from '~/atom/table';
 import { OperationButton, Switch } from '~/components';
 import { AlertDialog } from '~/components/alert-dialog';
 import { Form, FormItem } from '~/components/form';
 import { useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
-import { is2DArray } from '~/utils/common';
-import { getRowSelectionKeys } from '~/utils/table-helper';
+import {
+  getRowSelectionKeys,
+  removeTableDataItemsByPaths,
+} from '~/utils/table-helper';
 
 interface MoveFilesProps {
   disabled: boolean;
@@ -43,10 +45,8 @@ export function MoveFiles({ disabled }: MoveFilesProps) {
   const [loading, setLoading] = useState(false);
   const [openFileDialogLoading, setOpenFileDialogLoading] = useState(false);
   const setLogs = useSetAtom(logsAtom);
-  const [currentToolData, setCurrentToolData] = useAtom(currentToolDataAtom);
-  const [currentToolRowSelection, setCurrentToolRowSelection] = useAtom(
-    currentToolRowSelectionAtom,
-  );
+  const setTableData = useSetAtom(currentTableDataAtom);
+  const [rowSelection, setRowSelection] = useAtom(currentRowSelectionAtom);
   const t = useT();
 
   useListenEffect('move-files-result', (result: MoveFilesResult) => {
@@ -61,18 +61,14 @@ export function MoveFiles({ disabled }: MoveFilesProps) {
       ].join('\n'),
     );
     if (!options.copyMode) {
-      const set = new Set(successPaths);
-      const newData = is2DArray(currentToolData)
-        ? currentToolData.map((item) => {
-            return item.filter((v) => !set.has(v.path));
-          })
-        : currentToolData.filter((v) => !set.has(v.path));
-      setCurrentToolData(newData);
+      setTableData((oldTableData) =>
+        removeTableDataItemsByPaths(oldTableData, successPaths),
+      );
     }
-    setCurrentToolRowSelection({});
+    setRowSelection({});
   });
 
-  const paths = getRowSelectionKeys(currentToolRowSelection);
+  const paths = getRowSelectionKeys(rowSelection);
 
   const handleOpenChange = (v: boolean) => {
     if (loading) {

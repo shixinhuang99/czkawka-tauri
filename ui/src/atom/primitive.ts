@@ -63,78 +63,32 @@ export const logsAtom = atom<string>('');
 
 export const progressAtom = atom<Progress>(getDefaultProgress());
 
-export const toolDataAtom = atom<
+function createToolsDefaultValue<T>(
+  defaultValue: () => T,
+): Record<ToolsValues, T> {
+  return Object.fromEntries(
+    Object.values(Tools).map((tool) => [tool, defaultValue()]),
+  ) as any;
+}
+
+export const tableDataAtom = atom<
   Record<ToolsValues, BaseEntry[] | BaseEntry[][]>
->({
-  [Tools.DuplicateFiles]: [],
-  [Tools.EmptyFolders]: [],
-  [Tools.BigFiles]: [],
-  [Tools.EmptyFiles]: [],
-  [Tools.TemporaryFiles]: [],
-  [Tools.SimilarImages]: [],
-  [Tools.SimilarVideos]: [],
-  [Tools.MusicDuplicates]: [],
-  [Tools.InvalidSymlinks]: [],
-  [Tools.BrokenFiles]: [],
-  [Tools.BadExtensions]: [],
-});
+>(createToolsDefaultValue(() => []));
 
-export const rowSelectionAtom = atom<Record<ToolsValues, RowSelectionState>>({
-  [Tools.DuplicateFiles]: {},
-  [Tools.EmptyFolders]: {},
-  [Tools.BigFiles]: {},
-  [Tools.EmptyFiles]: {},
-  [Tools.TemporaryFiles]: {},
-  [Tools.SimilarImages]: {},
-  [Tools.SimilarVideos]: {},
-  [Tools.MusicDuplicates]: {},
-  [Tools.InvalidSymlinks]: {},
-  [Tools.BrokenFiles]: {},
-  [Tools.BadExtensions]: {},
-});
+export const rowSelectionAtom = atom<Record<ToolsValues, RowSelectionState>>(
+  createToolsDefaultValue(() => ({})),
+);
 
-export const sortingAtom = atom<Record<ToolsValues, SortingState>>({
-  [Tools.DuplicateFiles]: [],
-  [Tools.EmptyFolders]: [],
-  [Tools.BigFiles]: [],
-  [Tools.EmptyFiles]: [],
-  [Tools.TemporaryFiles]: [],
-  [Tools.SimilarImages]: [],
-  [Tools.SimilarVideos]: [],
-  [Tools.MusicDuplicates]: [],
-  [Tools.InvalidSymlinks]: [],
-  [Tools.BrokenFiles]: [],
-  [Tools.BadExtensions]: [],
-});
+export const sortingAtom = atom<Record<ToolsValues, SortingState>>(
+  createToolsDefaultValue(() => []),
+);
 
-export const filterAtom = atom<Record<ToolsValues, string>>({
-  [Tools.DuplicateFiles]: '',
-  [Tools.EmptyFolders]: '',
-  [Tools.BigFiles]: '',
-  [Tools.EmptyFiles]: '',
-  [Tools.TemporaryFiles]: '',
-  [Tools.SimilarImages]: '',
-  [Tools.SimilarVideos]: '',
-  [Tools.MusicDuplicates]: '',
-  [Tools.InvalidSymlinks]: '',
-  [Tools.BrokenFiles]: '',
-  [Tools.BadExtensions]: '',
-});
+export const filterAtom = atom<Record<ToolsValues, string>>(
+  createToolsDefaultValue(() => ''),
+);
 
 export const filteredTableDataAtom = atom<
   Record<ToolsValues, BaseEntry[] | BaseEntry[][]>
->({
-  [Tools.DuplicateFiles]: [],
-  [Tools.EmptyFolders]: [],
-  [Tools.BigFiles]: [],
-  [Tools.EmptyFiles]: [],
-  [Tools.TemporaryFiles]: [],
-  [Tools.SimilarImages]: [],
-  [Tools.SimilarVideos]: [],
-  [Tools.MusicDuplicates]: [],
-  [Tools.InvalidSymlinks]: [],
-  [Tools.BrokenFiles]: [],
-  [Tools.BadExtensions]: [],
-});
+>(createToolsDefaultValue(() => []));
 
 export const searchInputValueAtom = atom('');

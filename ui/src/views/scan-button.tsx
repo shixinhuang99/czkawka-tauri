@@ -4,9 +4,9 @@ import { useEffect } from 'react';
 import { currentToolAtom, logsAtom, progressAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import {
-  clearToolInProgressRowSelectionAtom,
-  setToolInProgressDataAtom,
-} from '~/atom/tools';
+  clearInProgressRowSelectionAtom,
+  setInProgressTableDataAtom,
+} from '~/atom/table';
 import { OperationButton } from '~/components';
 import { getDefaultProgress, Tools } from '~/consts';
 import { useListenEffect, useT } from '~/hooks';
@@ -58,9 +58,9 @@ export function ScanButton() {
   const settings = useAtomValue(settingsAtom);
   const [progress, setProgress] = useAtom(progressAtom);
   const setLogs = useSetAtom(logsAtom);
-  const setToolInProgressData = useSetAtom(setToolInProgressDataAtom);
-  const clearToolInProgressRowSelection = useSetAtom(
-    clearToolInProgressRowSelectionAtom,
+  const setInProgressTableData = useSetAtom(setInProgressTableDataAtom);
+  const clearInProgressRowSelection = useSetAtom(
+    clearInProgressRowSelectionAtom,
   );
   const t = useT();
 
@@ -73,8 +73,8 @@ export function ScanButton() {
     setLogs(message);
     const convertFn = convertFnMap[cmd];
     const data = convertFn(list);
-    setToolInProgressData(data);
-    clearToolInProgressRowSelection();
+    setInProgressTableData(data);
+    clearInProgressRowSelection();
     setProgress(getDefaultProgress());
   });
 

@@ -3,7 +3,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { FileJsonIcon } from 'lucide-react';
 import { useState } from 'react';
 import { currentToolAtom, logsAtom } from '~/atom/primitive';
-import { currentToolDataAtom } from '~/atom/tools';
+import { currentTableDataAtom } from '~/atom/table';
 import { OperationButton } from '~/components';
 import { AlertDialog } from '~/components/alert-dialog';
 import { useListenEffect, useT } from '~/hooks';
@@ -14,12 +14,12 @@ interface SaveResultProps {
 }
 
 export function SaveResult({ disabled }: SaveResultProps) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const currentTool = useAtomValue(currentToolAtom);
-  const currentToolData = useAtomValue(currentToolDataAtom);
+  const tableData = useAtomValue(currentTableDataAtom);
   const setLogs = useSetAtom(logsAtom);
-  const t = useT();
 
   useListenEffect('save-result-done', (v: string) => {
     setLoading(false);
@@ -50,7 +50,7 @@ export function SaveResult({ disabled }: SaveResultProps) {
   return (
     <>
       <OperationButton
-        disabled={disabled || !currentToolData.length}
+        disabled={disabled || !tableData.length}
         onClick={() => setOpen(true)}
       >
         <FileJsonIcon />

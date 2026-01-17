@@ -19,41 +19,50 @@ import {
   rowSelectionAtom,
   searchInputValueAtom,
   sortingAtom,
-  toolDataAtom,
+  tableDataAtom,
 } from './primitive';
 
-export const currentToolDataAtom = atom(
+export const currentTableDataAtom = atom(
   (get) => {
     const currentTool = get(currentToolAtom);
-    const toolData = get(toolDataAtom);
-    return toolData[currentTool];
+    const tableData = get(tableDataAtom);
+    return tableData[currentTool];
   },
-  (get, set, data: any[] | any[][]) => {
+  (
+    get,
+    set,
+    updater:
+      | (BaseEntry[] | BaseEntry[][])
+      | ((v: BaseEntry[] | BaseEntry[][]) => BaseEntry[] | BaseEntry[][]),
+  ) => {
     const currentTool = get(currentToolAtom);
-    const toolData = get(toolDataAtom);
-    set(toolDataAtom, {
-      ...toolData,
-      [currentTool]: data,
+    const tableData = get(tableDataAtom);
+    set(tableDataAtom, {
+      ...tableData,
+      [currentTool]:
+        typeof updater === 'function'
+          ? updater(tableData[currentTool])
+          : updater,
     });
   },
 );
 
-export const setToolInProgressDataAtom = atom(
+export const setInProgressTableDataAtom = atom(
   null,
   (get, set, data: any[] | any[][]) => {
     const progress = get(progressAtom);
     if (!progress.tool) {
       return;
     }
-    const toolData = get(toolDataAtom);
-    set(toolDataAtom, {
-      ...toolData,
+    const tableData = get(tableDataAtom);
+    set(tableDataAtom, {
+      ...tableData,
       [progress.tool]: data,
     });
   },
 );
 
-export const currentToolRowSelectionAtom = atom(
+export const currentRowSelectionAtom = atom(
   (get) => {
     const currentTool = get(currentToolAtom);
     const rowSelection = get(rowSelectionAtom);
@@ -72,7 +81,7 @@ export const currentToolRowSelectionAtom = atom(
   },
 );
 
-export const clearToolInProgressRowSelectionAtom = atom(null, (get, set) => {
+export const clearInProgressRowSelectionAtom = atom(null, (get, set) => {
   const progress = get(progressAtom);
   if (!progress.tool) {
     return;
@@ -84,7 +93,7 @@ export const clearToolInProgressRowSelectionAtom = atom(null, (get, set) => {
   });
 });
 
-export const currentToolSortingAtom = atom(
+export const currentSortingAtom = atom(
   (get) => {
     const currentTool = get(currentToolAtom);
     const sorting = get(sortingAtom);
@@ -101,7 +110,7 @@ export const currentToolSortingAtom = atom(
   },
 );
 
-export const currentToolFilterAtom = atom(
+export const currentFilterAtom = atom(
   (get) => {
     const currentTool = get(currentToolAtom);
     const filter = get(filterAtom);
@@ -120,16 +129,16 @@ export const currentToolFilterAtom = atom(
 
     let filteredData: BaseEntry[] | BaseEntry[][] = [];
     if (newFilter !== '') {
-      const currentToolData = get(currentToolDataAtom);
+      const tableData = get(currentTableDataAtom);
 
-      if (is2DArray(currentToolData)) {
-        filteredData = currentToolData
+      if (is2DArray(tableData)) {
+        filteredData = tableData
           .map((group) => {
             return group.filter((item) => baseFilterFn(item, newFilter));
           })
           .filter((group) => group.length > 0);
       } else {
-        filteredData = currentToolData.filter((item) =>
+        filteredData = tableData.filter((item) =>
           baseFilterFn(item, newFilter),
         );
       }
@@ -144,55 +153,23 @@ export const currentToolFilterAtom = atom(
 );
 
 export const restoreFilterAtom = atom(null, (get, set) => {
-  const filter = get(currentToolFilterAtom);
+  const filter = get(currentFilterAtom);
   set(searchInputValueAtom, filter);
 });
 
-export const currentFilteredOrAllTableDataAtom = atom((get) => {
+export const currentFilteredTableDataAtom = atom((get) => {
   const currentTool = get(currentToolAtom);
-  const filter = get(currentToolFilterAtom);
+  const filter = get(currentFilterAtom);
   if (filter) {
     const filteredTableData = get(filteredTableDataAtom);
     return filteredTableData[currentTool];
   }
-  const toolData = get(toolDataAtom);
-  return toolData[currentTool];
+  const tableData = get(tableDataAtom);
+  return tableData[currentTool];
 });
 
-export function createGroupedDataAtom<T extends BaseEntry>() {
-  return atom((get) => {
-    const data = get(currentFilteredOrAllTableDataAtom).slice() as T[][];
-
-    const sorting = get(currentToolSortingAtom);
-    if (sorting.length) {
-      for (let group of data) {
-        group = [...group];
-        group.sort((a, b) => baseCompareFn(a, b, sorting[0]));
-      }
-      data.sort((aGroup, bGroup) => {
-        return baseCompareFn(aGroup[0], bGroup[0], sorting[0]);
-      });
-    }
-
-    return insertHiddenRows(data);
-  });
-}
-
-export function createFlatDataAtom<T extends BaseEntry>() {
-  return atom((get) => {
-    const data = get(currentFilteredOrAllTableDataAtom).slice() as T[];
-
-    const sorting = get(currentToolSortingAtom);
-    if (sorting.length) {
-      data.sort((a, b) => baseCompareFn(a, b, sorting[0]));
-    }
-
-    return data;
-  });
-}
-
 export const totalCountAtom = atom((get) => {
-  const data = get(currentToolDataAtom);
+  const data = get(currentTableDataAtom);
   if (is2DArray(data)) {
     return data.reduce((acc, group) => acc + group.length, 0);
   }
@@ -200,7 +177,7 @@ export const totalCountAtom = atom((get) => {
 });
 
 export const selectedCountAtom = atom((get) => {
-  const rowSelection = get(currentToolRowSelectionAtom);
+  const rowSelection = get(currentRowSelectionAtom);
   return Object.keys(rowSelection).length;
 });
 
@@ -215,4 +192,29 @@ export const foundCountAtom = atom((get) => {
     );
   }
   return currentFilteredTableData.length;
+});
+
+export const tableDataWithSortingAndFilterAtom = atom<any[]>((get) => {
+  const data = get(currentFilteredTableDataAtom);
+  const sorting = get(currentSortingAtom);
+
+  if (is2DArray(data)) {
+    const groupedData = data.slice();
+    if (sorting.length) {
+      for (let group of groupedData) {
+        group = [...group];
+        group.sort((a, b) => baseCompareFn(a, b, sorting[0]));
+      }
+      groupedData.sort((aGroup, bGroup) => {
+        return baseCompareFn(aGroup[0], bGroup[0], sorting[0]);
+      });
+    }
+    return insertHiddenRows(groupedData);
+  }
+
+  const flatData = data.slice();
+  if (sorting.length) {
+    flatData.sort((a, b) => baseCompareFn(a, b, sorting[0]));
+  }
+  return flatData;
 });

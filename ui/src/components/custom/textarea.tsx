@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { scrollBar } from '~/styles';
+import { scrollBarClassNames } from '~/styles';
 import { cn } from '~/utils/cn';
 import { Textarea as TextareaPrimitive } from '../shadcn/textarea';
 
@@ -11,7 +11,7 @@ export const Textarea = forwardRef<
     <TextareaPrimitive
       ref={ref}
       className={cn(
-        scrollBar(),
+        scrollBarClassNames(),
         'bg-white dark:bg-gray-900 placeholder:italic break-all',
         className,
       )}

@@ -14,7 +14,7 @@ import {
   VideoIcon,
 } from 'lucide-react';
 import { currentToolAtom, progressAtom } from '~/atom/primitive';
-import { restoreFilterAtom } from '~/atom/tools';
+import { restoreFilterAtom } from '~/atom/table';
 import { Button, ScrollArea } from '~/components';
 import { Tools } from '~/consts';
 import { useT } from '~/hooks';

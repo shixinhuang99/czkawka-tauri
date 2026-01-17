@@ -3,9 +3,9 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { SquareMousePointerIcon } from 'lucide-react';
 import { currentToolAtom } from '~/atom/primitive';
 import {
-  currentFilteredOrAllTableDataAtom,
-  currentToolRowSelectionAtom,
-} from '~/atom/tools';
+  currentFilteredTableDataAtom,
+  currentRowSelectionAtom,
+} from '~/atom/table';
 import { OperationButton } from '~/components';
 import {
   DropdownMenu,
@@ -29,21 +29,21 @@ const toolsWithExtraSelection = new Set<string>([
 export function SelectionMenu({ disabled }: { disabled: boolean }) {
   const t = useT();
   const currentTool = useAtomValue(currentToolAtom);
-  const currentToolTableData = useAtomValue(currentFilteredOrAllTableDataAtom);
-  const setCurrentToolRowSelection = useSetAtom(currentToolRowSelectionAtom);
+  const currentFilteredTableData = useAtomValue(currentFilteredTableDataAtom);
+  const setCurrentRowSelection = useSetAtom(currentRowSelectionAtom);
 
   const handleInvertSelection = () => {
-    const paths = getPathsFromEntries(currentToolTableData);
-    setCurrentToolRowSelection((old) => invertRowSelection(old, paths));
+    const paths = getPathsFromEntries(currentFilteredTableData);
+    setCurrentRowSelection((old) => invertRowSelection(old, paths));
   };
 
   const handleSelectAll = () => {
-    const paths = getPathsFromEntries(currentToolTableData);
-    setCurrentToolRowSelection(pathsToRowSelection(paths));
+    const paths = getPathsFromEntries(currentFilteredTableData);
+    setCurrentRowSelection(pathsToRowSelection(paths));
   };
 
   const handleClearSelection = () => {
-    setCurrentToolRowSelection({});
+    setCurrentRowSelection({});
   };
 
   const handleExtraSelecttion = (
@@ -52,11 +52,11 @@ export function SelectionMenu({ disabled }: { disabled: boolean }) {
   ) => {
     if (
       !toolsWithExtraSelection.has(currentTool) ||
-      !is2DArray(currentToolTableData)
+      !is2DArray(currentFilteredTableData)
     ) {
       return;
     }
-    setCurrentToolRowSelection(selectItem(currentToolTableData, type, dir));
+    setCurrentRowSelection(selectItem(currentFilteredTableData, type, dir));
   };
 
   return (
