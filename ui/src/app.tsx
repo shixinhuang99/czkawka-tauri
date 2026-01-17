@@ -93,6 +93,7 @@ export default function App() {
             defaultSize={PANEL_SIZE}
             minSize={bottomPanelMinSize}
             maxSize={50}
+            className="shadow-[0_-2px_4px_0_rgb(0_0_0_/_0.05)]"
           >
             <BottomBar headerRef={headerRef} />
           </ResizablePanel>

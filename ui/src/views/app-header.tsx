@@ -9,6 +9,7 @@ import {
 } from '~/atom/table';
 import { SearchInput } from '~/components';
 import { useT } from '~/hooks';
+import { getDataTauriDragRegionProp } from '~/styles';
 import { cn } from '~/utils/cn';
 import { SettingsButton } from './settings';
 
@@ -28,33 +29,33 @@ export function AppHeader() {
 
   return (
     <div
-      className="w-full h-11 flex justify-between items-center gap-4 px-4 py-1 border-b border-border/50 dark:border-border"
-      data-tauri-drag-region={PLATFORM === 'darwin' ? true : undefined}
+      className="w-full h-11 flex justify-between items-center gap-4 px-4 py-1 border-b"
+      {...getDataTauriDragRegionProp()}
     >
-      <div className="flex-1">
+      <div className="flex-1 flex gap-4 max-w-[85%]">
         <SearchInput
           placeholder={`${t('search')}...`}
           value={inputValue}
           onChange={handleInputChange}
           className="w-full"
         />
-      </div>
-      <div className="flex items-center gap-2 text-xs whitespace-nowrap">
-        <CountItem
-          label={t('total')}
-          count={totalCount}
-          className="text-blue-600 dark:text-blue-400"
-        />
-        <CountItem
-          label={t('selected')}
-          count={selectedCount}
-          className="text-green-600 dark:text-green-400"
-        />
-        <CountItem
-          label={t('found')}
-          count={filter ? foundCount : '--'}
-          className="text-orange-600 dark:text-orange-400"
-        />
+        <div className="flex items-center gap-2 text-xs whitespace-nowrap">
+          <CountItem
+            label={t('total')}
+            count={totalCount}
+            className="text-blue-600 dark:text-blue-400"
+          />
+          <CountItem
+            label={t('selected')}
+            count={selectedCount}
+            className="text-green-600 dark:text-green-400"
+          />
+          <CountItem
+            label={t('found')}
+            count={filter ? foundCount : '--'}
+            className="text-orange-600 dark:text-orange-400"
+          />
+        </div>
       </div>
       <SettingsButton />
     </div>

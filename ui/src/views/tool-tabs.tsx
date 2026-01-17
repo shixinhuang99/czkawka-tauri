@@ -18,6 +18,7 @@ import { restoreFilterAtom } from '~/atom/table';
 import { Button, ScrollArea } from '~/components';
 import { Tools } from '~/consts';
 import { useT } from '~/hooks';
+import { getDataTauriDragRegionProp } from '~/styles';
 import { blueBgBorderVariants } from '~/styles/variants';
 import type { ToolsValues } from '~/types';
 import { cn } from '~/utils/cn';
@@ -60,32 +61,30 @@ export function ToolTabs() {
   };
 
   return (
-    <div
-      className={cn(
-        'h-full w-[220px] border-r flex flex-col',
-        PLATFORM === 'darwin' && 'pt-5',
-      )}
-    >
+    <div className={cn('h-full w-[220px] border-r flex flex-col')}>
       <div
-        className="flex h-16 items-center gap-1 p-3 border-b mt-px"
-        data-tauri-drag-region={PLATFORM === 'darwin' ? true : undefined}
+        className={cn(
+          'flex items-center gap-1 pb-3 pr-3 border-b pl-4',
+          PLATFORM === 'macOS' ? 'pt-8 h-[84px]' : 'pt-3 h-16',
+        )}
+        {...getDataTauriDragRegionProp()}
       >
-        <div className="flex items-end">
+        <div className="flex items-end gap-1">
           <img className="size-8" src="/icon.ico" alt="czkawka icon" />
           <span className="font-serif tracking-wider">{PKG_NAME}</span>
-          <span className="font-extralight text-xs pl-1 pb-[3px]">
+          <span className="font-extralight text-xs pb-[3px]">
             {PKG_VERSION}
           </span>
         </div>
       </div>
-      <ScrollArea className="px-3 pb-1 flex-1 shadow-inner">
+      <ScrollArea className="px-3 flex-1 shadow-inner">
         {Object.values(Tools).map((name) => {
           const Icon = toolIcons[name];
           return (
             <Button
               key={name}
               className={cn(
-                'w-full h-10 justify-between mt-1 cursor-pointer',
+                'w-full h-10 justify-between mt-1 cursor-pointer last:mb-1',
                 currentTool === name &&
                   blueBgBorderVariants({ variant: 'withHover' }),
               )}

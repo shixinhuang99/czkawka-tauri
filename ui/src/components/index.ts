@@ -1,5 +1,6 @@
 export { Textarea } from './custom/textarea';
 export { EditInput } from './edit-input';
+export { HoverTip } from './hover-tip';
 export { InputNumber } from './input-number';
 export { LabelCheckbox } from './label-checkbox';
 export { OperationButton } from './operation-button';

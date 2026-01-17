@@ -375,7 +375,7 @@ function TableActions<T extends BaseEntry>({
   return (
     <TooltipButton
       tooltip={t('revealInDir', {
-        name: PLATFORM === 'darwin' ? t('finder') : t('fileExplorer'),
+        name: PLATFORM === 'macOS' ? t('finder') : t('fileExplorer'),
       })}
       onClick={handleClick}
     >

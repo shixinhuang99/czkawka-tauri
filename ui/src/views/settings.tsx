@@ -1,7 +1,6 @@
 import { openPath, openUrl } from '@tauri-apps/plugin-opener';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
-  CircleHelpIcon,
   ExternalLinkIcon,
   FilesIcon,
   FolderOpenIcon,
@@ -28,6 +27,7 @@ import { settingsAtom } from '~/atom/settings';
 import { applyMatchMediaAtom, initThemeAtom, setThemeAtom } from '~/atom/theme';
 import {
   Button,
+  HoverTip,
   InputNumber,
   ScrollArea,
   Select,
@@ -59,13 +59,13 @@ const SettingsTab = {
 } as const;
 
 export function SettingsButton() {
+  const t = useT();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [preventDialogClose, setPreventDialogClose] = useState(false);
-  const [tabValue, setTabValue] = useState<string>(SettingsTab.Scanner);
+  const [tabValue, setTabValue] = useState<string>(SettingsTab.Appearance);
   const initCurrentPreset = useSetAtom(initCurrentPresetAtom);
   const initTheme = useSetAtom(initThemeAtom);
   const applyMatchMedia = useSetAtom(applyMatchMediaAtom);
-  const t = useT();
 
   useOnceEffect(() => {
     initCurrentPreset();
@@ -293,13 +293,7 @@ function ScanerSettings({ onPreventDialogCloseChange }: ScannerSettingsProps) {
               label={
                 <span className="inline-flex items-center">
                   {t('threadNumber')}
-                  <TooltipButton
-                    tooltip={t('threadNumberTip')}
-                    onClick={(e) => e.preventDefault()}
-                    className="cursor-default"
-                  >
-                    <CircleHelpIcon />
-                  </TooltipButton>
+                  <HoverTip text={t('threadNumberTip')} className="mx-1" />
                 </span>
               }
               comp="slider"
