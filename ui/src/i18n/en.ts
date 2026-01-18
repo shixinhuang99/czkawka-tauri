@@ -150,7 +150,7 @@ export const en = {
   unexpectedError: 'Unexpected error',
   unknownError: 'Unknown error',
   appearance: 'Appearance',
-  scanner: 'Scanner',
+  advanced: 'Advanced',
   language: 'Language',
   theme: 'Theme',
   light: 'Light',
@@ -162,6 +162,8 @@ export const en = {
   total: 'Total',
   selected: 'Selected',
   found: 'Found',
+  pathInvalid:
+    'This path is invalid because it is included in the excluded path <1>{{excludedPath}}</1>',
 };
 
 export type TranslationKeys = keyof typeof en;

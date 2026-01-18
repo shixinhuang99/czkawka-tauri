@@ -1,6 +1,7 @@
 import { openPath, openUrl } from '@tauri-apps/plugin-opener';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
+  CogIcon,
   ExternalLinkIcon,
   FilesIcon,
   FolderOpenIcon,
@@ -8,7 +9,6 @@ import {
   MoonIcon,
   MusicIcon,
   PaletteIcon,
-  SearchIcon,
   SettingsIcon,
   SunIcon,
   TvMinimalIcon,
@@ -55,7 +55,7 @@ import { PresetSelect } from './preset-select';
 
 const SettingsTab = {
   Appearance: 'appearance',
-  Scanner: 'scanner',
+  Advanced: 'advanced',
 } as const;
 
 export function SettingsButton() {
@@ -105,15 +105,15 @@ export function SettingsButton() {
                 <PaletteIcon />
                 <span className="ml-2">{t('appearance')}</span>
               </TabsTrigger>
-              <TabsTrigger className="w-full" value={SettingsTab.Scanner}>
-                <SearchIcon />
-                <span className="ml-2">{t('scanner')}</span>
+              <TabsTrigger className="w-full" value={SettingsTab.Advanced}>
+                <CogIcon />
+                <span className="ml-2">{t('advanced')}</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
           {tabValue === SettingsTab.Appearance && <AppearancesSettings />}
-          {tabValue === SettingsTab.Scanner && (
-            <ScanerSettings
+          {tabValue === SettingsTab.Advanced && (
+            <AdvancedSettings
               onPreventDialogCloseChange={setPreventDialogClose}
             />
           )}
@@ -204,11 +204,13 @@ function AppearancesSettings() {
   );
 }
 
-interface ScannerSettingsProps {
+interface AdvancedSettingsProps {
   onPreventDialogCloseChange: (open: boolean) => void;
 }
 
-function ScanerSettings({ onPreventDialogCloseChange }: ScannerSettingsProps) {
+function AdvancedSettings({
+  onPreventDialogCloseChange,
+}: AdvancedSettingsProps) {
   const [settings, setSettings] = useAtom(settingsAtom);
   const platformSettings = useAtomValue(platformSettingsAtom);
   const t = useT();

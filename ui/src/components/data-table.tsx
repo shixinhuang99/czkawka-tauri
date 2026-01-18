@@ -105,17 +105,9 @@ export function DataTable<T extends BaseEntry>({
       return true;
     },
     onSortingChange,
-    sortingFns: {
-      sortByRawDataNumber: (rowA: Row<T>, rowB: Row<T>, columnId) => {
-        const fieldA = rowA.original.rawData[columnId];
-        const fieldB = rowB.original.rawData[columnId];
-        return fieldA - fieldB;
-      },
-    },
     manualSorting,
     onGlobalFilterChange,
     manualFiltering,
-    globalFilterFn: 'includesStringSensitive',
   });
   const t = useT();
 

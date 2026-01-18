@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai';
 import { currentToolAtom, progressAtom } from '~/atom/primitive';
 import { Progress } from '~/components';
 import { useT } from '~/hooks';
-import { Table } from './table';
+import { ScanResultTable } from './scan-result-table';
 
 export function AppBody() {
   const t = useT();
@@ -11,7 +11,7 @@ export function AppBody() {
 
   return (
     <div className="flex-1 flex flex-col w-full h-px pb-[3px]">
-      <Table className="flex-1 rounded-none border-none grow" />
+      <ScanResultTable className="flex-1 rounded-none border-none grow" />
       {progress.tool === currentTool && (
         <div className="h-20 border-t px-3">
           {progress.stopping ? (

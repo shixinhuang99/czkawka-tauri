@@ -65,7 +65,7 @@ export function ToolTabs() {
       <div
         className={cn(
           'flex items-center gap-1 pb-3 pr-3 border-b pl-4',
-          PLATFORM === 'macOS' ? 'pt-8 h-[84px]' : 'pt-3 h-16',
+          PLATFORM === 'macOS' ? 'pt-8 h-[85px]' : 'pt-3 h-[65px]',
         )}
         {...getDataTauriDragRegionProp()}
       >
