@@ -2,9 +2,9 @@
 
 A Tauri-based frontend for [Czkawka](https://github.com/qarmin/czkawka) on macOS and Windows.
 
-![App in light mode](./screenshots/1.png)
+![App in light mode](./screenshots/light.png)
 
-![App in dark mode](./screenshots/2.png)
+![App in dark mode](./screenshots/dark.png)
 
 ### Installation
 
