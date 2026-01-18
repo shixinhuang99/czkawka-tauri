@@ -1,4 +1,4 @@
-import { ImageOff, LoaderCircle } from 'lucide-react';
+import { ImageOffIcon, LoaderCircleIcon } from 'lucide-react';
 import { useState } from 'react';
 import {
   HoverCard,
@@ -55,15 +55,15 @@ function Image(props: { path: string }) {
   if (loading) {
     return (
       <div className="h-full w-full flex justify-center items-center">
-        <LoaderCircle className="animate-spin size-8" />
+        <LoaderCircleIcon className="animate-spin size-8" />
       </div>
     );
   }
 
   return (
     <div className="h-full w-full flex flex-col justify-center items-center">
-      <ImageOff className="size-24" />
-      {t('Failed to read image')}
+      <ImageOffIcon className="size-24" />
+      {t('failedToReadImage')}
     </div>
   );
 }

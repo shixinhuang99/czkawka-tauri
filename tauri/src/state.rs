@@ -2,7 +2,7 @@ use std::sync::{Arc, Mutex, atomic::AtomicBool};
 
 use crossbeam_channel::{Receiver, Sender, unbounded};
 use czkawka_core::{
-	progress_data::ProgressData,
+	common::progress_data::ProgressData,
 	tools::{
 		bad_extensions::BadExtensions, big_file::BigFile,
 		broken_files::BrokenFiles, duplicate::DuplicateFinder,

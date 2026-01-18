@@ -1,146 +1,137 @@
-import type { Table } from '@tanstack/react-table';
-import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
+import type { Row, Table } from '@tanstack/react-table';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
-  ArrowDownFromLine,
-  Folder,
-  FolderPen,
-  FolderPlus,
-  LoaderCircle,
-  ScrollText,
-  Trash2,
+  FolderIcon,
+  ScrollTextIcon,
+  Settings2Icon,
+  Trash2Icon,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
+import { Trans } from 'react-i18next';
 import {
   excludedDirsRowSelectionAtom,
+  excludedDirsRowSortingAtom,
   includedDirsRowSelectionAtom,
+  includedDirsRowSortingAtom,
   logsAtom,
 } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
-import { Button, ScrollArea, Textarea, TooltipButton } from '~/components';
+import { Button, ScrollArea } from '~/components';
+import { TooltipContent } from '~/components/custom/tooltip';
 import {
   createColumns,
   DataTable,
-  type RowSelection,
+  type RowSelectionUpdater,
 } from '~/components/data-table';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '~/components/shadcn/dialog';
 import { Tabs, TabsList, TabsTrigger } from '~/components/shadcn/tabs';
-import { useBoolean, useT } from '~/hooks';
+import { Tooltip, TooltipTrigger } from '~/components/shadcn/tooltip';
+import { useT } from '~/hooks';
 import type { DirsType } from '~/types';
-import { cn } from '~/utils/cn';
-import { getRowSelectionKeys, splitStr } from '~/utils/common';
+import { getRowSelectionKeys } from '~/utils/table-helper';
+import { DirsActions } from './dirs-actions';
 import { Operations } from './operations';
+import { ToolSettings } from './tool-settings';
 
 const DisplayType = {
   Dirs: 'dirs',
   Logs: 'logs',
+  ToolSettings: 'toolSettings',
 } as const;
 
-interface TableData {
+interface DirsData {
   path: string;
   field: DirsType;
+  // useless just for type checking
+  rawData: { path: string; [key: string]: any };
 }
 
-type PropsWithTable<T> = T & {
-  table: Table<TableData>;
-};
+interface BottomBarProps {
+  headerRef: React.RefObject<HTMLDivElement>;
+}
 
-type PropsWithRowSelection<T> = T & {
-  rowSelection: RowSelection;
-  onRowSelectionChange: (v: RowSelection) => void;
-};
-
-export function BottomBar() {
-  const [displayType, setDisplayType] = useState<string>(DisplayType.Dirs);
-  const minimizeBottomBar = useBoolean();
+export function BottomBar({ headerRef }: BottomBarProps) {
   const t = useT();
+  const [displayType, setDisplayType] = useState<string>(DisplayType.Dirs);
 
   return (
-    <div className="flex flex-col px-2 py-1 gap-1 border-t">
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col h-full px-2 py-1 gap-1">
+      <div ref={headerRef} className="flex justify-between items-center">
         <Operations />
         <div className="flex items-center gap-1">
           <Tabs value={displayType} onValueChange={setDisplayType}>
             <TabsList>
               <TabsTrigger value={DisplayType.Dirs}>
-                <Folder />
+                <FolderIcon />
+                <span className="ml-2 select-none">{t('directories')}</span>
+              </TabsTrigger>
+              <TabsTrigger value={DisplayType.ToolSettings}>
+                <Settings2Icon />
+                <span className="ml-2 select-none">{t('toolSettings')}</span>
               </TabsTrigger>
               <TabsTrigger value={DisplayType.Logs}>
-                <ScrollText />
+                <ScrollTextIcon />
+                <span className="ml-2 select-none">{t('logs')}</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
-          <TooltipButton
-            tooltip={minimizeBottomBar.value ? t('Expand') : t('Collapse')}
-            onClick={minimizeBottomBar.toggle}
-            variant="outline"
-          >
-            <ArrowDownFromLine
-              className={cn(
-                'transition-transform duration-300',
-                minimizeBottomBar.value && 'rotate-180',
-              )}
-            />
-          </TooltipButton>
         </div>
       </div>
-      {displayType === DisplayType.Dirs && !minimizeBottomBar.value && (
-        <div className="flex gap-1 h-[200px]">
+      {displayType === DisplayType.Dirs && (
+        <div className="flex gap-1 flex-1 min-h-0">
           <IncludedDirsTable />
           <ExcludedDirsTable />
         </div>
       )}
-      {displayType === DisplayType.Logs && !minimizeBottomBar.value && <Logs />}
+      {displayType === DisplayType.Logs && <Logs />}
+      {displayType === DisplayType.ToolSettings && <ToolSettings />}
     </div>
   );
 }
 
-function IncludedDirsTable() {
-  const t = useT();
-  const [settings, setSettings] = useAtom(settingsAtom);
-  const [rowSelection, setRowSelection] = useAtom(includedDirsRowSelectionAtom);
-  const data: TableData[] = useMemo(() => {
-    return settings.includedDirectories.map((path) => {
-      return {
-        path,
-        field: 'includedDirectories',
-      };
-    });
-  }, [settings]);
-
-  const columns = createColumns<TableData>([
+const includedDirsTableColumns = createColumns<DirsData>(
+  [
     {
       accessorKey: 'path',
-      header: t('Path'),
+      header: 'path',
       meta: {
         span: 10,
       },
+      cell: IncludeDirsPathCell,
     },
     {
       id: 'actions',
       meta: {
         span: 1,
       },
-      cell: ({ row, table }) => {
-        return <DirsRemoveButton {...row.original} table={table} />;
-      },
+      cell: DirsRemoveButton,
     },
-  ]);
+  ],
+  { customActions: true, headerClassName: '-ml-4' },
+);
 
-  const handleRowSelectionChagne = (v: RowSelection) => {
-    setRowSelection(v);
+function IncludedDirsTable() {
+  const t = useT();
+  const [settings, setSettings] = useAtom(settingsAtom);
+  const [rowSelection, setRowSelection] = useAtom(includedDirsRowSelectionAtom);
+  const [sorting, setSorting] = useAtom(includedDirsRowSortingAtom);
+  const data: DirsData[] = settings.includedDirectories.map((path) => {
+    return {
+      path,
+      field: 'includedDirectories',
+      rawData: {
+        path,
+      },
+    };
+  });
+
+  const handleRowSelectionChange = (updater: RowSelectionUpdater) => {
+    setRowSelection(updater);
+    const selectedKeys =
+      typeof updater === 'function' ? updater(rowSelection) : updater;
     setSettings((old) => {
       return {
         ...old,
-        includedDirectoriesReferenced: getRowSelectionKeys(v),
+        includedDirectoriesReferenced: getRowSelectionKeys(selectedKeys),
       };
     });
   };
@@ -148,43 +139,84 @@ function IncludedDirsTable() {
   return (
     <div className="w-1/2 flex flex-col">
       <div className="flex justify-between items-center">
-        <h3 className="text-center">{t('Include Directories')}</h3>
+        <SectionHeader>{t('includeDirectories')}</SectionHeader>
         <DirsActions
           rowSelection={rowSelection}
-          onRowSelectionChange={handleRowSelectionChagne}
+          onRowSelectionChange={handleRowSelectionChange}
           field="includedDirectories"
         />
       </div>
       <DataTable
         className="flex-1"
         data={data}
-        columns={columns}
-        emptyTip={t('Please add path')}
+        columns={includedDirsTableColumns}
+        emptyTip={t('pleaseAddPath')}
         layout="grid"
         rowSelection={rowSelection}
-        onRowSelectionChange={handleRowSelectionChagne}
+        onRowSelectionChange={handleRowSelectionChange}
+        sorting={sorting}
+        onSortingChange={setSorting}
       />
     </div>
   );
 }
 
-function ExcludedDirsTable() {
-  const t = useT();
-  const settings = useAtomValue(settingsAtom);
-  const [rowSelection, setRowSelection] = useAtom(excludedDirsRowSelectionAtom);
-  const data: TableData[] = useMemo(() => {
-    return settings.excludedDirectories.map((path) => {
-      return {
-        path,
-        field: 'excludedDirectories',
-      };
-    });
-  }, [settings]);
+function findExcludedParentPath(
+  path: string,
+  excludedDirectories: string[],
+): string | null {
+  for (const excludedPath of excludedDirectories) {
+    const separator = excludedPath.includes('\\') ? '\\' : '/';
+    const normalizedExcludedPath = excludedPath.endsWith(separator)
+      ? excludedPath
+      : excludedPath + separator;
 
-  const columns = createColumns<TableData>([
+    if (path.startsWith(normalizedExcludedPath) || path === excludedPath) {
+      return excludedPath;
+    }
+  }
+  return null;
+}
+
+function IncludeDirsPathCell({ row }: { row: Row<DirsData> }) {
+  const { path } = row.original;
+
+  const settings = useAtomValue(settingsAtom);
+
+  const excludedParentPath = findExcludedParentPath(
+    path,
+    settings.excludedDirectories,
+  );
+
+  if (excludedParentPath) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="text-muted-foreground cursor-help line-through">
+            {path}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>
+          <Trans
+            i18nKey="pathInvalid"
+            values={{ excludedPath: `"${excludedParentPath}"` }}
+          >
+            This path is invalid because it is included in the excluded path
+            <span className="text-primary" />
+          </Trans>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return path;
+}
+
+const excludedDirsTableColumns = createColumns<DirsData>(
+  [
     {
       accessorKey: 'path',
-      header: t('Path'),
+      header: 'path',
       meta: {
         span: 10,
       },
@@ -194,16 +226,31 @@ function ExcludedDirsTable() {
       meta: {
         span: 1,
       },
-      cell: ({ row, table }) => {
-        return <DirsRemoveButton {...row.original} table={table} />;
-      },
+      cell: DirsRemoveButton,
     },
-  ]);
+  ],
+  { customActions: true, headerClassName: '-ml-4' },
+);
+
+function ExcludedDirsTable() {
+  const t = useT();
+  const settings = useAtomValue(settingsAtom);
+  const [rowSelection, setRowSelection] = useAtom(excludedDirsRowSelectionAtom);
+  const [sorting, setSorting] = useAtom(excludedDirsRowSortingAtom);
+  const data: DirsData[] = settings.excludedDirectories.map((path) => {
+    return {
+      path,
+      field: 'excludedDirectories',
+      rawData: {
+        path,
+      },
+    };
+  });
 
   return (
     <div className="flex-1 flex flex-col">
       <div className="flex justify-between items-center">
-        <h3 className="text-center">{t('Exclude Directories')}</h3>
+        <SectionHeader>{t('excludeDirectories')}</SectionHeader>
         <DirsActions
           rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
@@ -213,18 +260,26 @@ function ExcludedDirsTable() {
       <DataTable
         className="flex-1"
         data={data}
-        columns={columns}
-        emptyTip={t('Please add path')}
+        columns={excludedDirsTableColumns}
+        emptyTip={t('pleaseAddPath')}
         layout="grid"
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
+        sorting={sorting}
+        onSortingChange={setSorting}
       />
     </div>
   );
 }
 
-function DirsRemoveButton(props: PropsWithTable<TableData>) {
-  const { path, field, table } = props;
+function DirsRemoveButton({
+  row,
+  table,
+}: {
+  row: Row<DirsData>;
+  table: Table<DirsData>;
+}) {
+  const { path, field } = row.original;
   const setSettings = useSetAtom(settingsAtom);
 
   const handleRemovePath = () => {
@@ -248,109 +303,8 @@ function DirsRemoveButton(props: PropsWithTable<TableData>) {
       size="icon"
       onClick={handleRemovePath}
     >
-      <Trash2 />
+      <Trash2Icon />
     </Button>
-  );
-}
-
-function DirsActions(props: PropsWithRowSelection<Pick<TableData, 'field'>>) {
-  const t = useT();
-  const { field, rowSelection, onRowSelectionChange } = props;
-  const setSettings = useSetAtom(settingsAtom);
-  const manualAddDialogOpen = useBoolean();
-  const [manualAddPaths, setManualAddPaths] = useState('');
-  const openFileDialogLoading = useBoolean();
-
-  const handleRemovePaths = () => {
-    const selected = new Set(getRowSelectionKeys(rowSelection));
-    if (!selected.size) {
-      return;
-    }
-    setSettings((settings) => {
-      return {
-        ...settings,
-        [field]: settings[field].filter((path) => !selected.has(path)),
-      };
-    });
-    onRowSelectionChange({});
-  };
-
-  const handleAddPath = async () => {
-    openFileDialogLoading.on();
-    const dir = await openFileDialog({ multiple: false, directory: true });
-    openFileDialogLoading.off();
-    if (!dir) {
-      return;
-    }
-    setSettings((settings) => {
-      const dirs = settings[field];
-      if (dirs.includes(dir)) {
-        return settings;
-      }
-      return {
-        ...settings,
-        [field]: [dir, ...dirs],
-      };
-    });
-  };
-
-  const handleManualAddOk = () => {
-    const paths = splitStr(manualAddPaths);
-    setSettings((settings) => {
-      return {
-        ...settings,
-        [field]: Array.from(new Set([...paths, ...settings[field]])),
-      };
-    });
-    manualAddDialogOpen.off();
-  };
-
-  return (
-    <div>
-      <TooltipButton tooltip={t('Add')} onClick={handleAddPath}>
-        {openFileDialogLoading.value ? (
-          <LoaderCircle className="animate-spin" />
-        ) : (
-          <FolderPlus />
-        )}
-      </TooltipButton>
-      <Dialog
-        open={manualAddDialogOpen.value}
-        onOpenChange={(v) => {
-          setManualAddPaths('');
-          manualAddDialogOpen.set(v);
-        }}
-      >
-        <DialogTrigger asChild>
-          <TooltipButton tooltip={t('Manual add')}>
-            <FolderPen />
-          </TooltipButton>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('Manual add')}</DialogTitle>
-            <DialogDescription>
-              {t('Manually add paths desc')}
-            </DialogDescription>
-          </DialogHeader>
-          <Textarea
-            rows={10}
-            value={manualAddPaths}
-            onChange={(e) => setManualAddPaths(e.target.value)}
-            className="resize-none"
-          />
-          <DialogFooter>
-            <Button variant="secondary" onClick={manualAddDialogOpen.off}>
-              {t('Cancel')}
-            </Button>
-            <Button onClick={handleManualAddOk}>{t('Ok')}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      <TooltipButton tooltip={t('Remove selected')} onClick={handleRemovePaths}>
-        <Trash2 />
-      </TooltipButton>
-    </div>
   );
 }
 
@@ -358,8 +312,16 @@ function Logs() {
   const logs = useAtomValue(logsAtom);
 
   return (
-    <ScrollArea className="h-[200px] rounded-md border text-card-foreground px-2 py-1 dark:bg-gray-900">
+    <ScrollArea className="flex-1 rounded-md border text-card-foreground px-2 py-1">
       <div className="whitespace-break-spaces">{logs}</div>
     </ScrollArea>
+  );
+}
+
+function SectionHeader({ children }: React.ComponentPropsWithoutRef<'h3'>) {
+  return (
+    <h3 className="text-sm font-semibold text-muted-foreground tracking-wider">
+      {children}
+    </h3>
   );
 }

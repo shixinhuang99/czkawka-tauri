@@ -1,12 +1,12 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { Ban, Search } from 'lucide-react';
+import { BanIcon, SearchIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { currentToolAtom, logsAtom, progressAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
 import {
-  toolInProgressDataAtom,
-  toolInProgressRowSelectionAtom,
-} from '~/atom/tools';
+  clearInProgressRowSelectionAtom,
+  setInProgressTableDataAtom,
+} from '~/atom/table';
 import { OperationButton } from '~/components';
 import { getDefaultProgress, Tools } from '~/consts';
 import { useListenEffect, useT } from '~/hooks';
@@ -23,7 +23,7 @@ import {
   convertSymlinksFileEntries,
   convertTemporaryFileEntries,
   convertVideosEntries,
-} from '~/utils/common';
+} from '~/utils/convert';
 
 const scanCmdMap: Record<string, ScanCmd> = {
   [Tools.DuplicateFiles]: 'scan_duplicate_files',
@@ -58,9 +58,9 @@ export function ScanButton() {
   const settings = useAtomValue(settingsAtom);
   const [progress, setProgress] = useAtom(progressAtom);
   const setLogs = useSetAtom(logsAtom);
-  const setToolInProgressData = useSetAtom(toolInProgressDataAtom);
-  const setToolInProgressRowSelection = useSetAtom(
-    toolInProgressRowSelectionAtom,
+  const setInProgressTableData = useSetAtom(setInProgressTableDataAtom);
+  const clearInProgressRowSelection = useSetAtom(
+    clearInProgressRowSelectionAtom,
   );
   const t = useT();
 
@@ -73,8 +73,8 @@ export function ScanButton() {
     setLogs(message);
     const convertFn = convertFnMap[cmd];
     const data = convertFn(list);
-    setToolInProgressData(data);
-    setToolInProgressRowSelection({});
+    setInProgressTableData(data);
+    clearInProgressRowSelection();
     setProgress(getDefaultProgress());
   });
 
@@ -104,16 +104,16 @@ export function ScanButton() {
     <>
       {progress.tool ? (
         <OperationButton disabled={progress.stopping} onClick={handleStopScan}>
-          <Ban />
-          {t('Stop')}
+          <BanIcon />
+          {t('stop')}
         </OperationButton>
       ) : (
         <OperationButton
           disabled={!settings.includedDirectories.length}
           onClick={handleScan}
         >
-          <Search />
-          {t('Scan')}
+          <SearchIcon />
+          {t('scan')}
         </OperationButton>
       )}
     </>

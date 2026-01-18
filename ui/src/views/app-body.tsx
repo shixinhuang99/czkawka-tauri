@@ -1,59 +1,32 @@
 import { useAtomValue } from 'jotai';
 import { currentToolAtom, progressAtom } from '~/atom/primitive';
 import { Progress } from '~/components';
-import { Tools } from '~/consts';
 import { useT } from '~/hooks';
-import { BadExtensions } from './bad-extensions';
-import { BigFiles } from './big-files';
-import { BrokenFiles } from './broken-files';
-import { DuplicateFiles } from './duplicate-files';
-import { EmptyFiles } from './empty-files';
-import { EmptyFolders } from './empty-folders';
-import { InvalidSymlinks } from './invalid-symlinks';
-import { MusicDuplicates } from './music-duplicates';
-import { SimilarImages } from './similar-images';
-import { SimilarVideos } from './similar-videos';
-import { TemporaryFiles } from './temporary-files';
-
-const tableMap: Record<string, () => React.JSX.Element> = {
-  [Tools.DuplicateFiles]: DuplicateFiles,
-  [Tools.EmptyFolders]: EmptyFolders,
-  [Tools.BigFiles]: BigFiles,
-  [Tools.EmptyFiles]: EmptyFiles,
-  [Tools.TemporaryFiles]: TemporaryFiles,
-  [Tools.SimilarImages]: SimilarImages,
-  [Tools.SimilarVideos]: SimilarVideos,
-  [Tools.MusicDuplicates]: MusicDuplicates,
-  [Tools.InvalidSymlinks]: InvalidSymlinks,
-  [Tools.BrokenFiles]: BrokenFiles,
-  [Tools.BadExtensions]: BadExtensions,
-};
+import { ScanResultTable } from './scan-result-table';
 
 export function AppBody() {
+  const t = useT();
   const progress = useAtomValue(progressAtom);
   const currentTool = useAtomValue(currentToolAtom);
-  const t = useT();
-
-  const Table = tableMap[currentTool] || Fallback;
 
   return (
-    <div className="flex-1 flex flex-col w-full h-px">
-      <Table />
+    <div className="flex-1 flex flex-col w-full h-px pb-[3px]">
+      <ScanResultTable className="flex-1 rounded-none border-none grow" />
       {progress.tool === currentTool && (
         <div className="h-20 border-t px-3">
           {progress.stopping ? (
             <div className="h-full flex justify-center items-center">
-              {t('Stopping scan')}
+              {t('stoppingScan')}
             </div>
           ) : (
             <>
               <div className="text-center h-6">{progress.data.stepName}</div>
               <ProgressWrap
-                label={t('Current stage')}
+                label={t('currentStage')}
                 value={progress.data.currentProgress}
               />
               <ProgressWrap
-                label={t('All stages')}
+                label={t('allStages')}
                 value={progress.data.allProgress}
               />
             </>
@@ -78,8 +51,4 @@ function ProgressWrap(props: { label: string; value: number }) {
       <div className="w-12 shrink-0 text-right">{value}%</div>
     </div>
   );
-}
-
-function Fallback() {
-  return <div>Something wrong</div>;
 }

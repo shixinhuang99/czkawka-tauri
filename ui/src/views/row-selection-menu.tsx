@@ -1,9 +1,12 @@
+import type { RowSelectionState } from '@tanstack/react-table';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { SquareMousePointer } from 'lucide-react';
+import { SquareMousePointerIcon } from 'lucide-react';
 import { currentToolAtom } from '~/atom/primitive';
-import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
+import {
+  currentFilteredTableDataAtom,
+  currentRowSelectionAtom,
+} from '~/atom/table';
 import { OperationButton } from '~/components';
-import type { RowSelection } from '~/components/data-table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,138 +15,135 @@ import {
 } from '~/components/shadcn/dropdown-menu';
 import { Tools } from '~/consts';
 import { useT } from '~/hooks';
-import type { BaseEntry, RefEntry } from '~/types';
-import { getPathsFromEntries, getRowSelectionKeys } from '~/utils/common';
+import type { BaseEntry } from '~/types';
+import { is2DArray } from '~/utils/common';
+import { getPathsFromEntries, getRowSelectionKeys } from '~/utils/table-helper';
 
-const toolsWithSizeAndDateSelect = new Set<string>([
+const toolsWithExtraSelection = new Set<string>([
   Tools.DuplicateFiles,
   Tools.SimilarImages,
   Tools.SimilarVideos,
   Tools.MusicDuplicates,
 ]);
 
-export function RowSelectionMenu(props: { disabled: boolean }) {
-  const { disabled } = props;
-
-  const currentTool = useAtomValue(currentToolAtom);
-  const currentToolData = useAtomValue(currentToolDataAtom);
-  const setCurrentToolRowSelection = useSetAtom(currentToolRowSelectionAtom);
+export function SelectionMenu({ disabled }: { disabled: boolean }) {
   const t = useT();
+  const currentTool = useAtomValue(currentToolAtom);
+  const currentFilteredTableData = useAtomValue(currentFilteredTableDataAtom);
+  const setCurrentRowSelection = useSetAtom(currentRowSelectionAtom);
 
   const handleInvertSelection = () => {
-    invertSelection(currentToolData, setCurrentToolRowSelection);
+    const paths = getPathsFromEntries(currentFilteredTableData);
+    setCurrentRowSelection((old) => invertRowSelection(old, paths));
   };
 
-  const handleSelectXXX = (
+  const handleSelectAll = () => {
+    const paths = getPathsFromEntries(currentFilteredTableData);
+    setCurrentRowSelection(pathsToRowSelection(paths));
+  };
+
+  const handleClearSelection = () => {
+    setCurrentRowSelection({});
+  };
+
+  const handleExtraSelecttion = (
     type: 'size' | 'date' | 'resolution',
     dir: 'asc' | 'desc',
   ) => {
-    if (!toolsWithSizeAndDateSelect.has(currentTool)) {
+    if (
+      !toolsWithExtraSelection.has(currentTool) ||
+      !is2DArray(currentFilteredTableData)
+    ) {
       return;
     }
-    setCurrentToolRowSelection(selectItem(currentToolData, type, dir));
+    setCurrentRowSelection(selectItem(currentFilteredTableData, type, dir));
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <OperationButton disabled={disabled}>
-          <SquareMousePointer />
-          {t('Select')}
+          <SquareMousePointerIcon />
+          {t('select')}
         </OperationButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent side="top">
         {currentTool === Tools.SimilarImages && (
           <>
             <DropdownMenuItem
-              onClick={() => handleSelectXXX('resolution', 'asc')}
+              onClick={() => handleExtraSelecttion('resolution', 'asc')}
             >
-              {t('Select the highest resolution')}
+              {t('selectTheHighestResolution')}
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => handleSelectXXX('resolution', 'desc')}
+              onClick={() => handleExtraSelecttion('resolution', 'desc')}
             >
-              {t('Select the lowest resolution')}
+              {t('selectTheLowestResolution')}
             </DropdownMenuItem>
           </>
         )}
-        {toolsWithSizeAndDateSelect.has(currentTool) && (
+        {toolsWithExtraSelection.has(currentTool) && (
           <>
-            <DropdownMenuItem onClick={() => handleSelectXXX('size', 'asc')}>
-              {t('Select the biggest size')}
+            <DropdownMenuItem
+              onClick={() => handleExtraSelecttion('size', 'asc')}
+            >
+              {t('selectTheBiggestSize')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSelectXXX('size', 'desc')}>
-              {t('Select the smallest size')}
+            <DropdownMenuItem
+              onClick={() => handleExtraSelecttion('size', 'desc')}
+            >
+              {t('selectTheSmallestSize')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSelectXXX('date', 'asc')}>
-              {t('Select the newest')}
+            <DropdownMenuItem
+              onClick={() => handleExtraSelecttion('date', 'asc')}
+            >
+              {t('selectTheNewest')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSelectXXX('date', 'desc')}>
-              {t('Select the oldest')}
+            <DropdownMenuItem
+              onClick={() => handleExtraSelecttion('date', 'desc')}
+            >
+              {t('selectTheOldest')}
             </DropdownMenuItem>
           </>
         )}
         <DropdownMenuItem onClick={handleInvertSelection}>
-          {t('Invert selection')}
+          {t('invertSelection')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSelectAll}>
+          {t('selectAll')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleClearSelection}>
+          {t('clearSelection')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
 
-function invertSelection<T extends BaseEntry & Partial<RefEntry>>(
-  data: T[],
-  setFn: (updater: (v: RowSelection) => RowSelection) => void,
-) {
-  const paths = getPathsFromEntries(data);
-  setFn((old) => convertRowSelection(old, paths));
-}
-
-function convertRowSelection(old: RowSelection, paths: string[]): RowSelection {
+function invertRowSelection(
+  old: RowSelectionState,
+  paths: string[],
+): RowSelectionState {
   const selected = new Set(getRowSelectionKeys(old));
   const unselected = paths.filter((v) => !selected.has(v));
-  const result = pathsToRowSelection(unselected);
-  return result;
+  return pathsToRowSelection(unselected);
 }
 
-function pathsToRowSelection(paths: string[]): RowSelection {
-  const obj = Object.fromEntries(
+function pathsToRowSelection(paths: string[]): RowSelectionState {
+  return Object.fromEntries(
     paths.map((v) => {
       return [v, true];
     }),
   );
-  return obj;
 }
 
-function groupBy<T extends RefEntry>(list: T[]): T[][] {
-  const map: Map<number, T[]> = new Map();
-
-  for (const item of list) {
-    if (!item.groupId) {
-      continue;
-    }
-    const v = map.get(item.groupId);
-    if (v) {
-      v.push(item);
-    } else {
-      map.set(item.groupId, [item]);
-    }
-  }
-
-  return Array.from(map.values());
-}
-
-interface WithRaw {
-  raw: Record<string, any>;
-}
-
-function selectItem<T extends BaseEntry & RefEntry & WithRaw>(
-  data: T[],
+function selectItem<T extends BaseEntry>(
+  data: T[][],
   type: 'size' | 'date' | 'resolution',
   dir: 'asc' | 'desc',
-): RowSelection {
+): RowSelectionState {
   const paths: string[] = [];
-  let compareFn: (<T extends WithRaw>(a: T, b: T) => T) | null = null;
+  let compareFn: ((a: T, b: T) => T) | null = null;
   if (type === 'size' && dir === 'asc') {
     compareFn = pickBiggest;
   } else if (type === 'size' && dir === 'desc') {
@@ -160,8 +160,7 @@ function selectItem<T extends BaseEntry & RefEntry & WithRaw>(
   if (!compareFn) {
     return {};
   }
-  const groups = groupBy(data);
-  for (const group of groups) {
+  for (const group of data) {
     if (!group.length) {
       continue;
     }
@@ -171,26 +170,32 @@ function selectItem<T extends BaseEntry & RefEntry & WithRaw>(
   return pathsToRowSelection(paths);
 }
 
-function pickBiggest<T extends WithRaw>(a: T, b: T): T {
-  return a.raw.size >= b.raw.size ? a : b;
+function pickBiggest<T extends BaseEntry>(a: T, b: T): T {
+  return a.rawData.size >= b.rawData.size ? a : b;
 }
 
-function pickSmallest<T extends WithRaw>(a: T, b: T): T {
-  return a.raw.size <= b.raw.size ? a : b;
+function pickSmallest<T extends BaseEntry>(a: T, b: T): T {
+  return a.rawData.size <= b.rawData.size ? a : b;
 }
 
-function pickNewst<T extends WithRaw>(a: T, b: T): T {
-  return a.raw.modified_date >= b.raw.modified_date ? a : b;
+function pickNewst<T extends BaseEntry>(a: T, b: T): T {
+  return a.rawData.modified_date >= b.rawData.modified_date ? a : b;
 }
 
-function pickOldest<T extends WithRaw>(a: T, b: T): T {
-  return a.raw.modified_date <= b.raw.modified_date ? a : b;
+function pickOldest<T extends BaseEntry>(a: T, b: T): T {
+  return a.rawData.modified_date <= b.rawData.modified_date ? a : b;
 }
 
-function pickHighestResolution<T extends WithRaw>(a: T, b: T): T {
-  return a.raw.width * a.raw.height >= b.raw.width * b.raw.height ? a : b;
+function pickHighestResolution<T extends BaseEntry>(a: T, b: T): T {
+  return a.rawData.width * a.rawData.height >=
+    b.rawData.width * b.rawData.height
+    ? a
+    : b;
 }
 
-function pickLowestResolution<T extends WithRaw>(a: T, b: T): T {
-  return a.raw.width * a.raw.height <= b.raw.width * b.raw.height ? a : b;
+function pickLowestResolution<T extends BaseEntry>(a: T, b: T): T {
+  return a.rawData.width * a.rawData.height <=
+    b.rawData.width * b.rawData.height
+    ? a
+    : b;
 }

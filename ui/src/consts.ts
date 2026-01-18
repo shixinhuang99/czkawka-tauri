@@ -1,9 +1,19 @@
 import type { PlatformSettings, Preset, Progress, Settings } from '~/types';
 
+export const THEME_KEY = 'theme';
+export const SETTINGS_PRESETS_KEY = 'settingPresets';
+export const CURRENT_TOOL_KEY = 'currentTool';
+export const LANGUAGE_KEY = 'language';
+
 export const Theme = {
   Dark: 'dark',
   Light: 'light',
   System: 'system',
+} as const;
+
+export const Languages = {
+  En: 'en',
+  Zh: 'zh',
 } as const;
 
 export const DARK_MODE_MEDIA = '(prefers-color-scheme: dark)';
@@ -133,17 +143,17 @@ export function getDefaultPlatformSettings(): PlatformSettings {
 }
 
 export const Tools = {
-  DuplicateFiles: 'Duplicate Files',
-  EmptyFolders: 'Empty Folders',
-  BigFiles: 'Big Files',
-  EmptyFiles: 'Empty Files',
-  TemporaryFiles: 'Temporary Files',
-  SimilarImages: 'Similar Images',
-  SimilarVideos: 'Similar Videos',
-  MusicDuplicates: 'Music Duplicates',
-  InvalidSymlinks: 'Invalid Symlinks',
-  BrokenFiles: 'Broken Files',
-  BadExtensions: 'Bad Extensions',
+  DuplicateFiles: 'duplicateFiles',
+  EmptyFolders: 'emptyFolders',
+  BigFiles: 'bigFiles',
+  EmptyFiles: 'emptyFiles',
+  TemporaryFiles: 'temporaryFiles',
+  SimilarImages: 'similarImages',
+  SimilarVideos: 'similarVideos',
+  MusicDuplicates: 'musicDuplicates',
+  InvalidSymlinks: 'invalidSymlinks',
+  BrokenFiles: 'brokenFiles',
+  BadExtensions: 'badExtensions',
 } as const;
 
 export function getDefaultProgress(): Progress {
@@ -157,3 +167,5 @@ export function getDefaultProgress(): Progress {
     },
   };
 }
+
+export const HIDDEN_ROW_PREFIX = '__hidden__';

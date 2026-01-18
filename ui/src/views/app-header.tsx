@@ -1,68 +1,78 @@
-import { openUrl } from '@tauri-apps/plugin-opener';
-import { Languages } from 'lucide-react';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Select, TooltipButton } from '~/components';
-import { GitHub } from '~/components/icons';
-import { SelectIconTrigger } from '~/components/select';
+import { useAtom, useAtomValue } from 'jotai';
+import { useDebouncedCallback } from 'use-debounce';
+import { searchInputValueAtom } from '~/atom/primitive';
+import {
+  currentFilterAtom,
+  foundCountAtom,
+  selectedCountAtom,
+  totalCountAtom,
+} from '~/atom/table';
+import { SearchInput } from '~/components';
 import { useT } from '~/hooks';
-import { storage } from '~/utils/storage';
+import { getDataTauriDragRegionProp } from '~/styles';
+import { cn } from '~/utils/cn';
 import { SettingsButton } from './settings';
-import { ThemeToggle } from './theme-toggle';
 
 export function AppHeader() {
+  const t = useT();
+  const [filter, setFilter] = useAtom(currentFilterAtom);
+  const debouncedSetFilter = useDebouncedCallback(setFilter, 300);
+  const [inputValue, setInputValue] = useAtom(searchInputValueAtom);
+  const totalCount = useAtomValue(totalCountAtom);
+  const selectedCount = useAtomValue(selectedCountAtom);
+  const foundCount = useAtomValue(foundCountAtom);
+
+  const handleInputChange = (v: string) => {
+    setInputValue(v);
+    debouncedSetFilter(v.trim());
+  };
+
   return (
     <div
-      className="w-full h-11 flex justify-end items-center px-4 py-1 border-b border-border/50 dark:border-border"
-      data-tauri-drag-region={PLATFORM === 'darwin' ? true : undefined}
+      className="w-full h-11 flex justify-between items-center gap-4 px-4 py-1 border-b"
+      {...getDataTauriDragRegionProp()}
     >
-      <div className="flex items-center gap-1.5">
-        <ChangeLanguageButton />
-        <SettingsButton />
-        <ThemeToggle />
-        <ViewGitHubButton />
+      <div className="flex-1 flex gap-4 max-w-[85%]">
+        <SearchInput
+          placeholder={`${t('search')}...`}
+          value={inputValue}
+          onChange={handleInputChange}
+          className="w-full"
+        />
+        <div className="flex items-center gap-2 text-xs whitespace-nowrap">
+          <CountItem
+            label={t('total')}
+            count={totalCount}
+            className="text-blue-600 dark:text-blue-400"
+          />
+          <CountItem
+            label={t('selected')}
+            count={selectedCount}
+            className="text-green-600 dark:text-green-400"
+          />
+          <CountItem
+            label={t('found')}
+            count={filter ? foundCount : '--'}
+            className="text-orange-600 dark:text-orange-400"
+          />
+        </div>
       </div>
+      <SettingsButton />
     </div>
   );
 }
 
-function ViewGitHubButton() {
-  const t = useT();
-
-  return (
-    <TooltipButton
-      tooltip={t('View source code')}
-      onClick={() => openUrl(REPOSITORY_URL)}
-    >
-      <GitHub />
-    </TooltipButton>
-  );
+interface CountItemProps {
+  label: string;
+  count: number | string;
+  className?: string;
 }
 
-function ChangeLanguageButton() {
-  const { i18n } = useTranslation();
-  const [value, setValue] = useState(i18n.language);
-
-  const handleLanguageChange = (v: string) => {
-    setValue(v);
-    i18n.changeLanguage(v);
-    storage.setLanguage(v);
-    document.documentElement.lang = v;
-  };
-
+function CountItem({ label, count, className }: CountItemProps) {
   return (
-    <Select
-      trigger={
-        <SelectIconTrigger>
-          <Languages />
-        </SelectIconTrigger>
-      }
-      value={value}
-      onValueChange={handleLanguageChange}
-      options={[
-        { label: 'English', value: 'en' },
-        { label: '简体中文', value: 'zh' },
-      ]}
-    />
+    <div className="flex items-center gap-1">
+      <span className="text-muted-foreground">{label}:</span>
+      <span className={cn('font-semibold', className)}>{count}</span>
+    </div>
   );
 }

@@ -6,7 +6,6 @@
 set windows-shell := ["cmd.exe", "/c"]
 
 alias pr := prepare-release
-alias pt := push-tag
 alias dt := delete-tag
 
 default:
@@ -23,8 +22,11 @@ toolchain:
 	pnpm -v
 	pnpm tauri -V
 
+run:
+	pnpm tsx ./scripts/run.ts
+
 fmt:
-	node --run fmt
+	pnpm biome check --linter-enabled=false --write
 	cargo fmt
 	taplo fmt
 
@@ -32,22 +34,18 @@ check:
 	cargo fmt --check
 	taplo fmt --check
 	cargo clippy --no-deps --all-features -- -D warnings
-	node --run check
+	pnpm biome check
 	just typecheck
 
 typecheck:
-	node --run typecheck:ui
-	node --run typecheck:other
+	pnpm tsc -p ./ui/tsconfig.json --noEmit
+	pnpm tsc -p ./tsconfig.json --noEmit
 
-prepare-release tag:
-	pnpm tsx ./scripts/set-pkg-version.ts {{tag}}
-	cargo set-version {{tag}}
-	just fmt
-	git commit -am "prepare release {{tag}}"
+prepare-release type:
+	pnpm tsx ./scripts/prepare-release.ts {{type}}
 
-push-tag tag:
-	git tag {{tag}}
-	git push origin {{tag}}
+release:
+	pnpm tsx ./scripts/release.ts
 
 delete-tag tag:
 	git tag -d {{tag}}

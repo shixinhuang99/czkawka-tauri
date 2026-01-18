@@ -1,19 +1,33 @@
 import {
+  type AccessorKeyColumnDef,
+  type Cell,
+  type Column,
   type ColumnDef,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
   type Row,
   type RowSelectionState,
+  type SortingState,
+  type TableOptions,
   type Table as TTable,
   useReactTable,
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { revealItemInDir } from '@tauri-apps/plugin-opener';
-import { FolderOpen } from 'lucide-react';
+import {
+  ArrowDownIcon,
+  ArrowUpDownIcon,
+  ArrowUpIcon,
+  FolderOpenIcon,
+} from 'lucide-react';
 import { useRef } from 'react';
 import { useT } from '~/hooks';
+import { scrollBarClassNames } from '~/styles';
 import type { BaseEntry } from '~/types';
 import { cn } from '~/utils/cn';
+import { Button } from './shadcn/button';
 import { Checkbox } from './shadcn/checkbox';
 import {
   Table,
@@ -26,53 +40,76 @@ import {
 import { toastError } from './toast';
 import { TooltipButton } from './tooltip-button';
 
-interface DataTableProps<T> {
-  data: T[];
-  columns: ColumnDef<T>[];
+export type RowSelectionUpdater =
+  | RowSelectionState
+  | ((v: RowSelectionState) => RowSelectionState);
+
+export type SortingStateUpdater =
+  | SortingState
+  | ((v: SortingState) => SortingState);
+
+export type FilterStateUpdater = string | ((v: string) => string);
+
+interface DataTableProps<T>
+  extends Pick<
+    TableOptions<T>,
+    | 'data'
+    | 'columns'
+    | 'onRowSelectionChange'
+    | 'onSortingChange'
+    | 'manualSorting'
+    | 'onGlobalFilterChange'
+    | 'manualFiltering'
+  > {
   className?: string;
   emptyTip?: React.ReactNode;
   layout?: 'grid' | 'resizeable';
   rowSelection: RowSelectionState;
-  onRowSelectionChange: (v: RowSelectionState) => void;
+  sorting: SortingState;
+  globalFilter?: string;
 }
 
-export type RowSelection = RowSelectionState;
-
-export function DataTable<T extends BaseEntry>(props: DataTableProps<T>) {
-  'use no memo';
-
-  const {
-    data,
-    columns,
-    className,
-    emptyTip,
-    layout = 'resizeable',
-    rowSelection,
-    onRowSelectionChange,
-  } = props;
-
+export function DataTable<T extends BaseEntry>({
+  data,
+  columns,
+  className,
+  emptyTip,
+  layout = 'resizeable',
+  rowSelection,
+  onRowSelectionChange,
+  sorting,
+  onSortingChange,
+  manualSorting,
+  globalFilter,
+  onGlobalFilterChange,
+  manualFiltering,
+}: DataTableProps<T>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    columnResizeMode: 'onChange',
     getRowId: (row) => row.path,
-    onRowSelectionChange: (updater) => {
-      const newSelection =
-        typeof updater === 'function' ? updater(rowSelection) : updater;
-      onRowSelectionChange(newSelection);
+    state: {
+      rowSelection,
+      sorting,
+      globalFilter,
     },
+    onRowSelectionChange,
     enableRowSelection: (row) => {
-      const original = row.original as { isRef?: boolean; hidden?: boolean };
-      if (original.isRef || original.hidden) {
+      if (row.original.isRef || row.original.hidden) {
         return false;
       }
       return true;
     },
-    state: {
-      rowSelection,
-    },
-    columnResizeMode: 'onChange',
+    onSortingChange,
+    manualSorting,
+    onGlobalFilterChange,
+    manualFiltering,
   });
+  const t = useT();
 
   const isGrid = layout === 'grid';
   const isResizeable = layout === 'resizeable';
@@ -80,7 +117,8 @@ export function DataTable<T extends BaseEntry>(props: DataTableProps<T>) {
   return (
     <div
       className={cn(
-        'rounded-sm border overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent scrollbar-thumb-rounded-full',
+        'rounded-sm border overflow-x-auto overflow-y-hidden',
+        scrollBarClassNames(),
         className,
       )}
     >
@@ -125,6 +163,7 @@ export function DataTable<T extends BaseEntry>(props: DataTableProps<T>) {
                         className="w-1 h-full border-border border-r hover:bg-primary cursor-col-resize absolute right-0"
                         onDoubleClick={() => header.column.resetSize()}
                         onMouseDown={header.getResizeHandler()}
+                        title={t('resetOnDoubleClick')}
                       />
                     )}
                   </TableHead>
@@ -145,16 +184,14 @@ interface TableBodyProps<T> {
   layout?: 'grid' | 'resizeable';
 }
 
-function DataTableBody<T>(props: TableBodyProps<T>) {
-  const { table, emptyTip, layout } = props;
-  const { rows = [] } = table.getRowModel();
+function DataTableBody<T>({ table, emptyTip, layout }: TableBodyProps<T>) {
+  const rows = table.getRowModel().rows || [];
 
   const containerRef = useRef<HTMLDivElement>(null);
   const rowVirtualizer = useVirtualizer<HTMLDivElement, HTMLDivElement>({
     count: rows.length,
     estimateSize: () => 40,
     getScrollElement: () => containerRef.current,
-    measureElement: (element) => element?.getBoundingClientRect().height,
     overscan: 5,
   });
   const t = useT();
@@ -165,7 +202,7 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
   return (
     <div
       ref={containerRef}
-      className="overflow-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent scrollbar-thumb-rounded-full"
+      className={cn('overflow-auto', scrollBarClassNames())}
       style={{ height: 'calc(100% - 41px)' }}
     >
       <TableBody
@@ -196,7 +233,7 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
                     <TableCell
                       key={cell.id}
                       className="truncate"
-                      title={cell.getValue<any>()}
+                      title={cell.getValue<string>()}
                       style={{
                         gridColumn:
                           isGrid && span
@@ -218,7 +255,9 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
         ) : (
           <TableRow className="h-full">
             <TableCell className="h-full flex justify-center items-center">
-              {emptyTip || t('No data')}
+              <span className="text-muted-foreground">
+                {emptyTip || t('noData')}
+              </span>
             </TableCell>
           </TableRow>
         )}
@@ -227,10 +266,8 @@ function DataTableBody<T>(props: TableBodyProps<T>) {
   );
 }
 
-export function TableRowSelectionHeader<T>(props: { table: TTable<T> }) {
+function TableRowSelectionHeader<T>({ table }: { table: TTable<T> }) {
   'use no memo';
-
-  const { table } = props;
 
   return (
     <Checkbox
@@ -244,10 +281,12 @@ export function TableRowSelectionHeader<T>(props: { table: TTable<T> }) {
   );
 }
 
-export function TableRowSelectionCell<T>(props: { row: Row<T> }) {
+function TableRowSelectionCell<T extends BaseEntry>({ row }: { row: Row<T> }) {
   'use no memo';
 
-  const { row } = props;
+  if (typeof row.original.isRef === 'boolean' && row.original.isRef) {
+    return null;
+  }
 
   return (
     <Checkbox
@@ -259,7 +298,13 @@ export function TableRowSelectionCell<T>(props: { row: Row<T> }) {
   );
 }
 
-export function createColumns<T>(columns: ColumnDef<T>[]): ColumnDef<T>[] {
+export function createColumns<T extends BaseEntry>(
+  columns: ColumnDef<T>[],
+  options?: {
+    customActions?: boolean;
+    headerClassName?: string;
+  },
+): ColumnDef<T>[] {
   return [
     {
       id: 'select',
@@ -268,46 +313,96 @@ export function createColumns<T>(columns: ColumnDef<T>[]): ColumnDef<T>[] {
       },
       size: 40,
       minSize: 40,
-      header: ({ table }) => {
-        return <TableRowSelectionHeader table={table} />;
-      },
-      cell: ({ row }) => {
-        return <TableRowSelectionCell row={row} />;
-      },
+      header: TableRowSelectionHeader,
+      cell: TableRowSelectionCell,
+      enableSorting: false,
+      enableGlobalFilter: false,
     },
-    ...columns,
+    ...(columns as AccessorKeyColumnDef<T>[]).map((column) => {
+      if (!column.accessorKey) {
+        return column;
+      }
+      return {
+        ...column,
+        header: createSortableColumnHeader(
+          column.header as string,
+          options?.headerClassName,
+        ),
+      };
+    }),
+    ...(options?.customActions
+      ? []
+      : [
+          {
+            id: 'actions',
+            size: 55,
+            minSize: 55,
+            cell: TableActions,
+            enableSorting: false,
+            enableGlobalFilter: false,
+          },
+        ]),
   ];
 }
 
-export function TableActions(props: { path: string }) {
-  const { path } = props;
+function TableActions<T extends BaseEntry>({
+  cell,
+}: {
+  cell: Cell<T, unknown>;
+}) {
   const t = useT();
+
+  if (typeof cell.row.original.isRef === 'boolean' && cell.row.original.isRef) {
+    return null;
+  }
+
+  const handleClick = async () => {
+    try {
+      await revealItemInDir(cell.row.original.path);
+    } catch (err) {
+      toastError(t('opreationFailed'), err);
+    }
+  };
 
   return (
     <TooltipButton
-      tooltip={t('Reveal in dir', {
-        name: PLATFORM === 'darwin' ? t('Finder') : t('File Explorer'),
+      tooltip={t('revealInDir', {
+        name: PLATFORM === 'macOS' ? t('finder') : t('fileExplorer'),
       })}
-      onClick={() =>
-        revealItemInDir(path).catch((err) =>
-          toastError(t('Opreation failed'), err),
-        )
-      }
+      onClick={handleClick}
     >
-      <FolderOpen />
+      <FolderOpenIcon />
     </TooltipButton>
   );
 }
 
-export function createActionsColumn<
-  T extends { path: string },
->(): ColumnDef<T> {
-  return {
-    id: 'actions',
-    size: 55,
-    minSize: 55,
-    cell: ({ cell }) => {
-      return <TableActions path={cell.row.original.path} />;
-    },
+export function createSortableColumnHeader(
+  titleKey: string,
+  className?: string,
+) {
+  return function SortableColumnHeader({ column }: { column: Column<any> }) {
+    const t = useT();
+    const direction = column.getIsSorted();
+
+    return (
+      <Button
+        variant="ghost"
+        onClick={column.getToggleSortingHandler()}
+        className={cn('gap-2', className)}
+      >
+        {t(titleKey as any)}
+        {direction === 'asc' && <ArrowUpIcon />}
+        {direction === 'desc' && <ArrowDownIcon />}
+        {direction === false && <ArrowUpDownIcon />}
+      </Button>
+    );
   };
+}
+
+export function PathCell<T extends BaseEntry>({ row }: { row: Row<T> }) {
+  if (row.original.hidden) {
+    return null;
+  }
+
+  return row.original.path;
 }

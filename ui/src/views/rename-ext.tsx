@@ -1,13 +1,18 @@
 import { useAtom, useSetAtom } from 'jotai';
-import { TextCursorInput } from 'lucide-react';
+import { TextCursorInputIcon } from 'lucide-react';
+import { useState } from 'react';
 import { Trans } from 'react-i18next';
 import { logsAtom } from '~/atom/primitive';
-import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
+import { currentRowSelectionAtom, currentTableDataAtom } from '~/atom/table';
 import { OperationButton } from '~/components';
 import { AlertDialog } from '~/components/alert-dialog';
-import { useBoolean, useListenEffect, useT } from '~/hooks';
+import { useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
-import { getRowSelectionKeys } from '~/utils/common';
+import { is2DArray } from '~/utils/common';
+import {
+  getRowSelectionKeys,
+  removeTableDataItemsByPaths,
+} from '~/utils/table-helper';
 
 interface RenameExtProps {
   disabled: boolean;
@@ -18,68 +23,77 @@ interface RenameExtResult {
   errors: string[];
 }
 
-export function RenameExt(props: RenameExtProps) {
-  const { disabled } = props;
-
-  const open = useBoolean();
-  const loading = useBoolean();
+export function RenameExt({ disabled }: RenameExtProps) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const setLogs = useSetAtom(logsAtom);
-  const [currentToolData, setCurrentToolData] = useAtom(currentToolDataAtom);
-  const [currentToolRowSelection, setCurrentToolRowSelection] = useAtom(
-    currentToolRowSelectionAtom,
-  );
+  const [tableData, setTableData] = useAtom(currentTableDataAtom);
+  const [rowSelection, setRowSelection] = useAtom(currentRowSelectionAtom);
   const t = useT();
 
   useListenEffect('rename-ext-result', (result: RenameExtResult) => {
-    loading.off();
-    open.off();
+    setLoading(false);
+    setOpen(false);
     const { successPaths, errors } = result;
     setLogs(
       [`Successfully renamed ${successPaths.length} files`, ...errors].join(
         '\n',
       ),
     );
-    const set = new Set(successPaths);
-    const newData = currentToolData.filter((v) => !set.has(v.path));
-    setCurrentToolData(newData);
-    setCurrentToolRowSelection({});
+    if (successPaths.length) {
+      setTableData((oldTableData) =>
+        removeTableDataItemsByPaths(oldTableData, successPaths),
+      );
+    }
+    setRowSelection({});
   });
 
-  const paths = getRowSelectionKeys(currentToolRowSelection);
+  const paths = getRowSelectionKeys(rowSelection);
 
   const handleOpenChange = (v: boolean) => {
-    if (loading.value) {
+    if (loading) {
       return;
     }
-    open.set(v);
+    setOpen(v);
   };
 
   const handleOk = () => {
-    if (loading.value) {
+    if (loading) {
       return;
     }
-    loading.on();
+    setLoading(true);
+    const pathsSet = new Set(paths);
+    const selectedItems = is2DArray(tableData)
+      ? tableData.flatMap((group) =>
+          group.filter((item) => pathsSet.has(item.path)),
+        )
+      : tableData.filter((item) => pathsSet.has(item.path));
+
     ipc.renameExt({
-      items: currentToolData.map((v) => {
-        return { path: v.path, ext: v.properExtension };
-      }),
+      items: selectedItems.map((item) => ({
+        path: item.path,
+        ext: item.rawData.proper_extension,
+      })),
     });
   };
 
   return (
     <>
-      <OperationButton disabled={disabled || !paths.length} onClick={open.on}>
-        <TextCursorInput />
-        {t('Rename')}
+      <OperationButton
+        disabled={disabled || !paths.length}
+        onClick={() => setOpen(true)}
+      >
+        <TextCursorInputIcon />
+        {t('rename')}
       </OperationButton>
       <AlertDialog
-        open={open.value}
+        open={open}
         onOpenChange={handleOpenChange}
-        title={t('Renaming files')}
-        okLoading={loading.value}
+        title={t('renamingFiles')}
+        okLoading={loading}
         description={
           <span>
-            <Trans i18nKey="Rename confirm" values={{ length: paths.length }}>
+            <Trans i18nKey="renameConfirm" values={{ length: paths.length }}>
               This will rename extensions of selected
               <span className="text-primary p-1" /> files to more proper. Are
               you want to continue?

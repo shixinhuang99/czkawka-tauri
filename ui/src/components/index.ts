@@ -1,7 +1,10 @@
+export { Textarea } from './custom/textarea';
 export { EditInput } from './edit-input';
+export { HoverTip } from './hover-tip';
 export { InputNumber } from './input-number';
 export { LabelCheckbox } from './label-checkbox';
 export { OperationButton } from './operation-button';
+export { SearchInput } from './search-input';
 export { Select } from './select';
 export { Button } from './shadcn/button';
 export { Checkbox } from './shadcn/checkbox';
@@ -11,6 +14,6 @@ export { Progress } from './shadcn/progress';
 export { ScrollArea } from './shadcn/scroll-area';
 export { Slider } from './shadcn/slider';
 export { Switch } from './shadcn/switch';
-export { Textarea } from './shadcn/textarea';
+export { SliderValue } from './slider-value';
 export { toastError } from './toast';
 export { TooltipButton } from './tooltip-button';

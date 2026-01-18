@@ -1,15 +1,19 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { Trash2 } from 'lucide-react';
+import { Trash2Icon } from 'lucide-react';
+import { useState } from 'react';
 import { Trans } from 'react-i18next';
 import { currentToolAtom, logsAtom } from '~/atom/primitive';
 import { settingsAtom } from '~/atom/settings';
-import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
+import { currentRowSelectionAtom, currentTableDataAtom } from '~/atom/table';
 import { OperationButton } from '~/components';
 import { AlertDialog } from '~/components/alert-dialog';
 import { Tools } from '~/consts';
-import { useBoolean, useListenEffect, useT } from '~/hooks';
+import { useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
-import { getRowSelectionKeys } from '~/utils/common';
+import {
+  getRowSelectionKeys,
+  removeTableDataItemsByPaths,
+} from '~/utils/table-helper';
 
 interface DeleteFilesProps {
   disabled: boolean;
@@ -20,49 +24,47 @@ interface DeleteFilesResult {
   errors: string[];
 }
 
-export function DeleteFiles(props: DeleteFilesProps) {
-  const { disabled } = props;
-
-  const open = useBoolean();
-  const loading = useBoolean();
+export function DeleteFiles({ disabled }: DeleteFilesProps) {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const setLogs = useSetAtom(logsAtom);
   const settings = useAtomValue(settingsAtom);
   const currentTool = useAtomValue(currentToolAtom);
-  const [currentToolData, setCurrentToolData] = useAtom(currentToolDataAtom);
-  const [currentToolRowSelection, setCurrentToolRowSelection] = useAtom(
-    currentToolRowSelectionAtom,
-  );
-  const t = useT();
+  const setTableData = useSetAtom(currentTableDataAtom);
+  const [rowSelection, setRowSelection] = useAtom(currentRowSelectionAtom);
 
   useListenEffect('delete-files-result', (result: DeleteFilesResult) => {
-    loading.off();
-    open.off();
+    setLoading(false);
+    setOpen(false);
     const { successPaths, errors } = result;
     setLogs(
       [`Successfully deleted ${successPaths.length} files`, ...errors].join(
         '\n',
       ),
     );
-    const set = new Set(successPaths);
-    const newData = currentToolData.filter((v) => !set.has(v.path));
-    setCurrentToolData(newData);
-    setCurrentToolRowSelection({});
+    if (successPaths.length) {
+      setTableData((oldTableData) =>
+        removeTableDataItemsByPaths(oldTableData, successPaths),
+      );
+    }
+    setRowSelection({});
   });
 
-  const paths = getRowSelectionKeys(currentToolRowSelection);
+  const paths = getRowSelectionKeys(rowSelection);
 
   const handleOpenChange = (v: boolean) => {
-    if (loading.value) {
+    if (loading) {
       return;
     }
-    open.set(v);
+    setOpen(v);
   };
 
   const handleOk = () => {
-    if (loading.value) {
+    if (loading) {
       return;
     }
-    loading.on();
+    setLoading(true);
     ipc.deleteFiles({
       paths,
       moveDeletedFilesToTrash: settings.moveDeletedFilesToTrash,
@@ -72,18 +74,21 @@ export function DeleteFiles(props: DeleteFilesProps) {
 
   return (
     <>
-      <OperationButton disabled={disabled || !paths.length} onClick={open.on}>
-        <Trash2 />
-        {t('Delete')}
+      <OperationButton
+        disabled={disabled || !paths.length}
+        onClick={() => setOpen(true)}
+      >
+        <Trash2Icon />
+        {t('delete')}
       </OperationButton>
       <AlertDialog
-        open={open.value}
+        open={open}
         onOpenChange={handleOpenChange}
-        title={t('Delete items')}
-        okLoading={loading.value}
+        title={t('deleteItems')}
+        okLoading={loading}
         description={
           <span>
-            <Trans i18nKey="Delete comfirm" values={{ length: paths.length }}>
+            <Trans i18nKey="deleteComfirm" values={{ length: paths.length }}>
               Are you sure you want to delete the selected
               <span className="text-primary p-1" /> items?
             </Trans>

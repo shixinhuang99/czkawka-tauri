@@ -1,37 +1,42 @@
+import type { RowSelectionState, SortingState } from '@tanstack/react-table';
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import type { RowSelection } from '~/components/data-table';
 import {
+  CURRENT_TOOL_KEY,
   getDefaultPlatformSettings,
   getDefaultPreset,
   getDefaultProgress,
+  LANGUAGE_KEY,
+  Languages,
+  SETTINGS_PRESETS_KEY,
+  THEME_KEY,
+  Theme,
   Tools,
 } from '~/consts';
 import type {
-  BadFileEntry,
-  BrokenEntry,
-  DuplicateEntry,
-  FileEntry,
-  FolderEntry,
-  ImagesEntry,
-  MusicEntry,
+  BaseEntry,
   PlatformSettings,
   Preset,
   Progress,
-  SymlinksFileEntry,
-  TemporaryFileEntry,
-  ThemeCfg,
   ToolsValues,
-  VideosEntry,
 } from '~/types';
 
-export const themeAtom = atom<ThemeCfg>({
-  display: '',
-  className: '',
-});
+export const themeAtom = atomWithStorage<string>(
+  THEME_KEY,
+  Theme.System,
+  undefined,
+  { getOnInit: true },
+);
+
+export const languageAtom = atomWithStorage<string>(
+  LANGUAGE_KEY,
+  Languages.En,
+  undefined,
+  { getOnInit: true },
+);
 
 export const presetsAtom = atomWithStorage<Preset[]>(
-  'setting-presets',
+  SETTINGS_PRESETS_KEY,
   [getDefaultPreset()],
   undefined,
   { getOnInit: true },
@@ -42,60 +47,48 @@ export const platformSettingsAtom = atom<PlatformSettings>(
 );
 
 export const currentToolAtom = atomWithStorage<ToolsValues>(
-  'currentTool',
+  CURRENT_TOOL_KEY,
   Tools.DuplicateFiles,
   undefined,
   { getOnInit: true },
 );
 
-export const includedDirsRowSelectionAtom = atom<RowSelection>({});
+export const includedDirsRowSelectionAtom = atom<RowSelectionState>({});
+export const includedDirsRowSortingAtom = atom<SortingState>([]);
 
-export const excludedDirsRowSelectionAtom = atom<RowSelection>({});
+export const excludedDirsRowSelectionAtom = atom<RowSelectionState>({});
+export const excludedDirsRowSortingAtom = atom<SortingState>([]);
 
 export const logsAtom = atom<string>('');
 
 export const progressAtom = atom<Progress>(getDefaultProgress());
 
-export const duplicateFilesAtom = atom<DuplicateEntry[]>([]);
+function createToolsDefaultValue<T>(
+  defaultValue: () => T,
+): Record<ToolsValues, T> {
+  return Object.fromEntries(
+    Object.values(Tools).map((tool) => [tool, defaultValue()]),
+  ) as any;
+}
 
-export const duplicateFilesRowSelectionAtom = atom<RowSelection>({});
+export const tableDataAtom = atom<
+  Record<ToolsValues, BaseEntry[] | BaseEntry[][]>
+>(createToolsDefaultValue(() => []));
 
-export const emptyFoldersAtom = atom<FolderEntry[]>([]);
+export const rowSelectionAtom = atom<Record<ToolsValues, RowSelectionState>>(
+  createToolsDefaultValue(() => ({})),
+);
 
-export const emptyFoldersRowSelectionAtom = atom<RowSelection>({});
+export const sortingAtom = atom<Record<ToolsValues, SortingState>>(
+  createToolsDefaultValue(() => []),
+);
 
-export const bigFilesAtom = atom<FileEntry[]>([]);
+export const filterAtom = atom<Record<ToolsValues, string>>(
+  createToolsDefaultValue(() => ''),
+);
 
-export const bigFilesRowSelectionAtom = atom<RowSelection>({});
+export const filteredTableDataAtom = atom<
+  Record<ToolsValues, BaseEntry[] | BaseEntry[][]>
+>(createToolsDefaultValue(() => []));
 
-export const emptyFilesAtom = atom<FileEntry[]>([]);
-
-export const emptyFilesRowSelectionAtom = atom<RowSelection>({});
-
-export const temporaryFilesAtom = atom<TemporaryFileEntry[]>([]);
-
-export const temporaryFilesRowSelectionAtom = atom<RowSelection>({});
-
-export const similarImagesAtom = atom<ImagesEntry[]>([]);
-
-export const similarImagesRowSelectionAtom = atom<RowSelection>({});
-
-export const similarVideosAtom = atom<VideosEntry[]>([]);
-
-export const similarVideosRowSelectionAtom = atom<RowSelection>({});
-
-export const musicDuplicatesAtom = atom<MusicEntry[]>([]);
-
-export const musicDuplicatesRowSelectionAtom = atom<RowSelection>({});
-
-export const invalidSymlinksAtom = atom<SymlinksFileEntry[]>([]);
-
-export const invalidSymlinksRowSelectionAtom = atom<RowSelection>({});
-
-export const brokenFilesAtom = atom<BrokenEntry[]>([]);
-
-export const brokenFilesRowSelectionAtom = atom<RowSelection>({});
-
-export const badExtensionsAtom = atom<BadFileEntry[]>([]);
-
-export const badExtensionsRowSelectionAtom = atom<RowSelection>({});
+export const searchInputValueAtom = atom('');

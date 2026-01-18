@@ -1,13 +1,8 @@
-import type { Tools } from './consts';
+import type { Tools } from '../consts';
 
 type ValueOf<T> = T[keyof T];
 
 export type ToolsValues = ValueOf<typeof Tools>;
-
-export interface ThemeCfg {
-  display: string;
-  className: string;
-}
 
 export interface Preset {
   name: string;
@@ -115,14 +110,12 @@ export interface ProgressData {
   stepName: string;
 }
 
-export interface BaseEntry {
+export interface BaseEntry<T = { path: string; [key: string]: any }> {
   path: string;
-}
-
-export interface RefEntry {
-  isRef: boolean;
-  hidden: boolean;
+  isRef?: boolean;
+  hidden?: boolean;
   groupId?: number;
+  rawData: T;
 }
 
 export interface RawFileEntry {
@@ -131,7 +124,7 @@ export interface RawFileEntry {
   modified_date: number;
 }
 
-export interface FileEntry extends BaseEntry {
+export interface FileEntry extends BaseEntry<RawFileEntry> {
   size: string;
   fileName: string;
   modifiedDate: string;
@@ -144,13 +137,11 @@ export interface RawDuplicateEntry {
   hash: string;
 }
 
-export interface DuplicateEntry extends BaseEntry, RefEntry {
+export interface DuplicateEntry extends BaseEntry<RawDuplicateEntry> {
   size: string;
   fileName: string;
   modifiedDate: string;
-  hash: string;
   isImage: boolean;
-  raw: RawDuplicateEntry;
 }
 
 export interface RawFolderOrTemporaryFileEntry {
@@ -158,12 +149,13 @@ export interface RawFolderOrTemporaryFileEntry {
   modified_date: number;
 }
 
-export interface FolderEntry extends BaseEntry {
+export interface FolderEntry extends BaseEntry<RawFolderOrTemporaryFileEntry> {
   folderName: string;
   modifiedDate: string;
 }
 
-export interface TemporaryFileEntry extends BaseEntry {
+export interface TemporaryFileEntry
+  extends BaseEntry<RawFolderOrTemporaryFileEntry> {
   fileName: string;
   modifiedDate: string;
 }
@@ -177,13 +169,12 @@ export interface RawImagesEntry {
   similarity: string;
 }
 
-export interface ImagesEntry extends BaseEntry, RefEntry {
+export interface ImagesEntry extends BaseEntry<RawImagesEntry> {
   fileName: string;
   size: string;
   modifiedDate: string;
   similarity: string;
   dimensions: string;
-  raw: RawImagesEntry;
 }
 
 export interface RawVideosEntry {
@@ -192,11 +183,10 @@ export interface RawVideosEntry {
   modified_date: number;
 }
 
-export interface VideosEntry extends BaseEntry, RefEntry {
+export interface VideosEntry extends BaseEntry<RawVideosEntry> {
   fileName: string;
   size: string;
   modifiedDate: string;
-  raw: RawVideosEntry;
 }
 
 export interface RawMusicEntry {
@@ -211,7 +201,7 @@ export interface RawMusicEntry {
   bitrate: number;
 }
 
-export interface MusicEntry extends BaseEntry, RefEntry {
+export interface MusicEntry extends BaseEntry<RawMusicEntry> {
   size: string;
   fileName: string;
   modifiedDate: string;
@@ -219,9 +209,7 @@ export interface MusicEntry extends BaseEntry, RefEntry {
   trackArtist: string;
   year: string;
   length: string;
-  genre: string;
   bitrate: string;
-  raw: RawMusicEntry;
 }
 
 export interface RawSymlinksFileEntry {
@@ -234,12 +222,11 @@ export interface RawSymlinksFileEntry {
   };
 }
 
-export interface SymlinksFileEntry extends BaseEntry {
+export interface SymlinksFileEntry extends BaseEntry<RawSymlinksFileEntry> {
   symlinkName: string;
   modifiedDate: string;
   destinationPath: string;
   typeOfError: string;
-  size: string;
 }
 
 export interface RawBrokenEntry {
@@ -249,7 +236,7 @@ export interface RawBrokenEntry {
   error_string: string;
 }
 
-export interface BrokenEntry extends BaseEntry {
+export interface BrokenEntry extends BaseEntry<RawBrokenEntry> {
   fileName: string;
   modifiedDate: string;
   size: string;
@@ -265,7 +252,7 @@ export interface RawBadFileEntry {
   proper_extension: string;
 }
 
-export interface BadFileEntry extends BaseEntry {
+export interface BadFileEntry extends BaseEntry<RawBadFileEntry> {
   fileName: string;
   modifiedDate: string;
   currentExtension: string;

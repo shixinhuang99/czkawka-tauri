@@ -32,7 +32,7 @@ export default defineConfig(async () => {
       PKG_NAME: JSON.stringify(pkg.productName),
       PKG_VERSION: JSON.stringify(pkg.version),
       REPOSITORY_URL: JSON.stringify(pkg.repository.url),
-      PLATFORM: JSON.stringify(process.platform),
+      PLATFORM: JSON.stringify(getPlatformName()),
     },
     build: {
       chunkSizeWarningLimit: 1000,
@@ -40,3 +40,14 @@ export default defineConfig(async () => {
     base: './',
   };
 });
+
+function getPlatformName() {
+  switch (process.platform) {
+    case 'darwin':
+      return 'macOS';
+    case 'win32':
+      return 'Windows';
+    default:
+      return process.platform;
+  }
+}

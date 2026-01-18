@@ -1,16 +1,19 @@
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { useAtom, useSetAtom } from 'jotai';
-import { FolderSymlink, LoaderCircle } from 'lucide-react';
+import { FolderSymlinkIcon, LoaderCircleIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Trans } from 'react-i18next';
 import { logsAtom } from '~/atom/primitive';
-import { currentToolDataAtom, currentToolRowSelectionAtom } from '~/atom/tools';
+import { currentRowSelectionAtom, currentTableDataAtom } from '~/atom/table';
 import { OperationButton, Switch } from '~/components';
 import { AlertDialog } from '~/components/alert-dialog';
-import { Form, FormItem } from '~/components/simple-form';
-import { useBoolean, useListenEffect, useT } from '~/hooks';
+import { Form, FormItem } from '~/components/form';
+import { useListenEffect, useT } from '~/hooks';
 import { ipc } from '~/ipc';
-import { getRowSelectionKeys } from '~/utils/common';
+import {
+  getRowSelectionKeys,
+  removeTableDataItemsByPaths,
+} from '~/utils/table-helper';
 
 interface MoveFilesProps {
   disabled: boolean;
@@ -27,32 +30,28 @@ interface MoveFilesResult {
   errors: string[];
 }
 
-const getDefaultOptions = (): Options => {
+function getDefaultOptions(): Options {
   return {
     copyMode: false,
     preserveStructure: false,
     overrideMode: false,
   };
-};
+}
 
-export function MoveFiles(props: MoveFilesProps) {
-  const { disabled } = props;
-
+export function MoveFiles({ disabled }: MoveFilesProps) {
   const [destination, setDestination] = useState('');
-  const [options, setOptions] = useState<Options>(getDefaultOptions());
-  const open = useBoolean();
-  const loading = useBoolean();
-  const openFileDialogLoading = useBoolean();
+  const [options, setOptions] = useState<Options>(getDefaultOptions);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [openFileDialogLoading, setOpenFileDialogLoading] = useState(false);
   const setLogs = useSetAtom(logsAtom);
-  const [currentToolData, setCurrentToolData] = useAtom(currentToolDataAtom);
-  const [currentToolRowSelection, setCurrentToolRowSelection] = useAtom(
-    currentToolRowSelectionAtom,
-  );
+  const setTableData = useSetAtom(currentTableDataAtom);
+  const [rowSelection, setRowSelection] = useAtom(currentRowSelectionAtom);
   const t = useT();
 
   useListenEffect('move-files-result', (result: MoveFilesResult) => {
-    loading.off();
-    open.off();
+    setLoading(false);
+    setOpen(false);
     setOptions(getDefaultOptions());
     const { successPaths, errors } = result;
     setLogs(
@@ -62,39 +61,39 @@ export function MoveFiles(props: MoveFilesProps) {
       ].join('\n'),
     );
     if (!options.copyMode) {
-      const set = new Set(successPaths);
-      const newData = currentToolData.filter((v) => !set.has(v.path));
-      setCurrentToolData(newData);
+      setTableData((oldTableData) =>
+        removeTableDataItemsByPaths(oldTableData, successPaths),
+      );
     }
-    setCurrentToolRowSelection({});
+    setRowSelection({});
   });
 
-  const paths = getRowSelectionKeys(currentToolRowSelection);
+  const paths = getRowSelectionKeys(rowSelection);
 
   const handleOpenChange = (v: boolean) => {
-    if (loading.value) {
+    if (loading) {
       return;
     }
     setOptions(getDefaultOptions());
-    open.set(v);
+    setOpen(v);
   };
 
   const handleChooseDestination = async () => {
-    openFileDialogLoading.on();
+    setOpenFileDialogLoading(true);
     const dir = await openFileDialog({ multiple: false, directory: true });
-    openFileDialogLoading.off();
+    setOpenFileDialogLoading(false);
     if (!dir) {
       return;
     }
     setDestination(dir);
-    open.on();
+    setOpen(true);
   };
 
   const handleOk = () => {
-    if (loading.value) {
+    if (loading) {
       return;
     }
-    loading.on();
+    setLoading(true);
     ipc.moveFiles({ paths, destination, ...options });
   };
 
@@ -104,22 +103,22 @@ export function MoveFiles(props: MoveFilesProps) {
         disabled={disabled || !paths.length}
         onClick={handleChooseDestination}
       >
-        {openFileDialogLoading.value ? (
-          <LoaderCircle className="animate-spin" />
+        {openFileDialogLoading ? (
+          <LoaderCircleIcon className="animate-spin" />
         ) : (
-          <FolderSymlink />
+          <FolderSymlinkIcon />
         )}
-        {t('Move')}
+        {t('move')}
       </OperationButton>
       <AlertDialog
-        open={open.value}
+        open={open}
         onOpenChange={handleOpenChange}
-        title={t('Moving files')}
-        okLoading={loading.value}
+        title={t('movingFiles')}
+        okLoading={loading}
         description={
           <span>
             <Trans
-              i18nKey="Move confirm"
+              i18nKey="moveConfirm"
               values={{ length: paths.length, destination }}
             >
               Moving
@@ -137,21 +136,21 @@ export function MoveFiles(props: MoveFilesProps) {
         >
           <FormItem
             name="copyMode"
-            label={t('Copy files instead of moving')}
+            label={t('copyFilesInsteadOfMoving')}
             comp="switch"
           >
             <Switch />
           </FormItem>
           <FormItem
             name="preserveStructure"
-            label={t('Preserve folder structure')}
+            label={t('preserveFolderStructure')}
             comp="switch"
           >
             <Switch />
           </FormItem>
           <FormItem
             name="overrideMode"
-            label={t('Override files')}
+            label={t('overrideFiles')}
             comp="switch"
           >
             <Switch />

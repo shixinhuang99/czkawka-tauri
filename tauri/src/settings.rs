@@ -1,6 +1,7 @@
-use czkawka_core::{
-	common::{get_all_available_threads, get_config_cache_path},
-	common_items::{DEFAULT_EXCLUDED_DIRECTORIES, DEFAULT_EXCLUDED_ITEMS},
+use czkawka_core::common::{
+	config_cache_path::get_config_cache_path,
+	get_all_available_threads,
+	items::{DEFAULT_EXCLUDED_DIRECTORIES, DEFAULT_EXCLUDED_ITEMS},
 };
 use serde::{Deserialize, Serialize};
 
@@ -102,22 +103,22 @@ fn default_included_directories() -> Vec<String> {
 fn default_excluded_directories() -> Vec<String> {
 	let mut dirs = vec![];
 
-	if cfg!(target_os = "macos") {
-		if let Some(home_dir) = home::home_dir() {
-			let home_dir = home_dir.to_string_lossy();
-			let items = [
-				"Downloads",
-				"Documents",
-				"Desktop",
-				"Pictures/Photos Library.photoslibrary",
-				"Library/Photos/Libraries/Syndication.photoslibrary",
-				"Library/Application Support/AddressBook",
-				"Library/Calendars",
-				"Library/Reminders",
-			];
-			for item in items {
-				dirs.push(format!("{}/{}", home_dir, item));
-			}
+	if cfg!(target_os = "macos")
+		&& let Some(home_dir) = home::home_dir()
+	{
+		let home_dir = home_dir.to_string_lossy();
+		let items = [
+			"Downloads",
+			"Documents",
+			"Desktop",
+			"Pictures/Photos Library.photoslibrary",
+			"Library/Photos/Libraries/Syndication.photoslibrary",
+			"Library/Application Support/AddressBook",
+			"Library/Calendars",
+			"Library/Reminders",
+		];
+		for item in items {
+			dirs.push(format!("{}/{}", home_dir, item));
 		}
 	}
 
