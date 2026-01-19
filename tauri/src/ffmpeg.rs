@@ -87,49 +87,17 @@ fn exe_info(name: &str) {
 }
 
 fn get_sys_paths() -> Vec<PathBuf> {
-	let path_string = if cfg!(windows) {
-		Command::new("cmd")
-			.args(["/C", "echo %PATH%"])
-			.output()
-			.ok()
-			.and_then(|output| {
-				if output.status.success() {
-					Some(
-						String::from_utf8_lossy(&output.stdout)
-							.trim()
-							.to_string(),
-					)
-				} else {
-					None
-				}
-			})
-			.unwrap_or_else(|| {
-				"C:\\Windows\\System32;C:\\Windows;C:\\Windows\\System32\\Wbem"
-					.to_string()
-			})
-	} else {
-		let shell =
-			env::var("SHELL").unwrap_or_else(|_| "/bin/bash".to_string());
-		Command::new(&shell)
-    		.args(["-l", "-c", "echo $PATH"])
-			.output()
-			.ok()
-			.and_then(|output| {
-				if output.status.success() {
-					let path = String::from_utf8_lossy(&output.stdout).trim().to_string();
-					if !path.is_empty() {
-						Some(path)
-					} else {
-						None
-					}
-				} else {
-					None
-				}
-			})
-			.unwrap_or_else(|| {
-				"/usr/local/bin:/opt/homebrew/bin:/usr/local/opt/bin:/opt/local/bin".to_string()
-			})
-	};
+	// Use the current process's PATH instead of spawning a login shell
+	// This avoids issues with extremely long PATH variables
+	let path_string = env::var("PATH").unwrap_or_else(|_| {
+		if cfg!(windows) {
+			"C:\\Windows\\System32;C:\\Windows;C:\\Windows\\System32\\Wbem"
+				.to_string()
+		} else {
+			"/usr/local/bin:/opt/homebrew/bin:/usr/local/opt/bin:/opt/local/bin"
+				.to_string()
+		}
+	});
 
 	env::split_paths(&path_string).collect::<Vec<_>>()
 }
